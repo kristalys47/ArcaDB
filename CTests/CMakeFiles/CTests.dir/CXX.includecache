@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/git/CTests/ORCManagement.cpp
+ORCManagement.h
+/git/CTests/ORCManagement.h
+
+/git/CTests/ORCManagement.h
+iostream
+-
+cstdint
+-
+
+/git/CTests/main.cpp
+iostream
+-
+

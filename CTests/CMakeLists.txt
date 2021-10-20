@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+project(CTests)
+set(CMAKE_CXX_STANDARD 14)
+target_link_directories(orc PUBLIC "/orc/c++/include")
+add_executable(CTests main.cpp ORCManagement.cpp ORCManagement.h)

@@ -21,7 +21,7 @@ public class ORC {
 //        Writer writer = OrcFile.createWriter(new Path(new URI("file:///c:/Users/Abigail/git-data/Container-DBMS/testORC/test.orc")),
 ////        Writer writer = OrcFile.createWriter(new Path(new URI("file:///tmp/code/Container-DBMS/testORC")),
 //                OrcFile.writerOptions(conf).setSchema(schema));
-//
+//          100 MBytes
 //        VectorizedRowBatch batch2 = new VectorizedRowBatch(2, 10);
 //        VectorizedRowBatch batch = schema.createRowBatch();
 //
@@ -57,12 +57,12 @@ public class ORC {
 
 
         System.out.println(reader.getStatistics().toString());
-        RecordReader records = reader.rows(reader.options().include(new boolean[]{true, true, true, true}));
+        RecordReader records = reader.rows(reader.options().include(new boolean[]{true, true, false}));
 
-        String[] colNames = reader.options().getColumnNames();
-
-        VectorizedRowBatch batch = reader.getSchema().createRowBatch(12);
-
+//        String[] colNames = reader.options().getColumnNames();
+        VectorizedRowBatch batch = new VectorizedRowBatch(3);
+                //reader.getSchema().createRowBatch(12);
+        System.out.println(batch.numCols);
         while (records.nextBatch(batch)) {
             System.out.println(batch);
 //            for(int r=0; r < batch.size; r++) {
