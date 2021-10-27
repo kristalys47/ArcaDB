@@ -1,3 +1,0 @@
-/git/CTests/CMakeFiles/rebuild_cache.dir
-/git/CTests/CMakeFiles/edit_cache.dir
-/git/CTests/CMakeFiles/CTests.dir

@@ -1,2 +1,6 @@
 /testORC/.idea/
 /testORC/target/
+/CTests/build/
+/CTests/orc/
+/CTests/cmake-build-debug/
+/CTests/CMakeFiles/

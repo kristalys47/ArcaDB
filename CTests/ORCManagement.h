@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstdint>
+#include <ORC/TypeImp.hh>
 
 class ORCManagement {
 public:
