@@ -29,8 +29,14 @@ TODO:
 -Try to make it run in c++
 -Create organized maven project
 -shards     // 100 MBytes
-- add limits to batch
+-add limits to batch
 -Integrate GraaValVM
+
+Notes:
+-SearchArguments vs setRowFiltering
+
+Doubts & Q's:
+- Logic tree / Boolean Expression tree
 
 
 
