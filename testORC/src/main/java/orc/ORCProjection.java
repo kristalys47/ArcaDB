@@ -73,6 +73,8 @@ public class ORCProjection {
                             } else {
                                 return false;
                             }
+                        case 0:
+                            return false;
                         case 1:
                             if(this.compare == 1) {
                                 return true;
@@ -106,8 +108,8 @@ public class ORCProjection {
 
     //Using order of operation
     public Consumer<OrcFilterContext> builder(String expression) {
-        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
-//        String test = "(((name=\"Kristal\")|(val<10))&(val>0))";
+//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
+        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
 //        String test = "(val<11)";
 
         Stack<String> parsingLogicBooleanTree = new Stack();
@@ -152,7 +154,9 @@ public class ORCProjection {
             }
         }
 
-        System.out.println(root.left);
+//        byte[] mmmm = new byte[]{0, 0, 0, 0, 0, 0, 0, 1};
+//
+//        System.out.println("_________" + root.right.evaluate(mmmm));
 
         order.forEach(s -> System.out.println(s));
         System.out.println(max);
