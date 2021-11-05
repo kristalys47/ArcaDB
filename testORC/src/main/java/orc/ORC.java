@@ -1,8 +1,5 @@
 package orc;
 
-import org.apache.hadoop.hive.ql.io.sarg.PredicateLeaf;
-import org.apache.hadoop.hive.ql.io.sarg.SearchArgument;
-import org.apache.hadoop.hive.ql.io.sarg.SearchArgumentFactory;
 import org.apache.orc.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -12,13 +9,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
 
-import org.apache.orc.filter.BatchFilter;
 import org.apache.orc.impl.RecordReaderImpl;
-import org.apache.orc.impl.filter.FilterFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,7 +41,7 @@ public class ORC {
 //        OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 
-        ORCProjection op = new ORCProjection();
+        ProjectionTree op = new ProjectionTree();
         op.treeBuilder(projections);
 
         TypeDescription schema = reader.getSchema();
@@ -89,7 +81,7 @@ public class ORC {
             int index = 0;
             int[] selected = batch.getSelected();
             for (int i = 0; i < batch.size; i++) {
-                Map<String, byte[]> row = new HashMap<>();
+                Map<String, Object> row = new HashMap<>();
                 for (int j = 0; j < batch.cols.length; j++) {
                     {
                         row.put(names.get(j), bcv[j].vector[i]);
@@ -141,7 +133,7 @@ public class ORC {
         String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
 //        String test = "(val<11)";
 
-        ORCProjection op = new ORCProjection();
+        ProjectionTree op = new ProjectionTree();
         op.treeBuilder(test);
 
         Reader.Options readOptions = reader.options();

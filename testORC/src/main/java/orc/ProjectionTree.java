@@ -1,16 +1,18 @@
 package orc;
 
+import orc.nodes.LogicANDNode;
+import orc.nodes.LogicORNode;
 import orc.nodes.Node;
 
 import java.util.*;
 
-public class ORCProjection {
+public class ProjectionTree {
 
     public Node root;
     public ArrayList<String> columns;
 
     //Using order of operation
-    ORCProjection(){
+    ProjectionTree(){
         this.root = null;
         this.columns = new ArrayList<>();
     }
@@ -34,9 +36,9 @@ public class ORCProjection {
                 }
                 parsingLogicBooleanTree.pop();
             } else if (test.charAt(i) == '|') {
-                order.add(new Node(parsingLogicBooleanTree.size(), "|", false, order.size()+1));
+                order.add(new LogicORNode(parsingLogicBooleanTree.size(), "|", false, order.size()+1));
             } else if (test.charAt(i) == '&') {
-                order.add(new Node(parsingLogicBooleanTree.size(), "&", false, order.size()+1));
+                order.add(new LogicANDNode(parsingLogicBooleanTree.size(), "&", false, order.size()+1));
             }
         }
 
@@ -65,15 +67,15 @@ public class ORCProjection {
 
     }
 
-    public boolean treeEvaluation(Map<String, byte[]> map) throws Exception {
+    public boolean treeEvaluation(Map<String, Object> map) throws Exception {
         return recursiveEval(this.root, map);
     }
 
-    public boolean recursiveEval(Node n, Map<String, byte[]> map) throws Exception {
+    public boolean recursiveEval(Node n, Map<String, Object> map) throws Exception {
         if(n.isLeaf){
-            return n.evaluateLeaf(map.get(n.columnName));
+            return n.evaluate(map.get(n.columnName));
         } else{
-            return n.evaluateParent(recursiveEval(n.left, map), recursiveEval(n.right, map));
+            return n.evaluate(recursiveEval(n.left, map), recursiveEval(n.right, map));
         }
 
     }
