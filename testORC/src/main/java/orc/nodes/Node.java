@@ -22,6 +22,10 @@ public abstract class Node <T> {
         this.inorderIndex = inorderIndex;
     }
 
+    public Node() {
+
+    }
+
     public abstract boolean evaluate(boolean left, boolean right) throws Exception;
     public abstract boolean evaluate(T value) throws Exception;
 

@@ -16,6 +16,11 @@ public class ProjectionTree {
         this.root = null;
         this.columns = new ArrayList<>();
     }
+
+    public void getNodeType(int level, String expression, boolean isLeaf, int inorderIndex, Dictionary<String, String> dic){
+
+//        return new Node<>
+    }
     public void treeBuilder(String test) {
         Stack<String> parsingLogicBooleanTree = new Stack();
         int level = 0;
@@ -32,7 +37,7 @@ public class ProjectionTree {
                 }
             } else if (test.charAt(i) == ')') {
                 if (!(test.charAt(i - 1) == ')')) {
-                    order.add(new Node(parsingLogicBooleanTree.size(), test.substring(start, i), true, order.size()+1));
+//                    order.add(new Node(parsingLogicBooleanTree.size(), test.substring(start, i), true, order.size()+1));
                 }
                 parsingLogicBooleanTree.pop();
             } else if (test.charAt(i) == '|') {

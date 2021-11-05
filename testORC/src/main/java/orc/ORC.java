@@ -23,6 +23,8 @@ import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 public class ORC {
     static final int BATCH_SIZE = 100;
 
+    //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
+
     public static void readerPrint(String path)throws IOException {
         Configuration conf = new Configuration();
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
@@ -195,7 +197,7 @@ public class ORC {
                 BytesColumnVector l = (BytesColumnVector) batch.cols[i];
                 for(int r = 0; r < rows.size(); r++) {
                     JSONArray row =(JSONArray) rows.get(r);
-                    v.setVal = Integer.valueOf((String) row.get(i));
+//                    v.setVal = Integer.valueOf((String) row.get(i));
                 }
             }
         }
