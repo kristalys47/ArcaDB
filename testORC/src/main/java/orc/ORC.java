@@ -11,13 +11,14 @@ import org.apache.hadoop.hive.ql.exec.vector.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.function.Consumer;
 
 import org.apache.orc.filter.BatchFilter;
 import org.apache.orc.impl.RecordReaderImpl;
 import org.apache.orc.impl.filter.FilterFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,8 +30,6 @@ import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 
 public class ORC {
     static final int BATCH_SIZE = 100;
-
-
 
     public static void readerPrint(String path)throws IOException {
         Configuration conf = new Configuration();
@@ -45,10 +44,81 @@ public class ORC {
         records.close();
     }
 
-    public static void reader(String path, String projections) throws IOException {
+    public static void reader(String path, String projections) throws Exception {
         Configuration conf = new Configuration();
 //        OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
-        OrcConf.ALLOW_SARG_TO_FILTER.setBoolean(conf, true);
+        Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
+
+        ORCProjection op = new ORCProjection();
+        op.treeBuilder(projections);
+
+        TypeDescription schema = reader.getSchema();
+        ArrayList<String> names = new  ArrayList<String>(schema.getFieldNames());
+        ArrayList<String> project = new ArrayList<String>(Arrays.asList(projections.split(",")));
+
+        // Projection
+        boolean[] finalProjection = new boolean[names.size()+1];
+        finalProjection[0] = true;
+        int countCol = 0;
+        for(int i = 0; i< names.size(); i++) {
+            if(project.contains(names.get(i))){
+                finalProjection[i+1] = true;
+                countCol++;
+            } else{
+                finalProjection[i+1] = false;
+            }
+        }
+
+//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
+        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
+//        String test = "(val<11)";
+
+        Reader.Options readOptions = reader.options();
+        RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
+        VectorizedRowBatch batch = reader.getSchema().createRowBatchV2();
+
+        int b = 0;
+        int t = 0;
+        while (records.nextBatch(batch)) {
+            TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
+
+            BytesColumnVector[] bcv = new BytesColumnVector[batch.numCols];
+            for (int i = 0; i < batch.cols.length; i++) {
+                bcv[i] = (BytesColumnVector) batch.cols[i];
+            }
+            int index = 0;
+            int[] selected = batch.getSelected();
+            for (int i = 0; i < batch.size; i++) {
+                Map<String, byte[]> row = new HashMap<>();
+                for (int j = 0; j < batch.cols.length; j++) {
+                    {
+                        row.put(names.get(j), bcv[j].vector[i]);
+                    }
+                }
+                if (op.treeEvaluation(row)){
+                    selected[index] = i;
+                    index++;
+                }
+            }
+            VectorizedRowBatch vv = new VectorizedRowBatch(countCol);
+            vv.setFilterContext(true, selected, index);
+
+//            OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
+//            Path pathO = new Path("/JavaCode/results" + t);
+//            t++;
+//            Writer writer = OrcFile.createWriter(pathO, options);
+//            writer.addRowBatch(vv);
+//            writer.close();
+        }
+        records.close();
+        batch.reset();
+    }
+
+
+
+    public static void readerExplicit(String path, String projections) throws IOException {
+        Configuration conf = new Configuration();
+//        OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 
         TypeDescription schema = reader.getSchema();
@@ -67,51 +137,23 @@ public class ORC {
             }
         }
 
-        Consumer<OrcFilterContext> consumer = gr ->
-        {
-            LongColumnVector cv = (LongColumnVector) gr.findColumnVector("val")[0];
-            int index = 0;
-            int[] selected = gr.getSelected();
-            for (int i = 0; i < cv.vector.length; i++) {
-                if(cv.vector[i] < 9){ // Condition
-                    selected[index] = i;
-                    index++;
-                }
-            }
-            gr.setSelectedInUse(true);
-            gr.setSelected(selected);
-            gr.setSelectedSize(index);
-        };
+//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
+        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
+//        String test = "(val<11)";
 
-//        Reader.Options readOptions = reader.options();
-//        readOptions.include(finalProjection);
-//        readOptions.setRowFilter(new String[]{"val"}, consumer);
-
-//        SearchArgument mm = SearchArgumentFactory.newBuilder()
-//                .equals("name", PredicateLeaf.Type.LONG, 17L)
-//                .build();
-//
-//        Reader.Options readOptions = new Reader.Options(conf);
-//        readOptions.allowSARGToFilter(true);
-//        readOptions.searchArgument(mm, new String[]{"val"});
-
+        ORCProjection op = new ORCProjection();
+        op.treeBuilder(test);
 
         Reader.Options readOptions = reader.options();
-        readOptions.setRowFilter(new String[]{"val"}, consumer);
-
-
-
-
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
-
         VectorizedRowBatch batch = reader.getSchema().createRowBatchV2();
+
         int b = 0;
         int t = 0;
         while (records.nextBatch(batch)) {
             TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
             VectorizedRowBatch vv = new VectorizedRowBatch(20);
-            System.out.printf("" + batch.selectedInUse);
-            ;
+
             for (int i = 0; i < batch.cols.length; i++) {
                 if (batch.projectedColumns[i] == 1) {
                     td.addField(names.get(i), new TypeDescription(TypeDescription.Category.LONG));
@@ -132,7 +174,7 @@ public class ORC {
         batch.reset();
     }
 
-    public static void writer(VectorizedRowBatch a, String path, String schemaStruct, String values) throws IOException, URISyntaxException, ParseException {
+    public static void writer(String path, String schemaStruct, String values) throws IOException, URISyntaxException, ParseException {
         Configuration conf = new Configuration();
 
         TypeDescription schema = TypeDescription.fromString(schemaStruct);
@@ -158,10 +200,10 @@ public class ORC {
                     v.setVal(r, ((String) row.get(i)).getBytes(StandardCharsets.UTF_8), 0, ((String) row.get(i)).getBytes().length);
                 }
             } else if (types.get(i).compareTo(new TypeDescription(TypeDescription.Category.INT)) == 0){
-                LongColumnVector l = (LongColumnVector) batch.cols[i];
+                BytesColumnVector l = (BytesColumnVector) batch.cols[i];
                 for(int r = 0; r < rows.size(); r++) {
                     JSONArray row =(JSONArray) rows.get(r);
-                    l.vector[r] = Integer.valueOf((String) row.get(i));
+                    v.setVal = Integer.valueOf((String) row.get(i));
                 }
             }
         }
