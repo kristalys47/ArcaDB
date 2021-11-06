@@ -6,6 +6,20 @@ public class LogicANDNode extends Node{
     }
 
     @Override
+    public int[] evaluateArray(int[] left, int[] right) throws Exception {
+        int[] result = new int[left.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (left[i]+right[i]) == 2? 1: 0;
+        }
+        return result;
+    }
+
+    @Override
+    public int[] evaluateArray(Object value) throws Exception {
+        throw new Exception("Parent node cannot compare values");
+    }
+
+    @Override
     public boolean evaluate(boolean left, boolean right) {
         return left&&right;
     }

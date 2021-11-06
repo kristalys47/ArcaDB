@@ -1,11 +1,21 @@
 package orc.nodes;
 
 //TODO: Implement BOOLEAN just in case
+//TODO: IMPLEMENT FLOAT
 
 public class BooleanNode extends Node{
 
     public BooleanNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
+    }
+
+    public int[] evaluateArray(int[] left, int[] right) throws Exception {
+        return new int[0];
+    }
+
+    @Override
+    public int[] evaluateArray(Object value) throws Exception {
+        return new int[0];
     }
 
     @Override

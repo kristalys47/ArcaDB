@@ -1,52 +1,81 @@
 package orc;
 
-import orc.nodes.LogicANDNode;
-import orc.nodes.LogicORNode;
-import orc.nodes.Node;
+import orc.nodes.*;
+import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
+import org.apache.orc.TypeDescription;
 
 import java.util.*;
+
+import static orc.Utils.getTypeFromTypeCategory;
 
 public class ProjectionTree {
 
     public Node root;
     public ArrayList<String> columns;
+    public TypeDescription schema;
 
     //Using order of operation
-    ProjectionTree(){
+    ProjectionTree(TypeDescription schema){
         this.root = null;
         this.columns = new ArrayList<>();
+        this.schema = schema;
     }
 
-    public void getNodeType(int level, String expression, boolean isLeaf, int inorderIndex, Dictionary<String, String> dic){
+    public Node getNodeType(int level, String expression, boolean isLeaf, int inorderIndex){
+        int index = 0;
+        if(expression.contains(">")){
+            index = expression.indexOf(">");
+        } else if (expression.contains("=")){
+            index = expression.indexOf("=");
+        } else if (expression.contains("<")){
+            index = expression.indexOf("<");
+        } else if (expression.contains("!")){
+            index = expression.indexOf("!");
+        }
 
-//        return new Node<>
+        int i = schema.getFieldNames().indexOf(expression.substring(0,index));
+
+        switch (getTypeFromTypeCategory(schema.getChildren().get(i).getCategory())){
+            case DECIMAL:
+                return new DecimalNode(level, expression, isLeaf, inorderIndex);
+            case DOUBLE:
+                return new DoubleNode(level, expression, isLeaf, inorderIndex);
+            case LONG:
+                return new LongNode(level, expression, isLeaf, inorderIndex);
+            default:
+                return new StringNode(level, expression, isLeaf, inorderIndex);
+        }
+
     }
-    public void treeBuilder(String test) {
+    public void treeBuilder(String logicExpression) {
+
+        //Creates a tree
         Stack<String> parsingLogicBooleanTree = new Stack();
         int level = 0;
         ArrayList<Node> order = new ArrayList<>();
 
         int start = 0;
         int max = 0;
-        for (int i = 0; i < test.length(); i++) {
-            if (test.charAt(i) == '(') {
+        for (int i = 0; i < logicExpression.length(); i++) {
+            if (logicExpression.charAt(i) == '(') {
                 parsingLogicBooleanTree.push("(");
                 start = i + 1;
                 if (parsingLogicBooleanTree.size() > max) {
                     max = parsingLogicBooleanTree.size();
                 }
-            } else if (test.charAt(i) == ')') {
-                if (!(test.charAt(i - 1) == ')')) {
-//                    order.add(new Node(parsingLogicBooleanTree.size(), test.substring(start, i), true, order.size()+1));
+            } else if (logicExpression.charAt(i) == ')') {
+                if (!(logicExpression.charAt(i - 1) == ')')) {
+                    order.add(getNodeType(parsingLogicBooleanTree.size(), logicExpression.substring(start, i), true, order.size()+1));
                 }
                 parsingLogicBooleanTree.pop();
-            } else if (test.charAt(i) == '|') {
+            } else if (logicExpression.charAt(i) == '|') {
                 order.add(new LogicORNode(parsingLogicBooleanTree.size(), "|", false, order.size()+1));
-            } else if (test.charAt(i) == '&') {
+            } else if (logicExpression.charAt(i) == '&') {
                 order.add(new LogicANDNode(parsingLogicBooleanTree.size(), "&", false, order.size()+1));
             }
         }
 
+        //Creates
         for (int i = 0; i < order.size(); i++) {
             if(order.get(i).isLeaf){
                 this.columns.add(order.get(i).columnName);
@@ -66,72 +95,17 @@ public class ProjectionTree {
                 }
             }
         }
-
-        System.out.println(max);
-        order.forEach(s -> System.out.println(s));
-
     }
 
-    public boolean treeEvaluation(Map<String, Object> map) throws Exception {
+    public int[] treeEvaluation(Map<String, ColumnVector> map) throws Exception {
         return recursiveEval(this.root, map);
     }
 
-    public boolean recursiveEval(Node n, Map<String, Object> map) throws Exception {
+    private int[] recursiveEval(Node n, Map<String, ColumnVector> map) throws Exception {
         if(n.isLeaf){
-            return n.evaluate(map.get(n.columnName));
+            return n.evaluateArray(map.get(n.columnName));
         } else{
-            return n.evaluate(recursiveEval(n.left, map), recursiveEval(n.right, map));
+            return n.evaluateArray(recursiveEval(n.left, map), recursiveEval(n.right, map));
         }
-
     }
-
-
-//    public void projection(OrcFilterContext batch) {
-//        BytesColumnVector cv = (BytesColumnVector) batch.findColumnVector("val")[0];
-//            int index = 0;
-//            int[] selected = batch.getSelected();
-//
-//            for (int i = 0; i < cv.vector.length; i++) {
-//                if(cv.vector[i] < 9){ // Condition
-//                    selected[index] = i;
-//                    index++;
-////                }
-//            }
-//            batch.setSelectedInUse(true);
-//            batch.setSelected(selected);
-//            batch.setSelectedSize(index);
-//    }
-//
-//    public static void projections(OrcFilterContext gr) {
-//        LongColumnVector cv = (LongColumnVector) gr.findColumnVector("val")[0];
-//        int index = 0;
-//        int[] selected = gr.getSelected();
-//        for (int i = 0; i < cv.vector.length; i++) {
-//            if (cv.vector[i] < 9) { // Condition
-//                selected[index] = i;
-//                index++;
-//            }
-//        }
-//        gr.setSelectedInUse(true);
-//        gr.setSelected(selected);
-//        gr.setSelectedSize(index);
-//    }
-//
-//    Consumer<OrcFilterContext> consumer = gr ->
-//    {
-//        System.out.printf("m");
-//        LongColumnVector cv = (LongColumnVector) gr.findColumnVector("val")[0];
-//        int index = 0;
-//        int[] selected = gr.getSelected();
-//        for (int i = 0; i < cv.vector.length; i++) {
-//            if(cv.vector[i] < 9){ // Condition
-//                selected[index] = i;
-//                index++;
-//            }
-//        }
-//        gr.setSelectedInUse(true);
-//        gr.setSelected(selected);
-//        gr.setSelectedSize(index);
-//    };
-
 }

@@ -1,12 +1,12 @@
 package orc.nodes;
 
-import java.nio.charset.StandardCharsets;
+import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 
 public class StringNode extends Node{
     public byte[] value;
     public String stringValue;
 
-    //TODO: Consider creating different nodes intances for each kind if comparator (!=, =) so on for the other types.
+    //TODO: Consider creating different nodes instance for each kind of comparator (!=, =) so on for the other types.
 
     public StringNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
@@ -20,6 +20,21 @@ public class StringNode extends Node{
         }
         int index = expression.indexOf("=");
         this.stringValue = expression.substring(index+2, expression.length()-1);
+    }
+
+    @Override
+    public int[] evaluateArray(int[] left, int[] right) throws Exception {
+        throw new Exception("Leaf node cannot compare arrays");
+    }
+
+    @Override
+    public int[] evaluateArray(Object value) throws Exception {
+        BytesColumnVector cv = (BytesColumnVector) value;
+        int[] result = new int[cv.vector.length];
+        for (int i = 0; i < cv.vector.length; i++) {
+            result[i] = evaluate(cv.vector[i])? 1: 0;
+        }
+        return result;
     }
 
     @Override

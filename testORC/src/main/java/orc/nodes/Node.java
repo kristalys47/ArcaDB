@@ -26,6 +26,9 @@ public abstract class Node <T> {
 
     }
 
+    public abstract int[] evaluateArray(int[] left, int[] right) throws Exception;
+    public abstract int[] evaluateArray(T value) throws Exception;
+
     public abstract boolean evaluate(boolean left, boolean right) throws Exception;
     public abstract boolean evaluate(T value) throws Exception;
 

@@ -20,7 +20,7 @@ import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 
 
 
-public class ORC {
+public class ORCManager {
     static final int BATCH_SIZE = 100;
 
     //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
@@ -38,18 +38,19 @@ public class ORC {
         records.close();
     }
 
-    public static void reader(String path, String projections) throws Exception {
+    public static void reader(String path, String projections, String selection) throws Exception {
         Configuration conf = new Configuration();
 //        OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 
-        ProjectionTree op = new ProjectionTree();
-        op.treeBuilder(projections);
+
 
         TypeDescription schema = reader.getSchema();
         ArrayList<String> names = new  ArrayList<String>(schema.getFieldNames());
         ArrayList<String> project = new ArrayList<String>(Arrays.asList(projections.split(",")));
 
+        ProjectionTree op = new ProjectionTree(schema);
+        op.treeBuilder(selection);
         // Projection
         boolean[] finalProjection = new boolean[names.size()+1];
         finalProjection[0] = true;
@@ -62,38 +63,25 @@ public class ORC {
                 finalProjection[i+1] = false;
             }
         }
-
-//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
-        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
-//        String test = "(val<11)";
+        // TODO: create the new Struct for the new writable ORC
 
         Reader.Options readOptions = reader.options();
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
         VectorizedRowBatch batch = reader.getSchema().createRowBatchV2();
 
+        TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
+
         int b = 0;
         int t = 0;
+        int index;
         while (records.nextBatch(batch)) {
-            TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
-
-            BytesColumnVector[] bcv = new BytesColumnVector[batch.numCols];
-            for (int i = 0; i < batch.cols.length; i++) {
-                bcv[i] = (BytesColumnVector) batch.cols[i];
-            }
-            int index = 0;
+            index = 0;
             int[] selected = batch.getSelected();
+            Map<String, Object> row = new HashMap<>();
             for (int i = 0; i < batch.size; i++) {
-                Map<String, Object> row = new HashMap<>();
-                for (int j = 0; j < batch.cols.length; j++) {
-                    {
-                        row.put(names.get(j), bcv[j].vector[i]);
-                    }
-                }
-                if (op.treeEvaluation(row)){
-                    selected[index] = i;
-                    index++;
-                }
+                row.put(names.get(i), batch.cols[i]);
             }
+            //                if (op.treeEvaluation(row))
             VectorizedRowBatch vv = new VectorizedRowBatch(countCol);
             vv.setFilterContext(true, selected, index);
 
@@ -107,7 +95,6 @@ public class ORC {
         records.close();
         batch.reset();
     }
-
 
 
     public static void readerExplicit(String path, String projections) throws IOException {
@@ -130,13 +117,6 @@ public class ORC {
                 finalProjection[i+1] = false;
             }
         }
-
-//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
-        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
-//        String test = "(val<11)";
-
-        ProjectionTree op = new ProjectionTree();
-        op.treeBuilder(test);
 
         Reader.Options readOptions = reader.options();
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
