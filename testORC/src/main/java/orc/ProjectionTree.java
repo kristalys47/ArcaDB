@@ -51,7 +51,6 @@ public class ProjectionTree {
 
         //Creates a tree
         Stack<String> parsingLogicBooleanTree = new Stack();
-        int level = 0;
         ArrayList<Node> order = new ArrayList<>();
 
         int start = 0;
