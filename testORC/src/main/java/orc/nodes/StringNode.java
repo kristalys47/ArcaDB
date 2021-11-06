@@ -1,6 +1,9 @@
 package orc.nodes;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
+
+import java.nio.charset.StandardCharsets;
 
 public class StringNode extends Node{
     public byte[] value;
@@ -20,6 +23,7 @@ public class StringNode extends Node{
         }
         int index = expression.indexOf("=");
         this.stringValue = expression.substring(index+2, expression.length()-1);
+        this.value = this.stringValue.getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -44,12 +48,16 @@ public class StringNode extends Node{
 
     @Override
     public boolean evaluate(Object value) throws Exception {
-        byte[] eval = (byte[]) value;
-        for (int i = 0; i < this.value.length; i++) {
-            if (Byte.compare(this.value[i], eval[i]) != 0 && this.compare == 2) {
+        if(value != null) {
+            byte[] eval = (byte[]) value;
+            for (int i = 0; i < this.value.length; i++) {
+                if (Byte.compare(this.value[i], eval[i]) != 0 && this.compare == 2) {
                     return true;
+                }
             }
+            return this.compare == 0 ? true : false;
         }
-        return this.compare == 0 ? true : false;
+        else
+            return false;
     }
 }
