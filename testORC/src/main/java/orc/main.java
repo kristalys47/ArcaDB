@@ -7,8 +7,11 @@ public class main {
     static public void main(String[] arg) throws Exception {
 
 //        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
-        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
+//        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
 //        String test = "(val<11)";
+        String test = "(((val<10)|(val<-10))&(val>0))";
+
+        String projection = "name,val";
 
 
         if(arg[0].equals("insert"))

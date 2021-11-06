@@ -48,11 +48,13 @@ public class ORCManager {
         ArrayList<String> project = new ArrayList<String>(Arrays.asList(projections.split(",")));
 
         // Projection
+        TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
         boolean[] finalProjection = new boolean[names.size()+1];
         finalProjection[0] = true;
         int countCol = 0;
         for(int i = 0; i< names.size(); i++) {
             if(project.contains(names.get(i))){
+                td.addField(names.get(i), new TypeDescription(schema.getChildren().get(i).getCategory()));
                 finalProjection[i+1] = true;
                 countCol++;
             } else{
@@ -60,17 +62,18 @@ public class ORCManager {
             }
         }
 
+        System.out.printf(td.toString());
+
         ProjectionTree op = new ProjectionTree(schema);
         op.treeBuilder(selection);
 
 
         // TODO: create the new Struct for the new writable ORC
 
-        Reader.Options readOptions = reader.options();
+        Reader.Options readOptions = reader.options().include(finalProjection);
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
         VectorizedRowBatch batch = reader.getSchema().createRowBatchV2();
 
-        TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
 
         int t = 0;
         int index;
@@ -82,11 +85,13 @@ public class ORCManager {
             }
             int[] selected = op.treeEvaluation(row);
             VectorizedRowBatch vv = new VectorizedRowBatch(countCol);
-            vv.setFilterContext(true, selected, (int) batch.count());
+//            OrcConf.INCLUDE_COLUMNS.setInt();
+            vv.setFilterContext(true, selected, 5);
             vv.cols = batch.cols;
             vv.projectedColumns = batch.projectedColumns;
-
-            OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(schema);
+//            vv.
+//            vv.getPartitionColumnCount() =
+            OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             Path pathO = new Path("/JavaCode/results" + t);
             t++;
             Writer writer = OrcFile.createWriter(pathO, options);
