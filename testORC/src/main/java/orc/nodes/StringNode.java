@@ -35,8 +35,10 @@ public class StringNode extends Node{
     public int[] evaluateArray(Object value) throws Exception {
         BytesColumnVector cv = (BytesColumnVector) value;
         int[] result = new int[cv.vector.length];
+        int start = 0;
         for (int i = 0; i < cv.vector.length; i++) {
-            result[i] = evaluate(cv.vector[i])? 1: 0;
+            result[i] = evaluate(cv.vector[i], start, start+cv.length[i])? 1: 0;
+            start += cv.length[i];
         }
         return result;
     }
@@ -48,14 +50,24 @@ public class StringNode extends Node{
 
     @Override
     public boolean evaluate(Object value) throws Exception {
+        throw new Exception("Leaf node cannot compare two values");
+    }
+
+    public boolean evaluate(Object value, int start, int end) throws Exception {
         if(value != null) {
             byte[] eval = (byte[]) value;
-            for (int i = 0; i < this.value.length; i++) {
-                if (Byte.compare(this.value[i], eval[i]) != 0 && this.compare == 2) {
-                    return true;
+            if(end-start != this.value.length && this.compare == 0){
+                return false;
+            } else if (end-start != this.value.length && this.compare == 2) {
+                return true;
+            }else {
+                for (int i = 0; i < this.value.length; i++) {
+                    if (Byte.compare(this.value[i], eval[i+start]) != 0) {
+                        return this.compare == 2? true: false;
+                    }
                 }
+                return this.compare == 0 ? true : false;
             }
-            return this.compare == 0 ? true : false;
         }
         else
             return false;

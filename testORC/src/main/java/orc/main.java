@@ -8,8 +8,11 @@ public class main {
 
 //        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
 //        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
+//        String test = "(((name=\"Kristal\")|(val<10))&(val>0))";
+        String test = "(name=\"al\")";
+
 //        String test = "(val<11)";
-        String test = "(((val<10)|(val<-10))&(val>0))";
+//        String test = "(((val<10)|(val<-10))&(val>0))";
 
         String projection = "name,val";
 
@@ -21,6 +24,8 @@ public class main {
             for (int i = 0; i<arg.length; i++){
                 System.out.println(arg[i]);
             }
+
+//            ORCManager.readerExplicit(arg[1], arg[2]);
             ORCManager.reader(arg[1], arg[2], test);
             ORCManager.readerPrint("/JavaCode/results0");
         }

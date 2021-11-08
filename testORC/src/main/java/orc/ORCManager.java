@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Consumer;
 
 import org.apache.orc.impl.RecordReaderImpl;
 import org.json.simple.JSONArray;
@@ -18,6 +19,7 @@ import org.json.simple.parser.ParseException;
 
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 
+import static orc.Utils.getTypeFromTypeCategory;
 
 
 public class ORCManager {
@@ -41,6 +43,8 @@ public class ORCManager {
     public static void reader(String path, String projections, String selection) throws Exception {
         Configuration conf = new Configuration();
         OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
+
+
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 
         TypeDescription schema = reader.getSchema();
@@ -49,30 +53,36 @@ public class ORCManager {
 
         // Projection
         TypeDescription td = new TypeDescription(TypeDescription.Category.STRUCT);
-        boolean[] finalProjection = new boolean[names.size()+1];
+
+        ProjectionTree op = new ProjectionTree(schema);
+        op.treeBuilder(selection);
+
+        boolean[] finalProjection = new boolean[schema.getChildren().size()+1];
+        boolean[] projectionForSelection = new boolean[schema.getChildren().size()+1];
         finalProjection[0] = true;
-        int countCol = 0;
+        projectionForSelection[0] = true;
         for(int i = 0; i< names.size(); i++) {
             if(project.contains(names.get(i))){
                 td.addField(names.get(i), new TypeDescription(schema.getChildren().get(i).getCategory()));
                 finalProjection[i+1] = true;
-                countCol++;
-            } else{
-                finalProjection[i+1] = false;
+                projectionForSelection[i+1] = true;
+            }
+
+            if(op.columns.contains(names.get(i))){
+                projectionForSelection[i+1] = true;
             }
         }
 
         System.out.printf(td.toString());
 
-        ProjectionTree op = new ProjectionTree(schema);
-        op.treeBuilder(selection);
+
 
 
         // TODO: create the new Struct for the new writable ORC
 
-        Reader.Options readOptions = reader.options().include(finalProjection);
+        Reader.Options readOptions = reader.options().include(projectionForSelection);
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
-        VectorizedRowBatch batch = reader.getSchema().createRowBatchV2();
+        VectorizedRowBatch batch = reader.getSchema().createRowBatch(15);
 
 
         int t = 0;
@@ -80,20 +90,72 @@ public class ORCManager {
         while (records.nextBatch(batch)) {
             index = 0;
             Map<String, ColumnVector> row = new HashMap<>();
+            VectorizedRowBatch vv = td.createRowBatch(15);
             for (int i = 0; i < batch.numCols; i++) {
                 row.put(names.get(i), batch.cols[i]);
+                if(finalProjection[i+1]){
+                    vv.cols[index++] = batch.cols[i];
+                }
             }
             int[] selected = op.treeEvaluation(row);
-            VectorizedRowBatch vv = new VectorizedRowBatch(countCol);
-//            OrcConf.INCLUDE_COLUMNS.setInt();
-            vv.setFilterContext(true, selected, 5);
-            vv.cols = batch.cols;
-            vv.projectedColumns = batch.projectedColumns;
-//            vv.
-//            vv.getPartitionColumnCount() =
+            int include = 0;
+            //TODO: this iterations can be cut short if you already have the number of qualifying rows. Implement that in the root node of the tree using another method.
+            for (int i = 0; i < vv.numCols; i++) {
+                int k = 0;
+                switch (getTypeFromTypeCategory(td.getChildren().get(i).getCategory())){
+                    case LONG:
+                        LongColumnVector cvl = (LongColumnVector) vv.cols[i];
+                        for (int j = 0; j < cvl.vector.length; j++) {
+                            if(selected[j] == 1){
+                                cvl.vector[k++] = cvl.vector[j];
+                                if(i == 0) {
+                                    include++;
+                                }
+                            }
+                        }
+                        break;
+                    case BYTES:
+                        BytesColumnVector cvb = (BytesColumnVector) vv.cols[i];
+                        for (int j = 0; j < cvb.vector.length; j++) {
+                            if(selected[j] == 1){
+                                cvb.vector[k++] = cvb.vector[j];
+                                if(i == 0) {
+                                    include++;
+                                }
+                            }
+                        }
+                        break;
+                    case DECIMAL:
+                        DecimalColumnVector cvd = (DecimalColumnVector) vv.cols[i];
+                        for (int j = 0; j < cvd.vector.length; j++) {
+                            if(selected[j] == 1){
+                                cvd.vector[k++] = cvd.vector[j];
+                                if(i == 0) {
+                                    include++;
+                                }
+                            }
+                        }
+                        break;
+                    case DOUBLE:
+                        DoubleColumnVector cvD = (DoubleColumnVector) vv.cols[i];
+                        for (int j = 0; j < cvD.vector.length; j++) {
+                            if(selected[j] == 1){
+                                cvD.vector[k++] = cvD.vector[j];
+                                if(i == 0) {
+                                    include++;
+                                }
+                            }
+                        }
+                        break;
+                }
+
+
+            }
+            vv.size = include;
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             Path pathO = new Path("/JavaCode/results" + t);
             t++;
+            System.out.println(vv.count());
             Writer writer = OrcFile.createWriter(pathO, options);
             writer.addRowBatch(vv);
             writer.close();
