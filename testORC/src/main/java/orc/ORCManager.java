@@ -1,5 +1,6 @@
 package orc;
 
+import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.orc.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -26,6 +27,8 @@ public class ORCManager {
     static final int BATCH_SIZE = 100;
 
     //TODO: handle the Batch Size, shards and other stuff realted to the limit of the ORC FILE:
+    //TODO: Handle booleans with bytes to save space;
+    //TODO: parse JSON outside.
 
     //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
 
@@ -183,18 +186,36 @@ public class ORCManager {
         JSONArray rows = (JSONArray) obj.get("values");
 
         for(int i = 0; i < types.size(); i++){
-            if(types.get(i).compareTo(new TypeDescription(TypeDescription.Category.STRING)) == 0){
-                BytesColumnVector v = (BytesColumnVector) batch.cols[i];
-                for(int r = 0; r < rows.size(); r++){
-                    JSONArray row =(JSONArray) rows.get(r);
-                    v.setVal(r, ((String) row.get(i)).getBytes(StandardCharsets.UTF_8), 0, ((String) row.get(i)).getBytes().length);
-                }
-            } else if (types.get(i).compareTo(new TypeDescription(TypeDescription.Category.INT)) == 0){
-                BytesColumnVector l = (BytesColumnVector) batch.cols[i];
-                for(int r = 0; r < rows.size(); r++) {
-                    JSONArray row =(JSONArray) rows.get(r);
-//                    v.setVal = Integer.valueOf((String) row.get(i));
-                }
+            //TODO: The casting of the type is important in this case. (check boolean, decimal, bytes and String)
+            switch (getTypeFromTypeCategory(types.get(i).getCategory())){
+                case LONG:
+                    LongColumnVector cvl = (LongColumnVector) batch.cols[i];
+                    for(int r = 0; r < rows.size(); r++){
+                        JSONArray row =(JSONArray) rows.get(r);
+                        cvl.vector[r] = (long) row.get(i);
+                    }
+                    break;
+                case BYTES:
+                    BytesColumnVector cvb = (BytesColumnVector) batch.cols[i];
+                    for(int r = 0; r < rows.size(); r++){
+                        JSONArray row =(JSONArray) rows.get(r);
+                        cvb.setVal(r, ((String) row.get(i)).getBytes(StandardCharsets.UTF_8), 0, ((String) row.get(i)).getBytes().length);
+                    }
+                    break;
+                case DECIMAL:
+                    DecimalColumnVector cvd = (DecimalColumnVector) batch.cols[i];
+                    for(int r = 0; r < rows.size(); r++){
+                        JSONArray row =(JSONArray) rows.get(r);
+                        cvd.vector[r] = new HiveDecimalWritable(row.get(i).toString());
+                    }
+                    break;
+                case DOUBLE:
+                    DoubleColumnVector cvD = (DoubleColumnVector) batch.cols[i];
+                    for(int r = 0; r < rows.size(); r++){
+                        JSONArray row =(JSONArray) rows.get(r);
+                        cvD.vector[r] = (double) row.get(i);
+                    }
+                    break;
             }
         }
 
