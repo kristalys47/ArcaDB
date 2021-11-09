@@ -97,11 +97,14 @@ public class ORCManager {
                     vv.cols[index++] = batch.cols[i];
                 }
             }
+            //TODO: make parent node count the occurances in the same loop it evaluates if it should be selected.
             int[] selected = op.treeEvaluation(row);
             int include = 0;
-            for (int i = 0; i < selected.length; i++) {
-                if(selected[i] == 1) include++;
+            for (int i = 0; i < batch.size; i++) {
+                if(selected[i] == 1)
+                    include++;
             }
+            vv.setFilterContext(true, selected, include);
             for (int i = 0; i < vv.numCols; i++) {
                 vv.cols[i].flatten(true, selected, include);
             }
