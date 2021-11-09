@@ -25,6 +25,8 @@ import static orc.Utils.getTypeFromTypeCategory;
 public class ORCManager {
     static final int BATCH_SIZE = 100;
 
+    //TODO: handle the Batch Size, shards and other stuff realted to the limit of the ORC FILE:
+
     //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
 
     public static void readerPrint(String path)throws IOException {
@@ -82,7 +84,7 @@ public class ORCManager {
 
         Reader.Options readOptions = reader.options().include(projectionForSelection);
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
-        VectorizedRowBatch batch = reader.getSchema().createRowBatch(15);
+        VectorizedRowBatch batch = reader.getSchema().createRowBatch();
 
 
         int t = 0;
@@ -90,7 +92,7 @@ public class ORCManager {
         while (records.nextBatch(batch)) {
             index = 0;
             Map<String, ColumnVector> row = new HashMap<>();
-            VectorizedRowBatch vv = td.createRowBatch(15);
+            VectorizedRowBatch vv = td.createRowBatch();
             for (int i = 0; i < batch.numCols; i++) {
                 row.put(names.get(i), batch.cols[i]);
                 if(finalProjection[i+1]){
@@ -174,13 +176,11 @@ public class ORCManager {
 
         ArrayList<TypeDescription> types = new  ArrayList<TypeDescription>(schema.getChildren());
 
-        VectorizedRowBatch batch = schema.createRowBatch(20);
+        VectorizedRowBatch batch = schema.createRowBatch();
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(values.replaceAll(" ", ""));
         JSONArray rows = (JSONArray) obj.get("values");
-
-//  addRow(row, types, batch, r);
 
         for(int i = 0; i < types.size(); i++){
             if(types.get(i).compareTo(new TypeDescription(TypeDescription.Category.STRING)) == 0){
