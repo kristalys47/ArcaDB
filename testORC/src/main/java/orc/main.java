@@ -19,39 +19,19 @@ public class main {
     //read /JavaCode/testORC name (((name="Kristal")|(val<-10))&(val>0))
     static public void main(String[] arg) throws Exception {
 
-//        String test = "(((name=\"Kristal\")|((name=\"b\")|(val<10)))&(val>0))";
-//        String test = "(((name=\"Kristal\")|(val<-10))&(val>0))";
-//        String test = "(((name=\"Kristal\")|(val<10))&(val>0))";
-        String test = "(name=\"al\")";
+        String test = "((name=\"qftrjyivexdeikecdhbf\")|(id<3))";
+        String projection = "last,isFemale";
 
-//        String test = "(val<11)";
-//        String test = "(((val<10)|(val<-10))&(val>0))";
-
-        String projection = "name,val";
-
-        String mmm = generateData();
-        String schema = "struct<id:int,name:string,last:string,score:float,isFemale:int>";
-
-//        TypeDescription lll = new TypeDescription(TypeDescription.Category.STRUCT);
-//        lll.addField("id", new TypeDescription(TypeDescription.Category.INT));
-//        lll.addField("sdf", new TypeDescription(TypeDescription.Category.STRING));
-//        lll.addField("asdv", new TypeDescription(TypeDescription.Category.DECIMAL));
-//        lll.addField("assdv", new TypeDescription(TypeDescription.Category.BOOLEAN));
-//        lll.addField("assdsv", new TypeDescription(TypeDescription.Category.DOUBLE));
-//        System.out.printf(lll.toString());
 
         if(arg[0].equals("insert")) {
+            String data = generateData();
+            String schema = "struct<id:int,name:string,last:string,score:float,isFemale:int>";
 
-            ORCManager.writer("/JavaCode/rewriting", schema, mmm);
+            ORCManager.writer("/JavaCode/rewriting", schema, data);
             ORCManager.readerPrint("/JavaCode/rewriting");
         }
         else{
-            for (int i = 0; i<arg.length; i++){
-                System.out.println(arg[i]);
-            }
-
-//            ORCManager.readerExplicit(arg[1], arg[2]);
-            ORCManager.reader(arg[1], arg[2], test);
+            ORCManager.reader("/JavaCode/rewriting", projection, test);
             ORCManager.readerPrint("/JavaCode/results0");
         }
 

@@ -29,6 +29,7 @@ public class ORCManager {
     //TODO: handle the Batch Size, shards and other stuff realted to the limit of the ORC FILE:
     //TODO: Handle booleans with bytes to save space;
     //TODO: parse JSON outside.
+    //TODO: Manager uses string of fixed lenght.
 
     //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
 
@@ -78,17 +79,11 @@ public class ORCManager {
             }
         }
 
-        System.out.printf(td.toString());
-
-
-
-
         // TODO: create the new Struct for the new writable ORC
 
         Reader.Options readOptions = reader.options().include(projectionForSelection);
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
-
 
         int t = 0;
         int index;
@@ -104,59 +99,12 @@ public class ORCManager {
             }
             int[] selected = op.treeEvaluation(row);
             int include = 0;
-            //TODO: this iterations can be cut short if you already have the number of qualifying rows. Implement that in the root node of the tree using another method.
-            for (int i = 0; i < vv.numCols; i++) {
-                int k = 0;
-                switch (getTypeFromTypeCategory(td.getChildren().get(i).getCategory())){
-                    case LONG:
-                        LongColumnVector cvl = (LongColumnVector) vv.cols[i];
-                        for (int j = 0; j < cvl.vector.length; j++) {
-                            if(selected[j] == 1){
-                                cvl.vector[k++] = cvl.vector[j];
-                                if(i == 0) {
-                                    include++;
-                                }
-                            }
-                        }
-                        break;
-                    case BYTES:
-                        BytesColumnVector cvb = (BytesColumnVector) vv.cols[i];
-                        for (int j = 0; j < cvb.vector.length; j++) {
-                            if(selected[j] == 1){
-                                cvb.vector[k++] = cvb.vector[j];
-                                if(i == 0) {
-                                    include++;
-                                }
-                            }
-                        }
-                        break;
-                    case DECIMAL:
-                        DecimalColumnVector cvd = (DecimalColumnVector) vv.cols[i];
-                        for (int j = 0; j < cvd.vector.length; j++) {
-                            if(selected[j] == 1){
-                                cvd.vector[k++] = cvd.vector[j];
-                                if(i == 0) {
-                                    include++;
-                                }
-                            }
-                        }
-                        break;
-                    case DOUBLE:
-                        DoubleColumnVector cvD = (DoubleColumnVector) vv.cols[i];
-                        for (int j = 0; j < cvD.vector.length; j++) {
-                            if(selected[j] == 1){
-                                cvD.vector[k++] = cvD.vector[j];
-                                if(i == 0) {
-                                    include++;
-                                }
-                            }
-                        }
-                        break;
-                }
-
-
+            for (int i = 0; i < selected.length; i++) {
+                if(selected[i] == 1) include++;
             }
-            vv.size = include;
+            for (int i = 0; i < vv.numCols; i++) {
+                vv.cols[i].flatten(true, selected, include);
+            }
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             Path pathO = new Path("/JavaCode/results" + t);
             t++;
