@@ -26,7 +26,7 @@ import static orc.Utils.getTypeFromTypeCategory;
 public class ORCManager {
     static final int BATCH_SIZE = 100;
 
-    //TODO: handle the Batch Size, shards and other stuff realted to the limit of the ORC FILE:
+    //TODO: handle the Batch Size, shards and other stuff related to the limit of the ORC FILE:
     //TODO: Handle booleans with bytes to save space;
     //TODO: parse JSON outside.
     //TODO: Manager uses string of fixed lenght.
@@ -120,7 +120,15 @@ public class ORCManager {
         batch.reset();
     }
 
-    public static void writer(String path, String schemaStruct, String values) throws IOException, URISyntaxException, ParseException {
+    /**
+     * This method uses the schema struct and the values in jason format to create to store and ORC file in adress here.
+     * @param path
+     * @param schemaStruct
+     * @param values
+     * @throws IOException
+     * @throws ParseException
+     */
+    public static void writer(String path, String schemaStruct, String values) throws IOException, ParseException {
         Configuration conf = new Configuration();
 
         TypeDescription schema = TypeDescription.fromString(schemaStruct);
@@ -128,13 +136,13 @@ public class ORCManager {
         Path pathO = new Path(path);
         Writer writer = OrcFile.createWriter(pathO, options);
 
-        ArrayList<TypeDescription> types = new  ArrayList<TypeDescription>(schema.getChildren());
-
-        VectorizedRowBatch batch = schema.createRowBatch();
+        ArrayList<TypeDescription> types = new ArrayList<>(schema.getChildren());
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(values.replaceAll(" ", ""));
         JSONArray rows = (JSONArray) obj.get("values");
+
+        VectorizedRowBatch batch = schema.createRowBatch(rows.size());
 
         for(int i = 0; i < types.size(); i++){
             //TODO: The casting of the type is important in this case. (check boolean, decimal, bytes and String)
