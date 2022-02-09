@@ -24,12 +24,12 @@ import static orc.Utils.getTypeFromTypeCategory;
 
 
 public class ORCManager {
-    static final int BATCH_SIZE = 100;
+    static final int BATCH_SIZE = 500000;
 
     //TODO: handle the Batch Size, shards and other stuff related to the limit of the ORC FILE:
     //TODO: Handle booleans with bytes to save space;
     //TODO: parse JSON outside.
-    //TODO: Manager uses string of fixed lenght.
+    //TODO: Manager uses string of fixed length.
 
     //TODO: hacer matching de los types del schema al type del batch y crear un diccionario a base de esto por consiguiente va a provocar que tengas que cambiar tanto el tree builder como wl writer y el reader.
 
@@ -49,7 +49,6 @@ public class ORCManager {
     public static void reader(String path, String projections, String selection) throws Exception {
         Configuration conf = new Configuration();
         OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
-
 
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 
@@ -83,14 +82,14 @@ public class ORCManager {
 
         Reader.Options readOptions = reader.options().include(projectionForSelection);
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(readOptions);
-        VectorizedRowBatch batch = reader.getSchema().createRowBatch();
+        VectorizedRowBatch batch = reader.getSchema().createRowBatch(BATCH_SIZE);
 
         int t = 0;
         int index;
         while (records.nextBatch(batch)) {
             index = 0;
             Map<String, ColumnVector> row = new HashMap<>();
-            VectorizedRowBatch vv = td.createRowBatch();
+            VectorizedRowBatch vv = td.createRowBatch(BATCH_SIZE);
             for (int i = 0; i < batch.numCols; i++) {
                 row.put(names.get(i), batch.cols[i]);
                 if(finalProjection[i+1]){
@@ -109,25 +108,27 @@ public class ORCManager {
                 vv.cols[i].flatten(true, selected, include);
             }
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
-            Path pathO = new Path("/JavaCode/results" + t);
-            t++;
-            System.out.println(vv.count());
-            Writer writer = OrcFile.createWriter(pathO, options);
-            writer.addRowBatch(vv);
-            writer.close();
+            if(vv.count()>0) {
+                Path pathO = new Path("/JavaCode/results" + t);
+                t++;
+                Writer writer = OrcFile.createWriter(pathO, options);
+                writer.addRowBatch(vv);
+                writer.close();
+            }
         }
         records.close();
         batch.reset();
+        if(t>1){
+
+            List<Path> filesToMerge = new ArrayList<>();
+            for (int i = 0; i < t; i++) {
+                filesToMerge.add(new Path("/JavaCode/results" + i));
+            }
+            OrcFile.mergeFiles(new Path("/JavaCode/finalResults"), OrcFile.writerOptions(conf).overwrite(true).setSchema(td), filesToMerge);
+
+        }
     }
 
-    /**
-     * This method uses the schema struct and the values in jason format to create to store and ORC file in adress here.
-     * @param path
-     * @param schemaStruct
-     * @param values
-     * @throws IOException
-     * @throws ParseException
-     */
     public static void writer(String path, String schemaStruct, String values) throws IOException, ParseException {
         Configuration conf = new Configuration();
 
@@ -184,7 +185,6 @@ public class ORCManager {
         batch.reset();
         writer.close();
         System.out.println("It has been successfully saved in path " + path);
-
     }
 
     private static void addRow(JSONArray row, ArrayList<TypeDescription> types, VectorizedRowBatch batch, int place) {
