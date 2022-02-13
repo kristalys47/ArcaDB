@@ -16,16 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 public class main {
     private static FileWriter file;
+
     //insert /JavaCode/testORC struct<id:int,name:string,last:string,score:decimal,isFemale:boolean> {\"values\":[[\"Kristal\",\"3\"],[\"al\",\"4\"],[\"bob\",\"17\"],[\"Bi\",\"34\"],[\"col\",\"6\"],[\"Jil\",\"4\"],[\"sam\",\"3\"],[\"Dead\",\"0\"]]}
     //read /JavaCode/testORC name (((name="Kristal")|(val<-10))&(val>0))
     static public void main(String[] arg) throws Exception {
 
 
-
         System.out.println("Started");
         int portNumber = 7172;
 
-        while(true){
+        while (true) {
             try (AsynchronousServerSocketChannel server =
                          AsynchronousServerSocketChannel.open()) {
                 server.bind(new InetSocketAddress("127.0.0.1",
@@ -34,9 +34,9 @@ public class main {
                         server.accept();
                 AsynchronousSocketChannel client = acceptCon.get(0,
                         TimeUnit.SECONDS);
-                if ((client!= null) && (client.isOpen())) {
+                if ((client != null) && (client.isOpen())) {
 
-                    
+
                 }
                 client.close();
             } catch (Exception e) {
@@ -85,3 +85,4 @@ public class main {
         }
 
     }
+}

@@ -9,6 +9,7 @@ import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.orc.*;
 import org.apache.orc.impl.RecordReaderImpl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -53,4 +54,9 @@ public class JoinManager {
         batch2.reset();
         System.out.println(hm.toString());
     }
+
+    // TODO: Create own Linked List that will autoflush.
+
+
 }
+
