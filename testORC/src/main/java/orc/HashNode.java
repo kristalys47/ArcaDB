@@ -1,28 +1,28 @@
 package orc;
 
-public class Node<T> {
-    private Node next;
-    private Node prev;
+public class HashNode<T> {
+    private HashNode next;
+    private HashNode prev;
     private T element;
 
-    public Node(T element, Node next) {
+    public HashNode(T element, HashNode next) {
         this.next = next;
         this.element = element;
     }
 
-    public Node getPrev() {
+    public HashNode getPrev() {
         return prev;
     }
 
-    public void setPrev(Node prev) {
+    public void setPrev(HashNode prev) {
         this.prev = prev;
     }
 
-    public Node getNext() {
+    public HashNode getNext() {
         return next;
     }
 
-    public void setNext(Node next) {
+    public void setNext(HashNode next) {
         this.next = next;
     }
 

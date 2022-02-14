@@ -12,13 +12,13 @@ public class WorkerManager {
             String data = "";
             JSONParser parser = new JSONParser();
             try {
-                Object obj = parser.parse(new FileReader("/JavaCode/rewriting3.json"));
+                Object obj = parser.parse(new FileReader(arg[1]));
                 JSONObject jsonObject = (JSONObject)obj;
                 data = jsonObject.toJSONString();
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            ORCManager.writer(arg[1], arg[2], data);
+            ORCManager.writer(arg[2], arg[3], data);
             if(arg[0].equals("insertRead"))
                 ORCManager.readerPrint(arg[1]);
         }

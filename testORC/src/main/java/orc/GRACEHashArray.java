@@ -11,6 +11,8 @@ public class GRACEHashArray {
     private LinkedList<String>[] records;
     private int recordsLimit;
 
+    // TODO: Create own Linked List that will autoflush.
+
     public GRACEHashArray(int buckets, int recordSize) {
         this.buckets = buckets;
         this.fileBuckets = new LinkedList[buckets];
@@ -26,66 +28,50 @@ public class GRACEHashArray {
 
     public void addRecord(int key, String record) throws FileNotFoundException {
         int hashValue = key % buckets;
-        records[hashValue].add(record);
+        records[hashValue].add(key + "," + record);
         checkFileFull(hashValue);
     }
 
     public void checkFileFull(int bucket) throws FileNotFoundException {
         if(records[bucket].size() >= recordsLimit){
-            String fileName = "/tmp/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
-            File tempFile = new File(fileName);
-            fileBuckets[bucket].add(tempFile);
-
-            try(FileOutputStream fos = new FileOutputStream(tempFile);) {
-                BufferedOutputStream writer = new BufferedOutputStream(fos);
-
-                //TODO: Implement that the writer is saved and flush as objects are added to avoid the usage of this loop.
-                while(records[bucket].size()>0) {
-                    String record = (String) records[bucket].removeFirst() + "\n";
-                    writer.write(record.getBytes(StandardCharsets.UTF_8));
-                }
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                //TODO: handle error;
-                e.printStackTrace();
-            }
-
+            flushToFile(bucket);
         }
+    }
 
+    private void flushToFile(int bucket) {
+        String fileName = "/tmp/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
+        File tempFile = new File(fileName);
+        fileBuckets[bucket].add(tempFile);
+
+        try(FileOutputStream fos = new FileOutputStream(tempFile);) {
+            BufferedOutputStream writer = new BufferedOutputStream(fos);
+
+            //TODO: Implement that the writer is saved and flush as objects are added to avoid the usage of this loop.
+            while(records[bucket].size()>0) {
+                String record = (String) records[bucket].removeFirst() + "\n";
+                writer.write(record.getBytes(StandardCharsets.UTF_8));
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            //TODO: handle error;
+            e.printStackTrace();
+        }
     }
 
     public void flushRemainders(){
         for (int i = 0; i < buckets; i++) {
             {
-                String fileName = "/tmp/temp_" + i + "_" + fileBuckets[i].size() + "_" + UUID.randomUUID();
-                File tempFile = new File(fileName);
-                fileBuckets[i].add(tempFile);
-
-                try(FileOutputStream fos = new FileOutputStream(tempFile);) {
-                    BufferedOutputStream writer = new BufferedOutputStream(fos);
-
-                    //TODO: Implement that the writer is saved and flush as objects are added to avoid the usage of this loop.
-                    while(records[i].size()>0) {
-                        String record = (String) records[i].removeFirst() + "\n";
-                        writer.write(record.getBytes(StandardCharsets.UTF_8));
-                    }
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    //TODO: handle error;
-                    e.printStackTrace();
+                if(records[i].size() > 0){
+                    flushToFile(i);
                 }
-
             }
         }
     }
 
-
-
     //TODO: this is private should be
-    public Map<String, Node<String>> readRecords(int bucket){
-        Map<String, Node<String>> map = new TreeMap<>();
+    public Map<String, HashNode<String>> readRecords(int bucket){
+        Map<String, HashNode<String>> map = new TreeMap<>();
         for (int i = 0; i < fileBuckets[bucket].size(); i++) {
             try {
                 FileInputStream reader = new FileInputStream(fileBuckets[bucket].get(i));
@@ -94,12 +80,11 @@ public class GRACEHashArray {
 
                 while (scanner.hasNext()) {
                     theString = scanner.next();
-                    System.out.println(theString);
                     String[] read = theString.split(",", 2);
                     if(!map.containsKey(read[0])){
-                        map.put(read[0], new Node<String>(read[1], null));
+                        map.put(read[0], new HashNode<String>(read[1], null));
                     } else {
-                        map.put(read[0], new Node<String>(read[1], map.get(read[0])));
+                        map.put(read[0], new HashNode<String>(read[1], map.get(read[0])));
                     }
                 }
                 scanner.close();

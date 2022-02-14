@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,8 +69,6 @@ public class mainTest {
         rTable.addRecord(2, "142,Hello");
         rTable.addRecord(2, "3325,Hello");
         rTable.flushRemainders();
-        rTable.readRecords(0);
-        rTable.readRecords(1);
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
@@ -78,8 +77,57 @@ public class mainTest {
             pool.execute(tmp);
         }
 
+        pool.shutdown();
 
 
 //        GRACEHashArray rTable = new GRACEHashArray(2, 340);
+    }
+
+    @Test
+    public void testJoin() throws FileNotFoundException {
+        int bucket = 2;
+        GRACEHashArray rTable = new GRACEHashArray(bucket, 340);
+        rTable.addRecord(175, "175,Hello,Kristalys,Ruiz,1757");
+        rTable.addRecord(456, "456,Hello,4556");
+        rTable.addRecord(1421, "1421,Hello,14221");
+        rTable.addRecord(142, "142,Hello,1412");
+        rTable.addRecord(3325, "3325,Hello,31125");
+        rTable.addRecord(142, "142,Hello,1412");
+        rTable.flushRemainders();
+
+        ExecutorService pool = Executors.newFixedThreadPool(10);
+
+        for (int i = 0; i < bucket; i++) {
+            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i));
+            pool.execute(tmp);
+        }
+
+        pool.shutdown();
+
+
+//        GRACEHashArray rTable = new GRACEHashArray(2, 340);
+    }
+
+    @Test
+    public void createfileAData() throws Exception {
+        String fileA = "/tmp/tableA.json";
+        TestingUtils.generateDataA(fileA);
+
+        String[] argsA = {"insert", fileA, "/tmp/tableA.orc", "struct<id:int,name:string,last:string,score:float,isFemale:int>"};
+        WorkerManager.dbms(argsA);
+    }
+
+    @Test
+    public void createfileBData() throws Exception {
+        String fileB = "/tmp/tableB.json";
+        TestingUtils.generateDataB(fileB);
+
+        String[] argsB = {"insert", fileB, "/tmp/tableB.orc", "struct<id:int,name:string,last:string,score:float,isFemale:int,fk:int>"};
+        WorkerManager.dbms(argsB);
+    }
+
+    @Test
+    public void joinWholeTest() throws Exception {
+        JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" );
     }
 }
