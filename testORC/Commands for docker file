@@ -26,88 +26,22 @@ https://programmerall.com/article/62732193206/
 
 TODO:
 -create dockerfile with dependencies to run the project
--Try to make it run in c++
 -Create organized maven project
 -shards     // 100 MBytes
 -add limits to batch
 -Integrate GraaValVM
 
-Notes:
--SearchArguments vs setRowFiltering
-
-Doubts & Q's:
-- Logic tree / Boolean Expression tree
 
 
+Docker Commands to create the cluster
+docker network create -d bridge dbms  <-- instead of bridge it would be "overlay" if the network is shared in nodes
+
+docker volume create --name comvol
 
 
-public void writeLine2() throws IOException {
-        String[] lines = new String[]{"1,a,aa", "2,b,bb", "3,c,cc", "4,d,dd", "1,a,aa", "2,b,bb", "3,c,cc", "4,d,dd", "1,a,aa", "2,b,bb", "3,c,cc", "4,d,dd", "1,a,aa", "2,b,bb", "3,c,cc", "4,d,dd"};
-//        String[] lines = new String[]{"1,2,4", "1,2,3", "1,2,3", "1,2,3", "1,2,3", "1,2,3", "1,2,3", "1,2,3"};
 
 
-        Configuration conf = new Configuration();
-        TypeDescription schema = TypeDescription.fromString("struct<field1:String,field2:String,field3:String>");
-//        TypeDescription schema = TypeDescription.fromString("struct<field1:int,field2:int,field3:int>");
-        Writer writer = OrcFile.createWriter(new Path("/tmp/Orc.orc"),
-                OrcFile.writerOptions(conf)
-                        .setSchema(schema).overwrite(true));
-        VectorizedRowBatch batch = schema.createRowBatch();
-        List<? super ColumnVector> columnVectors = new ArrayList<>();
-
-        for (int i = 0; i < batch.numCols; i++) {
-            columnVectors.add(batch.cols[i]);
-        }
-
-        for (String line : lines) {
-            String[] columns = line.split(",");
-            System.out.println(batch.size);
-            int row = batch.size++;
-            for (int i = 0; i < columns.length; i++) {
-                switch (columnVectors.get(i).getClass().getName()) {
-                    case "org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector":
-                        BytesColumnVector bytesColumnVector = BytesColumnVector.class.cast(columnVectors.get(i));
-                        bytesColumnVector.setVal(row, columns[i].getBytes(), 0, columns[i].getBytes().length);
-                        break;
-                    case "org.apache.hadoop.hive.ql.exec.vector.LongColumnVector":
-                        LongColumnVector longColumnVector = LongColumnVector.class.cast(columnVectors.get(i));
-                        longColumnVector.vector[row] = Long.parseLong(columns[i]);
-                        break;
-                    case "org.apache.hadoop.hive.ql.exec.vector.Decimal64ColumnVector":
-                        Decimal64ColumnVector decimal64ColumnVector = Decimal64ColumnVector.class.cast(columnVectors.get(i));
-                        decimal64ColumnVector.set(row, HiveDecimal.create(columns[i]));
-                        break;
-                    case "org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector":
-                        DecimalColumnVector decimalColumnVector = DecimalColumnVector.class.cast(columnVectors.get(i));
-                        decimalColumnVector.set(row, HiveDecimal.create(columns[i]));
-                        break;
-                    case "org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector":
-                        DoubleColumnVector doubleColumnVector = DoubleColumnVector.class.cast(columnVectors.get(i));
-                        doubleColumnVector.vector[row] = Double.parseDouble(columns[i]);
-                        break;
-                    case "org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector":
-                        TimestampColumnVector timestampColumnVector = TimestampColumnVector.class.cast(columnVectors.get(i));
-                        timestampColumnVector.set(row, java.sql.Timestamp.valueOf(columns[i]));
-                        break;
-                }
-                if (batch.size == batch.getMaxSize()) {
-                    writer.addRowBatch(batch);
-                    batch.reset();
-                }
-            }
-        }
-        if (batch.size != 0) {
-            writer.addRowBatch(batch);
-            batch.reset();
-        }
-        writer.close();
-
-    }
 
 
-static boolean hadBadBloomFilters(TypeDescription.Category category,
-                 OrcFile.WriterVersion version) {
- switch(category) {
-  case STRING:
 
 

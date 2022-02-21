@@ -1,5 +1,10 @@
 package orc;
 
+import com.lambdaworks.redis.RedisClient;
+import com.lambdaworks.redis.RedisConnection;
+import com.lambdaworks.redis.RedisURI;
+import com.sun.net.httpserver.Authenticator;
+
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -10,78 +15,64 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 
 public class main {
-    private static FileWriter file;
 
-    //insert /JavaCode/testORC struct<id:int,name:string,last:string,score:decimal,isFemale:boolean> {\"values\":[[\"Kristal\",\"3\"],[\"al\",\"4\"],[\"bob\",\"17\"],[\"Bi\",\"34\"],[\"col\",\"6\"],[\"Jil\",\"4\"],[\"sam\",\"3\"],[\"Dead\",\"0\"]]}
-    //read /JavaCode/testORC name (((name="Kristal")|(val<-10))&(val>0))
     static public void main(String[] arg) throws Exception {
 
-
         System.out.println("Started");
-        int portNumber = 7172;
+
+        String host = "127.0.0.1";
+        int socketPortNumber = 7172;
+//        int RedisPortNumber = 6379;
+
+        AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open();
+        InetSocketAddress hostAddress = new InetSocketAddress("localhost", socketPortNumber);
+        server.bind(hostAddress);
+
+
+        Future acceptResult = server.accept();
+        AsynchronousSocketChannel client = (AsynchronousSocketChannel) acceptResult.get();
+
 
         while (true) {
-            try (AsynchronousServerSocketChannel server =
-                         AsynchronousServerSocketChannel.open()) {
-                server.bind(new InetSocketAddress("127.0.0.1",
-                        portNumber));
-                Future<AsynchronousSocketChannel> acceptCon =
-                        server.accept();
-                AsynchronousSocketChannel client = acceptCon.get(0,
-                        TimeUnit.SECONDS);
+
                 if ((client != null) && (client.isOpen())) {
 
+                    ByteBuffer buffer = ByteBuffer.allocate(16);
+                    Future result = client.read(buffer);
+
+                    while (!result.isDone()) {
+                        // do nothing
+                    }
+
+                    buffer.flip();
+                    String message = new String(buffer.array()).trim();
+
+//                    RedisClient redisClient = new RedisClient(RedisURI.create("redis://" + host + ":" + RedisPortNumber));
+//                    RedisConnection<String, String> connection = redisClient.connect();
+//                    String[] args = connection.get(message).split(" ");
+
+                    String[] nodePlan = message.split(" ");
+                    try{
+                        WorkerManager.dbms(nodePlan);
+                    }catch (Exception e){
+                        System.out.println(e);
+                        String msg = "Something failed";
+                        buffer.put(msg.getBytes(StandardCharsets.UTF_8));
+                    } finally {
+                        String msg = "Success";
+                        buffer.put(msg.getBytes(StandardCharsets.UTF_8));
+                    }
+                    client.write(buffer);
+                    buffer.clear();
 
                 }
                 client.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-//        String host = "127.0.0.1";
-//        //Using lettuce for this since it supports async calls...
-//        RedisClient redisClient = new RedisClient(
-//                RedisURI.create("redis://" + host + ":6379"));
-//        RedisConnection<String, String> connection = redisClient.connect();
-//
-//        System.out.println("Connected to Redis");
-//        connection.set("mmmmm", "kristal");
-//        String value = connection.get("mmmmm");
-//        System.out.println(value);
-//
-//        connection.close();
-//        redisClient.shutdown();
-//
-//        StatefulRedisConnection<String, String> connection = client.connect();
-//        RedisStringAsyncCommands<String, String> async = connection.async();
-//        RedisFuture<String> set = async.set("key", "value")
-//        RedisFuture<String> get = async.get("key")
-//
-//        async.awaitAll(set, get) == true
-//
-//        set.get() == "OK"
-//        get.get() == "value"
-//
-////        JedisPooled jedis = new JedisPooled("localhost", 6379);
-
-
-//        ORCManager.readerPrint("/JavaCode/insertedTest");
-//        ORCManager.readerPrint("/JavaCode/results0");
-
-            //[1136582, "neauaitvamlpcqe", "avnupgkhzbuques", 1153.75048828125, 1]
-            String[] args = {"", "/JavaCode/insertedTest", "id,last,isFemale", "((name=\"neauaitvamlpcqe\")|(id<3))"};
-            WorkerManager.dbms(args);
-////
-//        String test = "((name=\"qftrjyivexdeikecdhbf\")|(id<3))";
-//        String projection = "last,isFemale";
-//        ORCManager.reader("/JavaCode/insertedTest", projection, test);
-
         }
 
     }

@@ -1,12 +1,12 @@
-package orc;
+package orc.helper.classes;
 
-import orc.nodes.*;
+import orc.helper.classes.nodes.*;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
 import org.apache.orc.TypeDescription;
 
 import java.util.*;
 
-import static orc.Utils.getTypeFromTypeCategory;
+import static orc.helper.classes.Utils.getTypeFromTypeCategory;
 
 public class ProjectionTree {
 
@@ -15,7 +15,7 @@ public class ProjectionTree {
     public TypeDescription schema;
 
     //Using order of operation
-    ProjectionTree(TypeDescription schema){
+    public ProjectionTree(TypeDescription schema){
         this.root = null;
         this.columns = new ArrayList<>();
         this.schema = schema;

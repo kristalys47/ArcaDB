@@ -1,8 +1,4 @@
-package orc.nodes;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+package orc.helper.classes.nodes;
 
 public abstract class Node <T> {
     public int level;

@@ -1,11 +1,11 @@
-package orc.nodes;
+package orc.helper.classes.nodes;
 
-import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 
-public class DoubleNode extends Node{
-    public double value;
+public class LongNode extends Node{
+    public long value;
 
-    public DoubleNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+    public LongNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
         int index = 0;
         //assume the left side is always the row value on memory
@@ -25,7 +25,7 @@ public class DoubleNode extends Node{
             this.columnName = expression.substring(0, expression.indexOf("<"));
             this.compare = 2;
         }
-        this.value = Double.valueOf(expression.substring(index+1));
+        this.value = Long.parseLong(expression.substring(index+1));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DoubleNode extends Node{
 
     @Override
     public int[] evaluateArray(Object value) throws Exception {
-        DoubleColumnVector cv = (DoubleColumnVector) value;
+        LongColumnVector cv = (LongColumnVector) value;
         int[] result = new int[cv.vector.length];
         for (int i = 0; i < cv.vector.length; i++) {
             result[i] = evaluate(cv.vector[i])? 1: 0;
@@ -50,7 +50,7 @@ public class DoubleNode extends Node{
 
     @Override
     public boolean evaluate(Object value) throws Exception {
-        double eval = (double) value;
+        long eval = (long) value;
         switch (this.compare){
             case -1:
                 return eval>this.value;

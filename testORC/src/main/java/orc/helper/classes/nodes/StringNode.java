@@ -1,6 +1,5 @@
-package orc.nodes;
+package orc.helper.classes.nodes;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 
 import java.nio.charset.StandardCharsets;

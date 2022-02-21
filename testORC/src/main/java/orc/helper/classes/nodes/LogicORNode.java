@@ -1,7 +1,7 @@
-package orc.nodes;
+package orc.helper.classes.nodes;
 
-public class LogicANDNode extends Node{
-    public LogicANDNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+public class LogicORNode extends Node{
+    public LogicORNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, false, inorderIndex);
     }
 
@@ -9,7 +9,7 @@ public class LogicANDNode extends Node{
     public int[] evaluateArray(int[] left, int[] right) throws Exception {
         int[] result = new int[left.length];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (left[i]+right[i]) == 2? 1: 0;
+            result[i] = (left[i]==1 || right[i]==1)? 1: 0;
         }
         return result;
     }
@@ -21,11 +21,11 @@ public class LogicANDNode extends Node{
 
     @Override
     public boolean evaluate(boolean left, boolean right) {
-        return left&&right;
+        return left||right;
     }
 
     @Override
     public boolean evaluate(Object value) throws Exception {
-            throw new Exception("Parent node cannot compare one value");
+        throw new Exception("Parent node cannot compare one value");
     }
 }

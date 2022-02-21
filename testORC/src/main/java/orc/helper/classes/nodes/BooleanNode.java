@@ -1,4 +1,4 @@
-package orc.nodes;
+package orc.helper.classes.nodes;
 
 //TODO: Implement BOOLEAN just in case
 //TODO: IMPLEMENT FLOAT

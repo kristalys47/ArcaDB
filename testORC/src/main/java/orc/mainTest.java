@@ -2,10 +2,12 @@ package orc;
 
 import static org.junit.Assert.assertEquals;
 
+import orc.helper.classes.GRACEHashArray;
+import orc.helper.classes.Join;
+import orc.helper.classes.TestingUtils;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -128,6 +130,14 @@ public class mainTest {
 
     @Test
     public void joinWholeTest() throws Exception {
+        // TODO: treat collisions
         JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" );
+    }
+
+    @Test
+
+    public void joinManagerTest() throws Exception {
+        String[] argsA = {"join", "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk"};
+        WorkerManager.dbms(argsA);
     }
 }

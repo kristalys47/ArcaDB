@@ -1,5 +1,7 @@
 package orc;
 
+import orc.helper.classes.GRACEHashArray;
+import orc.helper.classes.Join;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;

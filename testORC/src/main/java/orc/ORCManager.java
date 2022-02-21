@@ -1,5 +1,6 @@
 package orc;
 
+import orc.helper.classes.ProjectionTree;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.orc.*;
 import org.apache.hadoop.conf.Configuration;
@@ -7,10 +8,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
 
 import org.apache.orc.impl.RecordReaderImpl;
 import org.json.simple.JSONArray;
@@ -20,7 +19,7 @@ import org.json.simple.parser.ParseException;
 
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 
-import static orc.Utils.getTypeFromTypeCategory;
+import static orc.helper.classes.Utils.getTypeFromTypeCategory;
 
 
 public class ORCManager {

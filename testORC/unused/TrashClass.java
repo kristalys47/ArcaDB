@@ -126,6 +126,38 @@ public class TrashClass {
 
 
 
+//        String host = "127.0.0.1";
+//        //Using lettuce for this since it supports async calls...
+//        RedisClient redisClient = new RedisClient(
+//                RedisURI.create("redis://" + host + ":6379"));
+//        RedisConnection<String, String> connection = redisClient.connect();
+//
+//        System.out.println("Connected to Redis");
+//        connection.set("mmmmm", "kristal");
+//        String value = connection.get("mmmmm");
+//        System.out.println(value);
+//
+//        connection.close();
+//        redisClient.shutdown();
+//
+//        StatefulRedisConnection<String, String> connection = client.connect();
+//        RedisStringAsyncCommands<String, String> async = connection.async();
+//        RedisFuture<String> set = async.set("key", "value")
+//        RedisFuture<String> get = async.get("key")
+//
+//        async.awaitAll(set, get) == true
+//
+//        set.get() == "OK"
+//        get.get() == "value"
+//
+////        JedisPooled jedis = new JedisPooled("localhost", 6379);
+
+
+
+
+
+
+
 
 
 

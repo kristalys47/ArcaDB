@@ -1,4 +1,6 @@
-package orc;
+package orc.helper.classes;
+
+import orc.helper.classes.HashNode;
 
 import java.io.File;
 import java.io.FileInputStream;

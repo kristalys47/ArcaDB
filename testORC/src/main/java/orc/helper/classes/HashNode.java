@@ -1,4 +1,4 @@
-package orc;
+package orc.helper.classes;
 
 public class HashNode<T> {
     private HashNode next;

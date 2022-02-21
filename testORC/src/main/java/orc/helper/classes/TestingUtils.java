@@ -1,4 +1,4 @@
-package orc;
+package orc.helper.classes;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

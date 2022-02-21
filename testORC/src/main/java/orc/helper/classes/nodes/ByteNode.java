@@ -1,9 +1,6 @@
-package orc.nodes;
+package orc.helper.classes.nodes;
 
 //TODO: Implement Bytes just in case
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 public class ByteNode extends Node{
     public byte[] value;

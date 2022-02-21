@@ -22,6 +22,9 @@ public class WorkerManager {
             if(arg[0].equals("insertRead"))
                 ORCManager.readerPrint(arg[1]);
         }
+        else if(arg[0].indexOf("join")>-1){
+            JoinManager.join( arg[1], arg[2], arg[3], arg[4] );
+        }
         else{
             ORCManager.reader(arg[1], arg[2], arg[3]);
         }
