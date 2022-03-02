@@ -1,0 +1,60 @@
+docker run -dit --mount type=bind,source="$(pwd)",target="/JavaCode" --name rw2 ghcr.io/graalvm/graalvm-ce:latest bash
+
+install https://github.com/oracle/graal.git
+git clone https://github.com/oracle/graal.git
+
+docker run -dit --mount type=bind,source="$(pwd)",target="/JavaCode" --name "$(NAME)" ubuntu
+
+apt update -y
+apt install -y maven \
+openjdk-13 \
+git
+
+
+mvn clean install compile package
+//// java -cp target/testORC-1.0.jar orc.main "hello" <- deprecated jeje
+
+java -cp target/testORC-1.0.jar orc.main "insert" "/JavaCode/testORC/testFile.orc" "struct<name:string,val:int>" "{\"values\":[[\"kris\",\"4\"],[\"hel\",\"3\"],[\"bye\",\"10\"]]}"
+
+
+
+
+https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file
+https://programmerall.com/article/62732193206/
+
+
+
+TODO:
+-create dockerfile with dependencies to run the project
+-Create organized maven project
+-shards     // 100 MBytes
+-add limits to batch
+-Integrate GraaValVM
+
+
+
+Docker Commands to create the cluster
+docker network create -d bridge dbms  <-- instead of bridge it would be "overlay" if the network is shared in nodes
+
+docker volume create --name comvol
+
+
+mvn clean install
+
+
+mvn exec:java -Dexec.mainClas="orc.main"
+
+
+
+
+
+
+java -jar test-ORC.jar
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  servers:
+    image: openjdk:latest
+#    command:
+#    ports:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.95'
+          memory: 30G
+        reservations:
+          cpus: '0.50'
+          memory: 20G
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 60s
+      replicas: 4 # How many replcias in the system
+      placement:
+#        constraints:
+#          - "node.role==worker"
+        max_replicas_per_node: 2 # how many replicas per node
+        preferences:
+          - spread: node.labels.server
+  tries:
+    image: redis:latest
+    #    command:
+    #    ports:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.95'
+          memory: 30G
+        reservations:
+          cpus: '0.50'
+          memory: 20G
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 60s
+      replicas: 4 # How many replcias in the system
+      placement:
+        #        constraints:
+        #          - "node.role==worker"
+        max_replicas_per_node: 2 # how many replicas per node
+        preferences:
+          - spread: node.labels.redis
+
+.
