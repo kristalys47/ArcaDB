@@ -5,6 +5,7 @@ public class Controller {
         Connection c = null;
         Statement cursor = null;
         try {
+            Class.forName("org.postgresql.Driver");
             c = DriverManager.getConnection("jdbc:postgresql://localhost:5433/test",
                             "myusername", "mypassword");
             cursor = c.createStatement();
@@ -15,15 +16,18 @@ public class Controller {
         }
         System.out.println("Opened database successfully");
 
-        String query = "select * from table_name";
+        String query = "explain (FORMAT JSON) select * from table_name";
         cursor.executeQuery(query);
+        /*
+        stmt.executeUpdate(sql); // insert update delete
+        ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" ); // query
+        */
 
         ResultSet set = cursor.executeQuery(query);
 
         while(set.next()){
-            int a = set.getInt("column_1");
-            int b = set.getInt("column_2");
-            System.out.println(a + " " + b);
+            String a = set.getString("QUERY PLAN");
+            System.out.println(a);
         }
 
     }

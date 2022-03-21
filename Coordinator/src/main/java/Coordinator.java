@@ -16,7 +16,6 @@ public class Coordinator {
             String names = request.params("name"); // this work if name is in path like :name
             String names = request.body(); // if it is in the body
              */
-            System.out.println(name);
             return "This is it" + name + "--------\n" + json.get("name");
         });
     }
