@@ -1,7 +1,6 @@
 package orc;
 
-import orc.helper.classes.GRACEHashArray;
-import orc.helper.classes.Join;
+import orc.helper.classes.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
@@ -12,6 +11,7 @@ import org.apache.orc.Reader;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.RecordReaderImpl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -65,21 +65,28 @@ public class JoinManager {
 //, String pathS, String[] columns
     public static void join(String pathR, String columnR, String pathS, String columnS) throws IOException {
 
+        File directory = new File("/tmp/join/");
+
+        if(!directory.exists()){
+            directory.mkdir();
+        }
         //TODO: what to do if the join is with the same table but different columns
-        GRACEHashArray tableR = orcToMap(pathR, columnR);
-        GRACEHashArray tableS = orcToMap(pathS, columnS);
+        //TODO: what to do with the fixed bucket size
+        GRACEHashArray tableR = orcToMap(pathR, columnR, 100);
+        GRACEHashArray tableS = orcToMap(pathS, columnS, 100);
+
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         //TODO: select the one with least size to be the map
-        for (int i = 0; i < 40; i++) {
-            Join tmp = new Join(tableR.readRecords(i), tableS.getFileBuckets(i));
+        for (int i = 0; i < 100; i++) {
+            Join tmp = new Join(tableR.readRecords(i), tableS.getFileBuckets(i), "/tmp/finishedJoin"+i);
             pool.execute(tmp);
         }
 
         pool.shutdown();
 
     }
-    public static GRACEHashArray orcToMap(String path, String column) throws IOException {
+    public static GRACEHashArray orcToMap(String path, String column, int buckets) throws IOException {
         Configuration conf = new Configuration();
 
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
@@ -88,18 +95,19 @@ public class JoinManager {
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
         int joinKey = reader.getSchema().getFieldNames().indexOf(column);
         // TODO: size needs to be calculated, make a formula for that.
-        GRACEHashArray table = new GRACEHashArray(40, 100);
+        GRACEHashArray table = new GRACEHashArray(buckets, 100);
 
-        Pattern pattern = Pattern.compile(":::(.*):::");
-
+        //TODO: Generate this key
+        //TODO: change string
+        AES hashing = new AES("helohelohelohelo");
         while (records.nextBatch(batch)) {
             for(int r=0; r < batch.size; ++r) {
                 StringBuilder temp = new StringBuilder();
+                StringBuilder key = new StringBuilder();
                 for (int j = 0; j < batch.cols.length; j++) {
                     if(j == joinKey){
-                        temp.append(":::");
+                        batch.cols[j].stringifyValue(key, r);
                         batch.cols[j].stringifyValue(temp, r);
-                        temp.append(":::");
                     } else {
                         batch.cols[j].stringifyValue(temp, r);
                     }
@@ -108,27 +116,21 @@ public class JoinManager {
                     }
                 }
                 // TODO: create better hashfunction
-                Matcher matcher = pattern.matcher(temp.toString());
-                matcher.find();
-                String removeMark = temp.toString().replace(":::", "");
-                String keygroup = matcher.group(1);
-                table.addRecord(hashFunction(keygroup), removeMark);
+                String removeMark = temp.toString();
+                String keygroup = key.toString();
+                table.addRecord(hashFunction(keygroup, hashing), removeMark);
             }
         }
         records.close();
         batch.reset();
         table.flushRemainders();
-//        table.readRecords(0);
 
         return table;
     }
 
-    public static int hashFunction(String s){
-        int hash = s.charAt(s.length()-1);
-        for (int i = 0; i < s.length(); i++) {
-            hash = hash*2 + s.charAt(i);
-        }
-        return hash;
+    public static long hashFunction(String s, AES hashing){
+        long result = hashing.encrypt(s);
+        return result;
     }
 
 }

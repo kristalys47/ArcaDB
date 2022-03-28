@@ -16,7 +16,7 @@ public class Controller {
         }
         System.out.println("Opened database successfully");
 
-        String query = "explain (FORMAT JSON) select * from table_name";
+        String query = "explain (format json) select * from table_name inner join table_name3 using(column_1) where table_name.column_1 > 20;";
         cursor.executeQuery(query);
         /*
         stmt.executeUpdate(sql); // insert update delete

@@ -1,24 +1,33 @@
 package orc.helper.classes;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class Join implements Runnable{
     Map<String, HashNode<String>> R;
     LinkedList<File> S;
+    String jsonFile;
 
-    public Join(Map<String, HashNode<String>> R, LinkedList<File> S){
+
+    public Join(Map<String, HashNode<String>> R, LinkedList<File> S, String jsonFile){
         this.R = R;
         this.S = S;
+        this.jsonFile = jsonFile;
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < S.size(); i++) {
-            try {
+        FileWriter fr = null;
+        try {
+            fr = new FileWriter(this.jsonFile + ".json");
+            fr.write("{\"values\":[");
+            boolean first = true;
+
+            for (int i = 0; i < S.size(); i++) {
                 FileInputStream reader = new FileInputStream(S.get(i));
                 java.util.Scanner scanner = new java.util.Scanner(reader).useDelimiter("\n");
                 String theString = null;
@@ -30,18 +39,25 @@ public class Join implements Runnable{
                         HashNode<String> current = R.get(read[0]);
                         do {
                             //TODO: Save them correctly on a file.
-                            System.out.println(read[1] + " - joined - " + current.getElement() + "\n");
+                            if(!first){
+                                fr.write(",\n");
+                            } else{
+                                first = false;
+                            }
+                            fr.write("[" + read[1] +  "," + current.getElement() + "]");
                             current = current.getNext();
                         }while(current != null);
                     }
                 }
                 scanner.close();
 
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
-        }
 
+            fr.write("]}");
+            fr.flush();
+            fr.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

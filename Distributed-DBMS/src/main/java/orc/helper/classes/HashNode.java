@@ -1,8 +1,8 @@
 package orc.helper.classes;
 
 public class HashNode<T> {
-    private HashNode next;
-    private HashNode prev;
+    private HashNode<T> next;
+    private HashNode<T> prev;
     private T element;
 
     public HashNode(T element, HashNode next) {
@@ -10,19 +10,19 @@ public class HashNode<T> {
         this.element = element;
     }
 
-    public HashNode getPrev() {
+    public HashNode<T> getPrev() {
         return prev;
     }
 
-    public void setPrev(HashNode prev) {
+    public void setPrev(HashNode<T> prev) {
         this.prev = prev;
     }
 
-    public HashNode getNext() {
+    public HashNode<T> getNext() {
         return next;
     }
 
-    public void setNext(HashNode next) {
+    public void setNext(HashNode<T> next) {
         this.next = next;
     }
 

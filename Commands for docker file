@@ -54,9 +54,20 @@ docker run --name postgresql -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e 
 java -jar test-ORC.jar
 
 
+docker network create -d bridge nettest
 
+Server
+docker run -itd --name test openjdk
+docker network connect --alias server nettest test
+docker cp Main.java test:/
+docker exec -it test bash
+javac Main.Class
+java Main
 
-
-
-
-
+Client
+docker run -itd --name test2 openjdk
+docker network connect --alias client nettest test2
+docker cp Main.java test2:/
+docker exec -it test2 bash
+javac Main.Class
+java Main

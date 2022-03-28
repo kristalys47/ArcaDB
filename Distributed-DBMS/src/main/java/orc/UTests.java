@@ -1,11 +1,9 @@
 package orc;
 
-import orc.helper.classes.GRACEHashArray;
-import orc.helper.classes.Join;
-import orc.helper.classes.TestingUtils;
+import orc.helper.classes.*;
 import org.junit.jupiter.api.Test;
 
-
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -74,7 +72,7 @@ public class UTests {
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
         for (int i = 0; i < bucket; i++) {
-            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i));
+            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
             pool.execute(tmp);
         }
 
@@ -99,7 +97,7 @@ public class UTests {
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
         for (int i = 0; i < bucket; i++) {
-            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i));
+            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
             pool.execute(tmp);
         }
 
@@ -125,6 +123,11 @@ public class UTests {
 
         String[] argsB = {"insert", fileB, "/tmp/tableB.orc", "struct<id:int,name:string,last:string,score:float,isFemale:int,fk:int>"};
         WorkerManager.dbms(argsB);
+    }
+
+    @Test
+    public void testingReadA() throws Exception {
+        ORCManager.readerPrint("/tmp/tableB.orc");
     }
 
     @Test

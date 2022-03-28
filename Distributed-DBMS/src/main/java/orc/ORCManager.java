@@ -1,6 +1,6 @@
 package orc;
 
-import orc.helper.classes.ProjectionTree;
+import orc.helper.classes.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.*;
@@ -15,8 +15,6 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static orc.helper.classes.Utils.getTypeFromTypeCategory;
 
 
 public class ORCManager {
@@ -143,7 +141,7 @@ public class ORCManager {
 
         for(int i = 0; i < types.size(); i++){
             //TODO: The casting of the type is important in this case. (check boolean, decimal, bytes and String)
-            switch (getTypeFromTypeCategory(types.get(i).getCategory())){
+            switch (Utils.getTypeFromTypeCategory(types.get(i).getCategory())){
                 case LONG:
                     LongColumnVector cvl = (LongColumnVector) batch.cols[i];
                     for(int r = 0; r < rows.size(); r++){

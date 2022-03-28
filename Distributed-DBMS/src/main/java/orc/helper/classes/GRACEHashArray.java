@@ -6,7 +6,7 @@ import java.util.*;
 
 public class GRACEHashArray {
     private int buckets;
-    private int FILE_SIZE = 1024;
+    private int FILE_SIZE = 4096;
     private LinkedList<File>[] fileBuckets;
     private LinkedList<String>[] records;
     private int recordsLimit;
@@ -26,8 +26,8 @@ public class GRACEHashArray {
     }
 
 
-    public void addRecord(int key, String record) throws FileNotFoundException {
-        int hashValue = key % buckets;
+    public void addRecord(long key, String record) throws FileNotFoundException {
+        int hashValue = (int) Math.abs(key % buckets);
         records[hashValue].add(key + "," + record);
         checkFileFull(hashValue);
     }
@@ -39,7 +39,7 @@ public class GRACEHashArray {
     }
 
     private void flushToFile(int bucket) {
-        String fileName = "/tmp/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
+        String fileName = "/tmp/join/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
         File tempFile = new File(fileName);
         fileBuckets[bucket].add(tempFile);
 
