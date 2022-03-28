@@ -52,7 +52,6 @@ public class Join implements Runnable{
                 scanner.close();
 
             }
-
             fr.write("]}");
             fr.flush();
             fr.close();

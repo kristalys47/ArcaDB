@@ -8,6 +8,7 @@ import java.io.FileReader;
 public class WorkerManager {
     static void dbms(String[] arg)  throws Exception {
 
+        //TODO: check that folder does exist
         if(arg[0].indexOf("insert")>-1) {
             String data = "";
             JSONParser parser = new JSONParser();
@@ -23,7 +24,7 @@ public class WorkerManager {
                 ORCManager.readerPrint(arg[1]);
         }
         else if(arg[0].indexOf("join")>-1){
-            JoinManager.join( arg[1], arg[2], arg[3], arg[4] );
+            JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5] );
         }
         else{
             ORCManager.reader(arg[1], arg[2], arg[3]);

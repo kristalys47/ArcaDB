@@ -133,13 +133,13 @@ public class UTests {
     @Test
     public void joinWholeTest() throws Exception {
         // TODO: treat collisions
-        JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" );
+        JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" , "/tmp/results/joinresult.json");
     }
 
     @Test
 
     public void joinManagerTest() throws Exception {
-        String[] argsA = {"join", "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk"};
+        String[] argsA = {"join", "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk", "/tmp/results/joinresult.json"};
         WorkerManager.dbms(argsA);
     }
 }

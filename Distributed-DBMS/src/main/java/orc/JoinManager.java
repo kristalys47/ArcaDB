@@ -10,10 +10,17 @@ import org.apache.orc.OrcFile;
 import org.apache.orc.Reader;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.impl.RecordReaderImpl;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -62,10 +69,17 @@ public class JoinManager {
     }
 
 
-//, String pathS, String[] columns
-    public static void join(String pathR, String columnR, String pathS, String columnS) throws IOException {
+    //, String pathS, String[] columns
+    public static void join(String pathR, String columnR, String pathS, String columnS, String resultPath) throws IOException {
 
+
+        //TODO: This needs to be fixed
         File directory = new File("/tmp/join/");
+
+        if(!directory.exists()){
+            directory.mkdir();
+        }
+        directory = new File("/tmp/results/");
 
         if(!directory.exists()){
             directory.mkdir();
@@ -78,12 +92,47 @@ public class JoinManager {
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         //TODO: select the one with least size to be the map
+        ArrayList<String> files = new ArrayList<>();
+        String singleFile = "";
+        UUID id = UUID.randomUUID();
         for (int i = 0; i < 100; i++) {
-            Join tmp = new Join(tableR.readRecords(i), tableS.getFileBuckets(i), "/tmp/finishedJoin"+i);
+            singleFile = "/tmp/finishedJoin" + i + "_" + id;
+            files.add(singleFile);
+            Join tmp = new Join(tableR.readRecords(i), tableS.getFileBuckets(i), singleFile);
             pool.execute(tmp);
         }
-
         pool.shutdown();
+
+        mergeJSONFiles(files, resultPath);
+
+
+    }
+
+    public static void mergeJSONFiles(ArrayList<String> jsonFiles, String result){
+        JSONArray array = new JSONArray();
+        FileWriter fr = null;
+        JSONParser parser = new JSONParser();
+
+        try{
+            for (int i = 0; i < jsonFiles.size(); ++i){
+                Object obj = parser.parse(new FileReader(jsonFiles.get(i) + ".json"));
+                JSONObject jsonObject = (JSONObject)obj;
+                JSONArray jsonArray2 = (JSONArray) jsonObject.get("values");
+                array.addAll(jsonArray2);
+            }
+
+            JSONObject obj = new JSONObject();
+            obj.put("values", array);
+            fr = new FileWriter(result);
+            fr.write(obj.toJSONString());
+            fr.flush();
+            fr.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
 
     }
     public static GRACEHashArray orcToMap(String path, String column, int buckets) throws IOException {
