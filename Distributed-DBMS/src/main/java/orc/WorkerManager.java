@@ -9,6 +9,7 @@ public class WorkerManager {
     static void dbms(String[] arg)  throws Exception {
 
         //TODO: check that folder does exist
+        //TODO: check that if empty it projects all the columns
         if(arg[0].indexOf("insert")>-1) {
             String data = "";
             JSONParser parser = new JSONParser();

@@ -132,8 +132,6 @@ public class JoinManager {
             e.printStackTrace();
 
         }
-
-
     }
     public static GRACEHashArray orcToMap(String path, String column, int buckets) throws IOException {
         Configuration conf = new Configuration();
