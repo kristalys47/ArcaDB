@@ -40,7 +40,7 @@ public class ORCManager {
         records.close();
     }
 
-    public static void reader(String path, String projections, String selection) throws Exception {
+    public static void reader(String path, String selection, String projections, String result) throws Exception {
         Configuration conf = new Configuration();
         OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
 
@@ -103,7 +103,7 @@ public class ORCManager {
             }
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             if(vv.count()>0) {
-                Path pathO = new Path("/JavaCode/results" + t);
+                Path pathO = new Path("/tmp/temp" + t);
                 t++;
                 Writer writer = OrcFile.createWriter(pathO, options);
                 writer.addRowBatch(vv);
@@ -116,9 +116,9 @@ public class ORCManager {
 
             List<Path> filesToMerge = new ArrayList<>();
             for (int i = 0; i < t; i++) {
-                filesToMerge.add(new Path("/JavaCode/results" + i));
+                filesToMerge.add(new Path("/tmp/temp" + i));
             }
-            OrcFile.mergeFiles(new Path("/JavaCode/finalResults"), OrcFile.writerOptions(conf).overwrite(true).setSchema(td), filesToMerge);
+            OrcFile.mergeFiles(new Path(result), OrcFile.writerOptions(conf).overwrite(true).setSchema(td), filesToMerge);
 
         }
     }

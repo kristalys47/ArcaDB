@@ -3,7 +3,6 @@ package orc;
 import orc.helper.classes.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +30,7 @@ public class UTests {
     public void testintProjectionToOrc2() throws Exception {
         String test = "((name=\"qftrjyivexdeikecdhbf\")|(id<3))";
         String projection = "last,isFemale";
-        ORCManager.reader("/JavaCode/insertedTest", projection, test);
+        ORCManager.reader("/JavaCode/insertedTest", test, projection, "/JavaCode/finalResults");
     }
 
     @Test
