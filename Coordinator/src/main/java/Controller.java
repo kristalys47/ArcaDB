@@ -13,9 +13,7 @@ public class Controller {
                             "myusername", "mypassword");
             cursor = c.createStatement();
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
-            System.exit(0);
+            System.err.println(e);
         }
         System.out.println("Opened database successfully");
 
@@ -37,7 +35,7 @@ public class Controller {
         JSONArray array = new JSONArray();
 
 
-        BinaryTreePlan btp = new BinaryTreePlan(obj);
+        BinaryTreePlan btp = new BinaryTreePlan(obj, cursor);
         System.out.println("mm");
 
     }
