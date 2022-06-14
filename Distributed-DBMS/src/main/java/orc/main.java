@@ -1,6 +1,14 @@
 package orc;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -14,51 +22,37 @@ public class main {
 
         System.out.println("Started");
 
-        String host = "127.0.0.1";
-        int socketPortNumber = 7172;
-//        int RedisPortNumber = 6379;
+        int socketPortNumber = 7272;
 
-        AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open();
-        InetSocketAddress hostAddress = new InetSocketAddress("localhost", socketPortNumber);
-        server.bind(hostAddress);
+        ServerSocket serverSocket = new ServerSocket(socketPortNumber);
+        Socket client = serverSocket.accept();
+        System.out.println("Connected Server");
 
-
-        Future acceptResult = server.accept();
-        AsynchronousSocketChannel client = (AsynchronousSocketChannel) acceptResult.get();
-
+        OutputStream out = client.getOutputStream();
+        InputStream in = client.getInputStream();
 
         while (true) {
 
-                if ((client != null) && (client.isOpen())) {
+                if ((client != null) && (!client.isClosed())) {
 
-                    ByteBuffer buffer = ByteBuffer.allocate(16);
-                    Future result = client.read(buffer);
+                    byte[] buffer = in.readAllBytes();
+                    String message = new String(buffer).trim();
 
-                    while (!result.isDone()) {
-                        // do nothing
-                    }
+                    JSONParser parser = new JSONParser();
+                    JSONObject obj = (JSONObject) parser.parse(message.replaceAll(" ", ""));
+                    JSONArray rows = (JSONArray) obj.get("plan");
 
-                    buffer.flip();
-                    String message = new String(buffer.array()).trim();
-
-//                    RedisClient redisClient = new RedisClient(RedisURI.create("redis://" + host + ":" + RedisPortNumber));
-//                    RedisConnection<String, String> connection = redisClient.connect();
-//                    String[] args = connection.get(message).split(" ");
-
-                    String[] nodePlan = message.split(" ");
                     try{
-                        WorkerManager.dbms(nodePlan);
+                        WorkerManager.dbms(rows.toJSONString().split(","));
                     }catch (Exception e){
                         System.out.println(e);
                         String msg = "Something failed";
-                        buffer.put(msg.getBytes(StandardCharsets.UTF_8));
+                        out.write(msg.getBytes(StandardCharsets.UTF_8));
                     } finally {
                         String msg = "Success";
-                        buffer.put(msg.getBytes(StandardCharsets.UTF_8));
+                        out.write(msg.getBytes(StandardCharsets.UTF_8));
                     }
-                    client.write(buffer);
-                    buffer.clear();
-
+                    out.flush();
                 }
                 client.close();
         }

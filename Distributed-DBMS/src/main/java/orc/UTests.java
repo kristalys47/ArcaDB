@@ -1,6 +1,8 @@
 package orc;
 
-import orc.helper.classes.*;
+import orc.helperClasses.*;
+import orc.helperClasses.GRACEHashArray;
+import orc.helperClasses.TestingUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -70,10 +72,10 @@ public class UTests {
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
-        for (int i = 0; i < bucket; i++) {
-            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
-            pool.execute(tmp);
-        }
+//        for (int i = 0; i < bucket; i++) {
+//            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
+//            pool.execute(tmp);
+//        }
 
         pool.shutdown();
 
@@ -95,10 +97,10 @@ public class UTests {
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
-        for (int i = 0; i < bucket; i++) {
-            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
-            pool.execute(tmp);
-        }
+//        for (int i = 0; i < bucket; i++) {
+//            Join tmp = new Join(rTable.readRecords(i), rTable.getFileBuckets(i), "/tmp/testing"+i);
+//            pool.execute(tmp);
+//        }
 
         pool.shutdown();
 

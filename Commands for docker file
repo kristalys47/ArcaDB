@@ -41,6 +41,12 @@ docker volume create --name comvol
 
 mvn clean install
 
+docker run -[d]it --name ss maven bash
+docker cp Distributed-DBMS/ [NAME OF CONTAINER]:/
+docker network connect --alias {alias of container} [name of connection] {NAME OF CONTAINER}
+docker start -ai ss bash
+mvn clean install
+
 
 mvn exec:java -Dexec.mainClass="orc.main"
 

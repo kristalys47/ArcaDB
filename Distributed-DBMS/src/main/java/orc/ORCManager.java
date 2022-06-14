@@ -1,6 +1,6 @@
 package orc;
 
-import orc.helper.classes.*;
+import orc.helperClasses.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.*;

@@ -1,5 +1,6 @@
 package orc;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -10,6 +11,10 @@ public class WorkerManager {
 
         //TODO: check that folder does exist
         //TODO: check that if empty it projects all the columns
+
+
+
+
         if(arg[0].indexOf("insert")>-1) {
             String data = "";
             JSONParser parser = new JSONParser();
