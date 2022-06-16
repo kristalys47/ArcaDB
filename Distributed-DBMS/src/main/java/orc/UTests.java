@@ -119,7 +119,7 @@ public class UTests {
 
     @Test
     public void createfileBData() throws Exception {
-        String fileB = "/tmp/tableB.json";
+        String fileB = "/tmp/data.json";
         TestingUtils.generateDataB(fileB);
 
         String[] argsB = {"insert", fileB, "/tmp/tableB.orc", "struct<id:int,name:string,last:string,score:float,isFemale:int,fk:int>"};

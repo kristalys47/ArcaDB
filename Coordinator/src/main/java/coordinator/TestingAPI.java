@@ -8,6 +8,6 @@ public class TestingAPI {
 
     @Test
     public void functions() throws SQLException {
-        Controller.handleRequest();
+//        Controller.handleRequest((String) json.get("query"));
     }
 }

@@ -6,12 +6,12 @@ import org.json.JSONObject;
 import java.sql.*;
 
 public class Controller {
-    public static void handleRequest() throws SQLException {
+    public static void handleRequest(String query) throws SQLException {
         Connection c = null;
         Statement cursor = null;
         try {
             Class.forName("org.postgresql.Driver");
-            c = DriverManager.getConnection("jdbc:postgresql://postgresql:5432/test",
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5433/postgres",
                             "myusername", "mypassword");
             cursor = c.createStatement();
         } catch (Exception e) {
@@ -19,14 +19,10 @@ public class Controller {
         }
         System.out.println("Opened database successfully");
 
-        String query = "explain (format json, timing false, costs false) select * from table_name where table_name.column_1 > 20;";
-        cursor.executeQuery(query);
-        /*
-        stmt.executeUpdate(sql); // insert update delete
-        ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" ); // query
-        */
+        String explain_query = "explain (format json, timing false, costs false) " + query;
+//        cursor.executeQuery(explain_query);
 
-        ResultSet set = cursor.executeQuery(query);
+        ResultSet set = cursor.executeQuery(explain_query);
         String a = "";
         while(set.next()){
             a = set.getString(1);

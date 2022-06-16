@@ -1,0 +1,9 @@
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/Coordinator.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/main.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/Controller.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/BinaryTreePlan.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/HashBinaryTreeNode.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/ScanBinaryTreeNode.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/HashJoinBinaryTreeNode.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/BinaryTreeNode.java
+/home/kristalys/git/Container-DBMS/Coordinator/src/main/java/coordinator/TestingAPI.java

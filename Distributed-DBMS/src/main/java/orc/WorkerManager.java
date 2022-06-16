@@ -12,16 +12,19 @@ public class WorkerManager {
         //TODO: check that folder does exist
         //TODO: check that if empty it projects all the columns
 
-
-
-
+        for (String s : arg) {
+            System.out.println(s);
+        }
+        System.out.println("worked manager class");
         if(arg[0].indexOf("insert")>-1) {
             String data = "";
             JSONParser parser = new JSONParser();
             try {
+                System.out.println(arg[1]);
                 Object obj = parser.parse(new FileReader(arg[1]));
                 JSONObject jsonObject = (JSONObject)obj;
                 data = jsonObject.toJSONString();
+
             } catch(Exception e) {
                 e.printStackTrace();
             }

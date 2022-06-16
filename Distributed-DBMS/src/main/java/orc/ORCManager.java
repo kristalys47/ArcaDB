@@ -135,7 +135,7 @@ public class ORCManager {
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(values.replaceAll(" ", ""));
-        JSONArray rows = (JSONArray) obj.get("values");
+        JSONArray rows = (JSONArray) obj.get("data");
 
         VectorizedRowBatch batch = schema.createRowBatch(rows.size());
 

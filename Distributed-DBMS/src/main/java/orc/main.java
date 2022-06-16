@@ -3,6 +3,7 @@ package orc;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import com.google.gson.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,7 +27,6 @@ public class main {
 
         ServerSocket serverSocket = new ServerSocket(socketPortNumber);
         Socket client = serverSocket.accept();
-        System.out.println("Connected Server");
 
         OutputStream out = client.getOutputStream();
         InputStream in = client.getInputStream();
@@ -38,12 +38,19 @@ public class main {
                     byte[] buffer = in.readAllBytes();
                     String message = new String(buffer).trim();
 
-                    JSONParser parser = new JSONParser();
-                    JSONObject obj = (JSONObject) parser.parse(message.replaceAll(" ", ""));
-                    JSONArray rows = (JSONArray) obj.get("plan");
+
+                    System.out.println(message);
+
+                    JsonObject gobj = JsonParser.parseString(message).getAsJsonObject();
+                    JsonArray rows = gobj.getAsJsonArray("plan");
+                    String[] args = new String[rows.size()];
+
+                    for (int i = 0; i < args.length; i++) {
+                        args[i] = rows.get(i).getAsString();
+                    }
 
                     try{
-                        WorkerManager.dbms(rows.toJSONString().split(","));
+                        WorkerManager.dbms(args);
                     }catch (Exception e){
                         System.out.println(e);
                         String msg = "Something failed";

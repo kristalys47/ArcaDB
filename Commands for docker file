@@ -77,3 +77,39 @@ docker cp Main.java test2:/
 docker exec -it test2 bash
 javac Main.Class
 java Main
+
+--------------------------------------------------------------
+
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+int APP_PORT  = 7272;
+Socket socket = new Socket("c1", APP_PORT);
+
+OutputStream out = socket.getOutputStream();
+InputStream in = socket.getInputStream();
+
+
+JSONArray array = new JSONArray();
+array.put(0, "scan");
+array.put(1, "/mytable/hello.orc");
+array.put(2, "id, name");
+array.put(3, "(id>4)");
+array.put(4, "/mytable/hello.orc");
+JSONObject obj = new JSONObject();
+obj.put("plan", array);
+
+
+String args = obj.toString();
+out.write(args.getBytes(StandardCharsets.UTF_8));
+out.flush();
+
+String received = "";
+byte[] response;
+response = in.readAllBytes();
+received = new String(response);
+
+
+
