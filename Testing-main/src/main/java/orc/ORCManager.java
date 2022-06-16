@@ -48,7 +48,6 @@ public class ORCManager {
 
         TypeDescription schema = reader.getSchema();
         ArrayList<String> names = new  ArrayList<String>(schema.getFieldNames());
-
         ArrayList<String> project = new ArrayList<String>(Arrays.asList(projections.split(",")));
 
         // Projection
@@ -136,7 +135,7 @@ public class ORCManager {
 
         JSONParser parser = new JSONParser();
         JSONObject obj = (JSONObject) parser.parse(values.replaceAll(" ", ""));
-        JSONArray rows = (JSONArray) obj.get("data");
+        JSONArray rows = (JSONArray) obj.get("values");
 
         VectorizedRowBatch batch = schema.createRowBatch(rows.size());
 

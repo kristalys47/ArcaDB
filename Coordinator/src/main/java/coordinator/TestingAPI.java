@@ -8,6 +8,6 @@ public class TestingAPI {
 
     @Test
     public void functions() throws SQLException {
-//        Controller.handleRequest((String) json.get("query"));
+        Controller.handleRequest("select * from mytable where mytable.id > 20;");
     }
 }
