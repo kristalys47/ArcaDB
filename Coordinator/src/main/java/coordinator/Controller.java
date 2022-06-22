@@ -11,7 +11,7 @@ public class Controller {
         Statement cursor = null;
         try {
             Class.forName("org.postgresql.Driver");
-            c = DriverManager.getConnection("jdbc:postgresql://localhost:5433/postgres",
+            c = DriverManager.getConnection("jdbc:postgresql://postgresql:5432/postgres",
                             "myusername", "mypassword");
             cursor = c.createStatement();
         } catch (Exception e) {
@@ -35,6 +35,7 @@ public class Controller {
 
         BinaryTreePlan btp = new BinaryTreePlan(obj, cursor);
         System.out.println("mm");
+
 
         btp.headNode.run();
 

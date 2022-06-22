@@ -1,7 +1,7 @@
 package orc.helperClasses.nodes;
 
-public class LogicANDNode extends Node{
-    public LogicANDNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+public class LogicANDSelectionTreeNode extends SelectionTreeNode {
+    public LogicANDSelectionTreeNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, false, inorderIndex);
     }
 

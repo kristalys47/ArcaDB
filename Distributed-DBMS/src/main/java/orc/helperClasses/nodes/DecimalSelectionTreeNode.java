@@ -2,10 +2,10 @@ package orc.helperClasses.nodes;
 
 import org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector;
 
-public class DecimalNode extends Node{
+public class DecimalSelectionTreeNode extends SelectionTreeNode {
     public float value;
 
-    public DecimalNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+    public DecimalSelectionTreeNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
         int index = 0;
         //assume the left side is always the row value on memory

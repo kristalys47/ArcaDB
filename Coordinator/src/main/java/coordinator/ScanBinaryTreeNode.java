@@ -20,9 +20,9 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
         this.TableFiles = new ArrayList<>();
         this.TableFiles.add("/mytable/hello.orc");
         if (info.has("Recheck Cond"))
-            this.selection = info.getString("Recheck Cond");
+            this.selection = info.getString("Recheck Cond").replaceAll(" ", "");
         if (info.has("Filter"))
-            this.selection = info.getString("Filter");
+            this.selection = info.getString("Filter").replaceAll(" ", "");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             //TODO: make request for resources
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
-            connectionWithContainers(obj.toString(), "join");
+            connectionWithContainers(obj.toString(), "c1");
         }
 
         this.setDone(true);

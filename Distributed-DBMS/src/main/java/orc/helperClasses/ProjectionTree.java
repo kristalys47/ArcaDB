@@ -12,7 +12,7 @@ import static orc.helperClasses.Utils.getTypeFromTypeCategory;
 
 public class ProjectionTree {
 
-    public Node root;
+    public SelectionTreeNode root;
     public ArrayList<String> columns;
     public TypeDescription schema;
 
@@ -23,7 +23,7 @@ public class ProjectionTree {
         this.schema = schema;
     }
 
-    public Node getNodeType(int level, String expression, boolean isLeaf, int inorderIndex){
+    public SelectionTreeNode getNodeType(int level, String expression, boolean isLeaf, int inorderIndex){
         int index = 0;
         if(expression.contains(">")){
             index = expression.indexOf(">");
@@ -39,13 +39,13 @@ public class ProjectionTree {
 
         switch (getTypeFromTypeCategory(schema.getChildren().get(i).getCategory())){
             case DECIMAL:
-                return new DecimalNode(level, expression, isLeaf, inorderIndex);
+                return new DecimalSelectionTreeNode(level, expression, isLeaf, inorderIndex);
             case DOUBLE:
-                return new DoubleNode(level, expression, isLeaf, inorderIndex);
+                return new DoubleSelectionTreeNode(level, expression, isLeaf, inorderIndex);
             case LONG:
-                return new LongNode(level, expression, isLeaf, inorderIndex);
+                return new LongSelectionTreeNode(level, expression, isLeaf, inorderIndex);
             default:
-                return new StringNode(level, expression, isLeaf, inorderIndex);
+                return new StringSelectionTreeNode(level, expression, isLeaf, inorderIndex);
         }
 
     }
@@ -53,7 +53,7 @@ public class ProjectionTree {
 
         //Creates a tree
         Stack<String> parsingLogicBooleanTree = new Stack();
-        ArrayList<Node> order = new ArrayList<>();
+        ArrayList<SelectionTreeNode> order = new ArrayList<>();
 
         int start = 0;
         int max = 0;
@@ -70,9 +70,9 @@ public class ProjectionTree {
                 }
                 parsingLogicBooleanTree.pop();
             } else if (logicExpression.charAt(i) == '|') {
-                order.add(new LogicORNode(parsingLogicBooleanTree.size(), "|", false, order.size()+1));
+                order.add(new LogicORSelectionTreeNode(parsingLogicBooleanTree.size(), "|", false, order.size()+1));
             } else if (logicExpression.charAt(i) == '&') {
-                order.add(new LogicANDNode(parsingLogicBooleanTree.size(), "&", false, order.size()+1));
+                order.add(new LogicANDSelectionTreeNode(parsingLogicBooleanTree.size(), "&", false, order.size()+1));
             }
         }
 
@@ -102,7 +102,7 @@ public class ProjectionTree {
         return recursiveEval(this.root, map);
     }
 
-    private int[] recursiveEval(Node n, Map<String, ColumnVector> map) throws Exception {
+    private int[] recursiveEval(SelectionTreeNode n, Map<String, ColumnVector> map) throws Exception {
         if(n.isLeaf){
             return n.evaluateArray(map.get(n.columnName));
         } else{

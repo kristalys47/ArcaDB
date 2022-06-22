@@ -47,6 +47,7 @@ public class main {
 
                     for (int i = 0; i < args.length; i++) {
                         args[i] = rows.get(i).getAsString();
+                        System.out.println(args[i]);
                     }
 
                     try{

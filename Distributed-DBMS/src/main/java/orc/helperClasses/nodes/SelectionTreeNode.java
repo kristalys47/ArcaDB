@@ -1,24 +1,24 @@
 package orc.helperClasses.nodes;
 
-public abstract class Node <T> {
+public abstract class SelectionTreeNode<T> {
     public int level;
     public String expression;
     public boolean isLeaf;
     public String columnName = "";
-    public Node parent = null;
-    public Node left = null;
-    public Node right = null;
+    public SelectionTreeNode parent = null;
+    public SelectionTreeNode left = null;
+    public SelectionTreeNode right = null;
     protected int compare;
     public int inorderIndex;
 
-    Node(int level, String expression, boolean isLeaf, int inorderIndex) {
+    SelectionTreeNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         this.level = level;
         this.expression = expression;
         this.isLeaf = isLeaf;
         this.inorderIndex = inorderIndex;
     }
 
-    public Node() {
+    public SelectionTreeNode() {
 
     }
 

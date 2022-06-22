@@ -3,9 +3,9 @@ package orc.helperClasses.nodes;
 //TODO: Implement BOOLEAN just in case
 //TODO: IMPLEMENT FLOAT
 
-public class BooleanNode extends Node{
+public class BooleanSelectionTreeNode extends SelectionTreeNode {
 
-    public BooleanNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+    public BooleanSelectionTreeNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
     }
 

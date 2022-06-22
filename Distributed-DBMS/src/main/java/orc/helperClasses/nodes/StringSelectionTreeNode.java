@@ -4,13 +4,13 @@ import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 
 import java.nio.charset.StandardCharsets;
 
-public class StringNode extends Node{
+public class StringSelectionTreeNode extends SelectionTreeNode {
     public byte[] value;
     public String stringValue;
 
     //TODO: Consider creating different nodes instance for each kind of comparator (!=, =) so on for the other types.
 
-    public StringNode(int level, String expression, boolean isLeaf, int inorderIndex) {
+    public StringSelectionTreeNode(int level, String expression, boolean isLeaf, int inorderIndex) {
         super(level, expression, isLeaf, inorderIndex);
         //TODO: this if could be better;
         if (expression.contains("=")){

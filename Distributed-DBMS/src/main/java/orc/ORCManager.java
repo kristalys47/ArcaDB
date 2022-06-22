@@ -62,7 +62,8 @@ public class ORCManager {
         finalProjection[0] = true;
         projectionForSelection[0] = true;
         for(int i = 0; i< names.size(); i++) {
-            if(project.contains(names.get(i))){
+
+            if(project.size() == 0 ||  project.contains(names.get(i))){
                 td.addField(names.get(i), new TypeDescription(schema.getChildren().get(i).getCategory()));
                 finalProjection[i+1] = true;
                 projectionForSelection[i+1] = true;
