@@ -21,6 +21,7 @@ public class main {
 
     static public void main(String[] arg) throws Exception {
 
+        //TODO: need a better logger when this is working
         System.out.println("Started");
 
         int socketPortNumber = 7272;

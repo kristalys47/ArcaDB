@@ -17,6 +17,9 @@ mvn clean install compile package
 java -cp target/testORC-1.0.jar orc.main "insert" "/JavaCode/testORC/testFile.orc" "struct<name:string,val:int>" "{\"values\":[[\"kris\",\"4\"],[\"hel\",\"3\"],[\"bye\",\"10\"]]}"
 
 
+https://generatedata.com
+"select * from mytable where mytable.id > 20;"
+"struct<id:int,name:string,email:string,address:string>"
 
 
 https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file

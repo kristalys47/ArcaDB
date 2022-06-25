@@ -3,6 +3,7 @@ package orc;
 import orc.helperClasses.*;
 import orc.helperClasses.GRACEHashArray;
 import orc.helperClasses.TestingUtils;
+import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -142,5 +143,19 @@ public class UTests {
     public void joinManagerTest() throws Exception {
         String[] argsA = {"join", "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk", "/tmp/results/joinresult.json"};
         WorkerManager.dbms(argsA);
+    }
+
+
+    @Test
+    public void testSingleFilterSelection() {
+        String schemaString = "struct<id:int,name:string,email:string,address:string>";
+        TypeDescription schema = TypeDescription.fromString(schemaString);
+        String selection = "(id>20)";
+
+        ProjectionTree op = new ProjectionTree(schema);
+        op.treeBuilder(selection);
+        System.out.println("mmmm");
+
+
     }
 }

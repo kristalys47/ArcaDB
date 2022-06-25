@@ -10,4 +10,10 @@ public class TestingAPI {
     public void functions() throws SQLException {
         Controller.handleRequest("select * from mytable where mytable.id > 20;");
     }
+
+    @Test
+    public void insertToContainer() throws SQLException {
+        Controller.handleRequest("select * from mytable where mytable.id > 20;");
+    }
+
 }
