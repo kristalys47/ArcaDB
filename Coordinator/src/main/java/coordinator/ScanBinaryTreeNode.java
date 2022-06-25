@@ -32,8 +32,8 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             JsonArray array = new JsonArray();
             array.add("scan");
             array.add(this.TableFiles.get(i));
-            array.add(this.projection);
             array.add(this.selection);
+            array.add(this.projection);
             this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode());
             array.add(this.resultFile.get(i));
             //TODO: make request for resources

@@ -1,5 +1,7 @@
 package orc;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import orc.helperClasses.*;
 import orc.helperClasses.GRACEHashArray;
 import orc.helperClasses.TestingUtils;
@@ -147,7 +149,24 @@ public class UTests {
 
 
     @Test
-    public void testSingleFilterSelection() {
+    public void addingForLocalTest() throws Exception {
+        JsonArray garray = new JsonArray();
+        garray.add("insert");
+        garray.add("/home/kristalys/git/Container-DBMS/data.json");
+        garray.add("/home/kristalys/mytable/hello.orc");
+        garray.add("struct<id:int,name:string,email:string,address:string>");
+
+        String[] args = new String[garray.size()];
+
+        for (int i = 0; i < args.length; i++) {
+            args[i] = garray.get(i).getAsString();
+            System.out.println(args[i]);
+        }
+
+        WorkerManager.dbms(args);
+    }
+    @Test
+    public void testSingleFilterSelection() throws Exception {
         String schemaString = "struct<id:int,name:string,email:string,address:string>";
         TypeDescription schema = TypeDescription.fromString(schemaString);
         String selection = "(id>20)";
@@ -155,6 +174,8 @@ public class UTests {
         ProjectionTree op = new ProjectionTree(schema);
         op.treeBuilder(selection);
         System.out.println("mmmm");
+
+        ORCManager.reader("/home/kristalys/mytable/hello.orc", "(id>20)", "", "/home/kristalys/QUERY_RESULTS/2110881374");
 
 
     }

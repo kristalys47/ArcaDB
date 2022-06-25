@@ -1,7 +1,6 @@
 package coordinator;
 
 import com.google.gson.stream.JsonReader;
-import org.apache.cassandra.streaming.StreamOut;
 import org.json.JSONObject;
 
 import static spark.Spark.*;

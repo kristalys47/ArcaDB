@@ -7,7 +7,7 @@ import org.json.simple.parser.JSONParser;
 import java.io.FileReader;
 
 public class WorkerManager {
-    static void dbms(String[] arg)  throws Exception {
+    static boolean dbms(String[] arg)  throws Exception {
 
         //TODO: check that folder does exist
         //TODO: check that if empty it projects all the columns
@@ -36,8 +36,9 @@ public class WorkerManager {
             JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5] );
         }
         else{
-            ORCManager.reader(arg[1], arg[2], arg[3], arg[4]);
-        }
+            return ORCManager.reader(arg[1], arg[2], arg[3], arg[4]);
 
+        }
+        return true;
     }
 }

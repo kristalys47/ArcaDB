@@ -40,7 +40,7 @@ public class ORCManager {
         records.close();
     }
 
-    public static void reader(String path, String selection, String projections, String result) throws Exception {
+    public static boolean reader(String path, String selection, String projections, String result) throws Exception {
         Configuration conf = new Configuration();
         OrcConf.READER_USE_SELECTED.setBoolean(conf, true);
 
@@ -105,7 +105,7 @@ public class ORCManager {
             }
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             if(vv.count()>0) {
-                Path pathO = new Path("/tmp/temp" + t);
+                Path pathO = new Path(result + "-" + t);
                 t++;
                 Writer writer = OrcFile.createWriter(pathO, options);
                 writer.addRowBatch(vv);
@@ -118,11 +118,12 @@ public class ORCManager {
 
             List<Path> filesToMerge = new ArrayList<>();
             for (int i = 0; i < t; i++) {
-                filesToMerge.add(new Path("/tmp/temp" + i));
+                filesToMerge.add(new Path(result + "-" + i));
             }
             OrcFile.mergeFiles(new Path(result), OrcFile.writerOptions(conf).overwrite(true).setSchema(td), filesToMerge);
 
         }
+        return true;
     }
 
     public static void writer(String path, String schemaStruct, String values) throws IOException, ParseException {
