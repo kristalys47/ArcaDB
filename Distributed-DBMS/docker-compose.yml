@@ -1,32 +1,33 @@
-version: '3'
+version: '3.9'
 services:
   postgresql:
     image: postgres
-    enviroment:
-      POSTGRES_USER: myusername
-      POSTGRES_DB: test
-      POSTGRES_PASSWORD: mypassword
-    port:
-      - 5433:5432
+    environment:
+      - POSTGRES_USER=myusername
+      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=mypassword
+    ports:
+      - 5434:5432
   coordinator:
     image: maven:latest
-    port:
-      -7271:7271
+    ports:
+      - 7271:7271
     networks:
       cloud:
-        - co
+        aliases:
+          - co
     depends_on:
-      postgresql:
-        condition: service_started
+      - postgresql
     deploy:
       replicas: 3
   worker:
     image: maven:latest
     volumes:
-      - storage:/
+      - storage:/tmp
     networks:
       cloud:
-        - wo
+        aliases:
+            - wo
     deploy:
       replicas: 3
 networks:
