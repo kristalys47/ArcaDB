@@ -13,7 +13,7 @@ public class TestingAPI {
 
     @Test
     public void insertToContainer() throws SQLException {
-        Controller.handleRequest("select * from mytable where mytable.id > 20;");
+        Controller.handleRequest("select * from mytable inner join transactions using(id) where amount>500 or amount<12;");
     }
 
 }

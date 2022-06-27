@@ -1,6 +1,6 @@
-package coordinator;
+package coordinator.plan;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.gson.*;
 
@@ -16,13 +16,25 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
 
     public ScanBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.PROJECTION, parent, inner, outer);
-        this.TableFiles = new ArrayList<>();
-        this.TableFiles.add("/mytable/hello.orc");
+        super(NodeType.SCAN, parent, inner, outer);
+        try {
+            this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));
+        } catch (JSONException exception){
+            this.TableFiles = new ArrayList<>();
+            System.out.println("This node is to be eliminated");
+        }
         if (info.has("Recheck Cond"))
-            this.selection = info.getString("Recheck Cond").replaceAll(" ", "");
+            this.selection = transformSelection(info.getString("Recheck Cond"));
         if (info.has("Filter"))
-            this.selection = info.getString("Filter").replaceAll(" ", "");
+            this.selection = transformSelection(info.getString("Filter"));
+
+    }
+
+    public String transformSelection(String conditions){
+        String cleaned = conditions.replaceAll(" ", "").replaceAll("\\)AND\\(", "\\)&\\(")
+                .replaceAll("\\)OR\\(", "\\)|\\(").replaceAll("::numeric", "")
+                .replaceAll("\\'", "");
+        return cleaned;
     }
 
     @Override
@@ -34,7 +46,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             array.add(this.TableFiles.get(i));
             array.add(this.selection);
             array.add(this.projection);
-            this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode());
+            this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode() + i + ".temporc");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources
             JsonObject obj = new JsonObject();

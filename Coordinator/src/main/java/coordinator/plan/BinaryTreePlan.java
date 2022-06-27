@@ -1,4 +1,4 @@
-package coordinator;
+package coordinator.plan;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ import java.util.Stack;
 
 public class BinaryTreePlan {
 
-    BinaryTreeNode headNode = null;
+    public BinaryTreeNode headNode = null;
 
     private class StackNode {
         public JSONObject object;
@@ -38,7 +38,9 @@ public class BinaryTreePlan {
                     case 0:
                         peekNode.count++;
                         JSONObject out = array.getJSONObject(0);
-                        if(peek.getString("Node Type").equals("Bitmap Heap Scan") || peek.getString("Node Type").equals("Hash")){
+                        String nodeType = peek.getString("Node Type");
+                        if(nodeType.equals("Bitmap Heap Scan") ||
+                                nodeType.equals("Hash")){
                             peekNode.count++;
                         }
                         stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, cursor, stackNode, null, null));

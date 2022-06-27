@@ -1,4 +1,4 @@
-package coordinator;
+package coordinator.plan;
 
 import org.json.JSONObject;
 
@@ -19,7 +19,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public ArrayList<String> resultFile;
 
 
-    public enum NodeType {JOIN, SELECTION, PROJECTION, HASH, NULL};
+    public enum NodeType {JOIN, SCAN};
 
     public BinaryTreeNode(NodeType type, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer){
         this.type = type;
@@ -115,10 +115,6 @@ public abstract class BinaryTreeNode implements Runnable{
         switch (node_type){
             case JOIN:
                 return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
-//            case PROJECTION:
-//                return new coordinator.ScanBinaryTreeNode(object, parent, inner, outer);
-            case HASH:
-                return new HashBinaryTreeNode(object, cursor, parent, inner, outer);
             default:
                 return new ScanBinaryTreeNode(object, cursor, parent, inner, outer);
 
@@ -129,14 +125,8 @@ public abstract class BinaryTreeNode implements Runnable{
         switch (node_type){
             case "Hash Join":
                 return BinaryTreeNode.NodeType.JOIN;
-            case "Seq Scan":
-                return BinaryTreeNode.NodeType.PROJECTION;
-            case "Hash":
-                return BinaryTreeNode.NodeType.HASH;
-            case "Bitmap Heap Scan":
-                return BinaryTreeNode.NodeType.PROJECTION;
             default:
-                return BinaryTreeNode.NodeType.PROJECTION;
+                return BinaryTreeNode.NodeType.SCAN;
 
         }
     }

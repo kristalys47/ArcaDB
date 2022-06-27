@@ -1,5 +1,6 @@
-package coordinator;
+package coordinator.plan;
 
+import com.google.gson.JsonArray;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,7 +17,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
 
     public HashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.HASH, parent, inner, outer);
+        super(NodeType.JOIN, parent, inner, outer);
     }
 
     @Override
@@ -31,14 +32,14 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
         }
 
         for (int i = 0; i < resultFile.size(); i++) {
-            JSONArray array = new JSONArray();
-            array.put(0, "join");
-            array.put(1, this.TableAfiles.get(i));
-            array.put(2, this.joinColumnTableA);
-            array.put(3, this.TableBfiles.get(i));
-            array.put(4, this.joinColumnTableB);
+            JsonArray array = new JsonArray();
+            array.add("join");
+            array.add(this.TableAfiles.get(i));
+            array.add(this.joinColumnTableA);
+            array.add(this.TableBfiles.get(i));
+            array.add(this.joinColumnTableB);
             this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode());
-            array.put(5, this.resultFile.get(i));
+            array.add(this.resultFile.get(i));
             //TODO: make request for resources and return the node to execute on
             JSONObject obj = new JSONObject();
             obj.put("plan", array);
