@@ -17,12 +17,8 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
     public ScanBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.SCAN, parent, inner, outer);
-        try {
+        if (info.has("Relation Name"))
             this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));
-        } catch (JSONException exception){
-            this.TableFiles = new ArrayList<>();
-            System.out.println("This node is to be eliminated");
-        }
         if (info.has("Recheck Cond"))
             this.selection = transformSelection(info.getString("Recheck Cond"));
         if (info.has("Filter"))
@@ -51,7 +47,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             //TODO: make request for resources
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
-            connectionWithContainers(obj.toString(), "c1");
+            connectionWithContainers(obj.toString(), "scan");
         }
 
         this.setDone(true);
