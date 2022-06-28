@@ -7,27 +7,37 @@ services:
       - POSTGRES_DB=test
       - POSTGRES_PASSWORD=mypassword
     ports:
-      - 5434:5432
+      - "5434:5432"
   coordinator:
-    image: maven:latest
+    build: /Coordinator/.
+    image: dbms
     ports:
-      - 7271:7271
+      - "7271:7271"
     networks:
       cloud:
         aliases:
           - co
     depends_on:
       - postgresql
-    deploy:
-      replicas: 3
-  worker:
-    image: maven:latest
+  workerscan:
+    build: /Distributed-DBMS/.
+    image: dbms
     volumes:
       - storage:/tmp
     networks:
       cloud:
         aliases:
-            - wo
+          - scan
+    deploy:
+      replicas: 3
+  workerjoin:
+    image: dbms
+    volumes:
+      - storage:/tmp
+    networks:
+      cloud:
+        aliases:
+          - join
     deploy:
       replicas: 3
 networks:

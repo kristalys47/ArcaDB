@@ -10,9 +10,24 @@ apt install -y maven \
 openjdk-13 \
 git
 
+docker build -f /path/to/a/Dockerfile .
+docker build . -t [tag of the image that is forming by the build]
+
+RUN mvn exec:java -Dexec.mainClass="orc.main"
+
+
+docker compose up
+docker stack deploy --compose-file docker-compose.yml [name of services]
+docker stack rm [name of services]
+
+
+
 
 mvn clean install compile package
 //// java -cp target/testORC-1.0.jar orc.main "hello" <- deprecated jeje
+
+
+
 
 java -cp target/testORC-1.0.jar orc.main "insert" "/JavaCode/testORC/testFile.orc" "struct<name:string,val:int>" "{\"values\":[[\"kris\",\"4\"],[\"hel\",\"3\"],[\"bye\",\"10\"]]}"
 

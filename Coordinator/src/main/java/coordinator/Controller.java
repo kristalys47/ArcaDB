@@ -13,8 +13,8 @@ public class Controller {
         try {
             Class.forName("org.postgresql.Driver");
             // local test
-            c = DriverManager.getConnection("jdbc:postgresql://localhost:5433/postgres",
-//            c = DriverManager.getConnection("jdbc:postgresql://postgresql:5432/postgres",
+            //c = DriverManager.getConnection("jdbc:postgresql://localhost:5433/postgres",
+            c = DriverManager.getConnection("jdbc:postgresql://postgresql:5432/postgres",
                             "myusername", "mypassword");
             cursor = c.createStatement();
         } catch (Exception e) {
