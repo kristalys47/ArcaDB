@@ -3,8 +3,6 @@ package coordinator.plan;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.gson.*;
-
-
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -42,12 +40,12 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             array.add(this.TableFiles.get(i));
             array.add(this.selection);
             array.add(this.projection);
-            this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode() + i + ".temporc");
+            this.resultFile.add("/host/QUERY_RESULTS/" + this.hashCode() + i + ".temporc");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
-            connectionWithContainers(obj.toString(), "scan");
+            connectionWithContainers(obj.toString(), "worker");
         }
 
         this.setDone(true);

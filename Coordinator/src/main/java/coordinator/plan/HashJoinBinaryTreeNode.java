@@ -41,12 +41,12 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             array.add(this.OuterColumnName);
             array.add(this.InnerTableFiles.get(i));
             array.add(this.InnerColumnName);
-            this.resultFile.add("/tmp/QUERY_RESULTS/" + this.hashCode());
+            this.resultFile.add("/host/QUERY_RESULTS/" + this.hashCode() + ".temporc");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources and return the node to execute on
             JSONObject obj = new JSONObject();
             obj.put("plan", array);
-            connectionWithContainers(obj.toString(), "join");
+            connectionWithContainers(obj.toString(), "worker");
         }
     }
 }

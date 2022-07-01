@@ -1,0 +1,9 @@
+product struct<id:int,name:string,price:float>
+customer struct<id:int,name:string,email:string,phone:string,city:string>
+order struct<id:int,customerid:int,cityofpurchase:string>
+orderproduct struct<orderid:int,productid:int>
+
+java -jar orc-tools-1.7.5-uber.jar convert product.csv --schema "struct<id:int,name:string,price:float>" -o product.orc
+java -jar orc-tools-1.7.5-uber.jar convert customer.csv --schema "struct<id:int,name:string,email:string,phone:string,city:string>" -o customer.orc
+java -jar orc-tools-1.7.5-uber.jar convert order.csv --schema "struct<id:int,customerid:int,cityofpurchase:string>" -o order.orc
+java -jar orc-tools-1.7.5-uber.jar convert orderproduct.csv --schema "struct<orderid:int,productid:int>" -o orderproduct.orc

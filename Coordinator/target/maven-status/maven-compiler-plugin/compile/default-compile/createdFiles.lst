@@ -1,0 +1,12 @@
+coordinator\plan\Catalog.class
+coordinator\Coordinator.class
+coordinator\main.class
+coordinator\TestingAPI.class
+coordinator\plan\BinaryTreeNode$NodeType.class
+coordinator\plan\BinaryTreePlan$StackNode.class
+coordinator\plan\BinaryTreeNode$1.class
+coordinator\plan\HashJoinBinaryTreeNode.class
+coordinator\plan\ScanBinaryTreeNode.class
+coordinator\plan\BinaryTreePlan.class
+coordinator\Controller.class
+coordinator\plan\BinaryTreeNode.class

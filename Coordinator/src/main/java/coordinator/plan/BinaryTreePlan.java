@@ -10,7 +10,7 @@ public class BinaryTreePlan {
 
     public BinaryTreeNode headNode = null;
 
-    private class StackNode {
+    protected class StackNode {
         public JSONObject object;
         public int count = 0;
         public BinaryTreeNode node;
@@ -58,20 +58,11 @@ public class BinaryTreePlan {
                         StackNode delete = stack.pop();
                         stackNode = delete.node.getParent();
                         break;
-
                 }
             } else {
                 StackNode delete = stack.pop();
                 stackNode = delete.node.getParent();
             }
-
         }
     }
-
-
-
-
-
-
-
 }

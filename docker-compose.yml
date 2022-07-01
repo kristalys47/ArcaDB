@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   postgresql:
     image: postgres
@@ -7,37 +7,50 @@ services:
       - POSTGRES_DB=test
       - POSTGRES_PASSWORD=mypassword
     ports:
-      - "5434:5432"
-  coordinator:
-    build: /Coordinator/.
-    image: dbms
-    ports:
-      - "7271:7271"
+      - 5434:5432
     networks:
       cloud:
         aliases:
-          - co
+          - postgresql
+  coordinator:
+    build: /Coordinator
+    image: coordinator
+    ports:
+      - target: 7271
+        published: 7271
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: storage
+        target: /temp
+      - type: bind
+        source: /host
+        target: /host
+    networks:
+      cloud:
+        aliases:
+          - coordinator
     depends_on:
       - postgresql
-  workerscan:
-    build: /Distributed-DBMS/.
+  worker:
+    build: /Distributed-DBMS
     image: dbms
+    ports:
+      - target: 7272
+        protocol: tcp
+        mode: host
     volumes:
-      - storage:/tmp
+      - type: volume
+        source: storage
+        target: /temp
+      - type: bind
+        source: /host
+        target: /host
     networks:
       cloud:
         aliases:
-          - scan
-    deploy:
-      replicas: 3
-  workerjoin:
-    image: dbms
-    volumes:
-      - storage:/tmp
-    networks:
-      cloud:
-        aliases:
-          - join
+          - worker
     deploy:
       replicas: 3
 networks:
@@ -46,8 +59,3 @@ networks:
     attachable: true
 volumes:
   storage:
-
-
-
-
-

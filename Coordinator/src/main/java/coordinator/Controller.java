@@ -1,13 +1,14 @@
 package coordinator;
 
-import coordinator.plan.BinaryTreePlan;
+import coordinator.plan.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Controller {
-    public static void handleRequest(String query) throws SQLException {
+    public static ArrayList<String> handleRequest(String query) throws SQLException {
         Connection c = null;
         Statement cursor = null;
         try {
@@ -35,14 +36,12 @@ public class Controller {
         JSONObject obj = new JSONObject(a);
         JSONArray array = new JSONArray();
 
-
         BinaryTreePlan btp = new BinaryTreePlan(obj, cursor);
         System.out.println("mm");
 
-
         btp.headNode.run();
 
-
+        return btp.headNode.resultFile;
     }
 
     private static void createTree(JSONObject obj) {
