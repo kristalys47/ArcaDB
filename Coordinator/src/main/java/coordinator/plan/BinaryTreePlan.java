@@ -38,7 +38,7 @@ public class BinaryTreePlan {
                     case 0:
                         peekNode.count++;
                         JSONObject out = array.getJSONObject(0);
-                        String nodeType = peek.getString("Node Type");
+                        String nodeType = out.getString("Node Type");
                         if(nodeType.equals("Bitmap Heap Scan") ||
                                 nodeType.equals("Hash")){
                             peekNode.count++;
@@ -49,7 +49,14 @@ public class BinaryTreePlan {
                         break;
                     case 1:
                         peekNode.count++;
-                        JSONObject in = array.getJSONObject(1);
+                        JSONObject in = array.getJSONObject(1);;
+                        nodeType = in.getString("Node Type");
+                        if(nodeType.equals("Bitmap Heap Scan") ||
+                                nodeType.equals("Hash")){
+                            if(in.has("Plans")){
+                                in = in.getJSONArray("Plans").getJSONObject(0);
+                            }
+                        }
                         stackNode.setInner(BinaryTreeNode.getNodeWithType(in, cursor, stackNode, null, null));
                         stackNode = stackNode.getInner();
                         stack.push(new StackNode(in, 0, stackNode));

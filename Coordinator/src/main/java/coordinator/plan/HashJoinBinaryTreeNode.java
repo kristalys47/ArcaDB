@@ -18,8 +18,10 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
         if (info.has("Hash Cond")){
             String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
                     .replaceAll("\\)", "").split(" = ");
-            OuterColumnName = columns[0].split(".")[1];
-            InnerColumnName = columns[0].split(".")[1];
+            String[] outCol = columns[0].split("\\.");
+            String[] inCol = columns[1].split("\\.");
+            this.OuterColumnName = outCol[1];
+            this.InnerColumnName = inCol[1];
         }
     }
 
@@ -34,7 +36,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             this.InnerTableFiles = this.inner.resultFile;
         }
 
-        for (int i = 0; i < resultFile.size(); i++) {
+        for (int i = 0; i < this.resultFile.size(); i++) {
             JsonArray array = new JsonArray();
             array.add("join");
             array.add(this.OuterTableFiles.get(i));

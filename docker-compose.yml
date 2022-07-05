@@ -1,7 +1,17 @@
 version: "3.9"
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+    networks:
+      cloud:
+        aliases:
+          - postgresql
   postgresql:
     image: postgres
+    container_name: postgres
     environment:
       - POSTGRES_USER=myusername
       - POSTGRES_DB=test
@@ -15,6 +25,7 @@ services:
   coordinator:
     build: /Coordinator
     image: coordinator
+    container_name: coordinator
     ports:
       - target: 7271
         published: 7271
@@ -23,10 +34,10 @@ services:
     volumes:
       - type: volume
         source: storage
-        target: /temp
+        target: /tmp
       - type: bind
-        source: /host
-        target: /host
+        source: /host/.
+        target: /host/.
     networks:
       cloud:
         aliases:
@@ -38,12 +49,10 @@ services:
     image: dbms
     ports:
       - target: 7272
+        published: 7272
         protocol: tcp
         mode: host
     volumes:
-      - type: volume
-        source: storage
-        target: /temp
       - type: bind
         source: /host
         target: /host

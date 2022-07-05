@@ -34,7 +34,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
     @Override
     public void run() {
         //TODO: This part should definitely have threads  or different nodes to perform each part of the result
-        for(int i = 0 ; i < TableFiles.size(); ++i){
+        for(int i = 0 ; i < this.TableFiles.size(); ++i){
             JsonArray array = new JsonArray();
             array.add("scan");
             array.add(this.TableFiles.get(i));

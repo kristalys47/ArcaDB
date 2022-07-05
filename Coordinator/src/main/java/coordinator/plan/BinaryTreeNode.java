@@ -84,7 +84,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public void connectionWithContainers(String args, String containerID){
         String received = "";
         try {
-            Socket socket = new Socket(containerID, APP_PORT);
+            Socket socket = new Socket("localhost", APP_PORT);
             System.out.println("Connected to Server");
             OutputStream out = socket.getOutputStream();
             InputStream in = socket.getInputStream();
