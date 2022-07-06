@@ -5,3 +5,11 @@
 /CTests/cmake-build-debug/
 /CTests/CMakeFiles/
 /Distributed-DBMS/target/
+/DumpingGround/TestingDeployment/.idea/
+/Distributed-DBMS/.idea/
+/Coordinator/.idea/
+/.idea/
+/DumpingGround/testORC/.idea/
+/DumpingGround/testORC/target/
+/TestFiles/Testing-main/target/
+/TestFiles/Testing-main/.idea/
