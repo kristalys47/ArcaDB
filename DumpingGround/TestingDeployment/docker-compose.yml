@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    networks:
+      cloud:
+        aliases:
+          - redis
+  server:
+    build: /Coordinator
+    image: server
+    container_name: coordinator
+    ports:
+      - target: 7271
+        published: 7271
+        protocol: tcp
+        mode: host
+    networks:
+      cloud:
+        aliases:
+          - server
+    depends_on:
+      - redis
+  worker:
+    build: /Distributed-DBMS
+    image: worker
+    networks:
+      cloud:
+        aliases:
+          - worker
+    deploy:
+      replicas: 5
+      placement:
+        max_replicas_per_node: 3
+    depends_on:
+      - redis
+      - coordinator
+    command: ./wait-for-it.sh redis:6379 -- mvn exec:java -Dexec.mainClass="orc.main" -Dexec.args=$IP
+networks:
+  cloud:
+    driver: overlay
+    attachable: true
+volumes:
+  storage:
