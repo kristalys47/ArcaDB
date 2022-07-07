@@ -3,7 +3,6 @@ package coordinator;
 import com.google.gson.*;
 import org.json.JSONObject;
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -1,6 +1,7 @@
 package coordinator.plan;
 
 import org.json.JSONObject;
+import redis.clients.jedis.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -81,25 +82,58 @@ public abstract class BinaryTreeNode implements Runnable{
 
     public abstract void run();
 
-    public void connectionWithContainers(String args, String containerID){
+    public void connectionWithContainers(String args, String containerIP){
         String received = "";
         try {
-            Socket socket = new Socket("localhost", APP_PORT);
+            Socket socket = new Socket(containerIP, APP_PORT);
             System.out.println("Connected to Server");
-            OutputStream out = socket.getOutputStream();
-            InputStream in = socket.getInputStream();
+            Jedis jedis = new Jedis("redis", 6379);
 
-//            boolean finished = false;
-//            while (!finished) {
-                out.write(args.getBytes(StandardCharsets.UTF_8));
-                out.flush();
-
-                byte[] response;
-                response = in.readAllBytes();
-                received = new String(response);
-                //TODO: Check signal for ending
-//                finished = true;
+//            Jedis jedis = new Jedis("redis", 6379);
+//
+//            String nodes = jedis.get("node");
+//            String[] site = nodes.split(",");
+//            String siteIP = "";
+//            for (int i = 0; i < site.length; i++) {
+//                String[] status = site[i].split("-");
+//                if (status[1].equals("available")) {
+//                    siteIP = status[0];
+//                    site[i] = status[0] + "-occupied";
+//                    break;
+//                }
 //            }
+//
+//            String nodesChanged = "";
+//            for (int i = 0; i < site.length; i++) {
+//                if(i == 0){
+//                    nodesChanged += site[i];
+//                } else {
+//                    nodesChanged += "," + site[i];
+//                }
+//            }
+//
+//            jedis.set("node", nodesChanged);
+
+            System.out.println("Site: " + containerIP);
+            System.out.println("Connected - - - - - -");
+
+            OutputStream outR = socket.getOutputStream();
+            InputStream inR = socket.getInputStream();
+
+            PrintStream out = new PrintStream(outR);
+            BufferedReader in = new BufferedReader(new InputStreamReader(inR));
+
+            out.println(args);
+
+            String line = null;
+            String message = "";
+            while((line = in.readLine()) != null)
+            {
+                message += line;
+                if(line.contains("blip--")) //have to decide the ending string
+                    break;
+            }
+
             socket.close();
 
         } catch (Exception s) {

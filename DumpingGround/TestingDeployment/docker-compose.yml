@@ -14,8 +14,6 @@ services:
     image: server
     container_name: coordinator
     ports:
-      - target: 7271
-
       - "7271:7271"
     networks:
       cloud:
