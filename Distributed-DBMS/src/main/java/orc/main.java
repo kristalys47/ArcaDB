@@ -13,7 +13,7 @@ public class main {
 
         Jedis jedis = new Jedis("redis", 6379);
         String ip = InetAddress.getLocalHost().getHostAddress();
-        String nodes;
+        String nodes = "";
         if(jedis.exists("node")){
             nodes = jedis.get("node");
             nodes = nodes + "," + ip + "-available";
@@ -42,10 +42,12 @@ public class main {
 
         String line = null;
         String message = "";
+
+
         while((line = in.readLine()) != null)
         {
             message += line;
-            if(line.contains("blip--")) //have to decide the ending string
+            if(line.contains("/EOF")) //have to decide the ending string
                 break;
         }
 

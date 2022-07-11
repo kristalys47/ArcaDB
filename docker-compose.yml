@@ -9,6 +9,7 @@ services:
       cloud:
         aliases:
           - redis
+
   postgresql:
     image: postgres
     container_name: postgres
@@ -22,8 +23,8 @@ services:
       cloud:
         aliases:
           - postgresql
+
   coordinator:
-    build: /Coordinator
     image: coordinator
     container_name: coordinator
     ports:
@@ -33,7 +34,7 @@ services:
         source: storage
         target: /tmp
       - type: bind
-        source: /host/.
+        source: /home/kristalys/
         target: /host/.
     networks:
       cloud:
@@ -41,26 +42,30 @@ services:
           - coordinator
     depends_on:
       - postgresql
+
   worker:
-    build: /Distributed-DBMS
     image: dbms
-    ports:
-      - "7271:7271"
     volumes:
       - type: bind
-        source: /host
+        source: /home/kristalys/
         target: /host
     networks:
       cloud:
         aliases:
           - worker
     deploy:
-      replicas: 10
+      replicas: 8
       placement:
-        ,max_replicas_per_node: 3
+        max_replicas_per_node: 4
+    depends_on:
+      - redis
+      - coordinator
+    command: ./wait-for-it.sh redis:6379 -- mvn exec:java -Dexec.mainClass="orc.main"
+
 networks:
   cloud:
     driver: overlay
     attachable: true
+
 volumes:
   storage:

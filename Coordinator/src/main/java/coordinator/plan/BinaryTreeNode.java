@@ -5,18 +5,17 @@ import redis.clients.jedis.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.sql.Statement;
 import java.util.ArrayList;
 
 public abstract class BinaryTreeNode implements Runnable{
     public static final int APP_PORT  = 7272;
-    protected BinaryTreeNode inner;
-    protected BinaryTreeNode outer;
-    protected BinaryTreeNode parent;
-    protected NodeType type;
-    protected boolean isLeaf;
-    protected boolean done;
+    public BinaryTreeNode inner;
+    public BinaryTreeNode outer;
+    public BinaryTreeNode parent;
+    public NodeType type;
+    public boolean isLeaf;
+    public boolean done;
     public ArrayList<String> resultFile;
 
 
@@ -85,37 +84,36 @@ public abstract class BinaryTreeNode implements Runnable{
     public void connectionWithContainers(String args, String containerIP){
         String received = "";
         try {
-            Socket socket = new Socket(containerIP, APP_PORT);
-            System.out.println("Connected to Server");
             Jedis jedis = new Jedis("redis", 6379);
 
-//            Jedis jedis = new Jedis("redis", 6379);
-//
-//            String nodes = jedis.get("node");
-//            String[] site = nodes.split(",");
-//            String siteIP = "";
-//            for (int i = 0; i < site.length; i++) {
-//                String[] status = site[i].split("-");
-//                if (status[1].equals("available")) {
-//                    siteIP = status[0];
-//                    site[i] = status[0] + "-occupied";
-//                    break;
-//                }
-//            }
-//
-//            String nodesChanged = "";
-//            for (int i = 0; i < site.length; i++) {
-//                if(i == 0){
-//                    nodesChanged += site[i];
-//                } else {
-//                    nodesChanged += "," + site[i];
-//                }
-//            }
-//
-//            jedis.set("node", nodesChanged);
+            String nodes = jedis.get("node");
+            String[] site = nodes.split(",");
+            String siteIP = "";
+            for (int i = 0; i < site.length; i++) {
+                String[] status = site[i].split("-");
+                if (status[1].equals("available")) {
+                    siteIP = status[0];
+                    site[i] = status[0] + "-occupied";
+                    break;
+                }
+            }
+
+            String nodesChanged = "";
+            for (int i = 0; i < site.length; i++) {
+                if(i == 0){
+                    nodesChanged += site[i];
+                } else {
+                    nodesChanged += "," + site[i];
+                }
+            }
+
+            jedis.set("node", nodesChanged);
 
             System.out.println("Site: " + containerIP);
             System.out.println("Connected - - - - - -");
+
+            Socket socket = new Socket(siteIP, APP_PORT);
+            System.out.println("Connected to Server");
 
             OutputStream outR = socket.getOutputStream();
             InputStream inR = socket.getInputStream();
@@ -123,21 +121,24 @@ public abstract class BinaryTreeNode implements Runnable{
             PrintStream out = new PrintStream(outR);
             BufferedReader in = new BufferedReader(new InputStreamReader(inR));
 
-            out.println(args);
+            out.println(args + "/EOF");
 
             String line = null;
             String message = "";
             while((line = in.readLine()) != null)
             {
                 message += line;
-                if(line.contains("blip--")) //have to decide the ending string
+                if(line.contains("Successful")) //have to decide the ending string
                     break;
+                else
+                    throw new Exception("There was an error in the container " + siteIP + " " + message);
             }
 
             socket.close();
 
         } catch (Exception s) {
             System.out.println(s);
+            throw new RuntimeException("Not working" + s);
         }
 
         this.setDone(true);
@@ -151,7 +152,6 @@ public abstract class BinaryTreeNode implements Runnable{
                 return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
             default:
                 return new ScanBinaryTreeNode(object, cursor, parent, inner, outer);
-
         }
     }
 
