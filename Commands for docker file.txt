@@ -44,6 +44,7 @@ https://programmerall.com/article/62732193206/
 
 
 
+
 TODO:
 -create dockerfile with dependencies to run the project
 -Create organized maven project
@@ -83,7 +84,7 @@ docker run -it --rm \
   --volume /var/run/docker.sock:/var/run/docker.sock \
 swarmpit/install:1.9
 
-
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04
 
 
 java -jar test-ORC.jar
