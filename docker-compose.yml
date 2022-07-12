@@ -32,10 +32,7 @@ services:
     volumes:
       - type: volume
         source: storage
-        target: /tmp
-      - type: bind
-        source: /home/kristalys/
-        target: /host/
+        target: /nfs
     networks:
       cloud:
         aliases:
@@ -46,9 +43,9 @@ services:
   worker:
     image: dbms
     volumes:
-      - type: bind
-        source: /home/kristalys/
-        target: /host/
+      - type: volume
+        source: storage
+        target: /nfs
     networks:
       cloud:
         aliases:
@@ -69,3 +66,5 @@ networks:
 
 volumes:
   storage:
+    driver_opts:
+      type: "nfs"
