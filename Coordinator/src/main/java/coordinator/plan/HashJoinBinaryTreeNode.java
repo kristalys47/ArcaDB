@@ -44,7 +44,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             array.add(this.OuterColumnName);
             array.add(this.InnerTableFiles.get(i));
             array.add(this.InnerColumnName);
-            this.resultFile.add("/nfs/QUERY_RESULTS/" + this.hashCode() + ".temporc");
+            this.resultFile.add("/nfs/QUERY_RESULTS/" + this.hashCode() + ".json");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources and return the node to execute on
             JsonObject obj = new JsonObject();
