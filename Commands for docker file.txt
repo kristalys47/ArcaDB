@@ -34,13 +34,12 @@ mvn clean install compile package
 java -cp target/testORC-1.0.jar orc.main "insert" "/JavaCode/testORC/testFile.orc" "struct<name:string,val:int>" "{\"values\":[[\"kris\",\"4\"],[\"hel\",\"3\"],[\"bye\",\"10\"]]}"
 
 
-https://generatedata.com
+
 "select * from mytable where mytable.id > 20;"
 "struct<id:int,name:string,email:string,address:string>"
 
 
-https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file
-https://programmerall.com/article/62732193206/
+
 
 
 
@@ -84,7 +83,7 @@ docker run -it --rm \
   --volume /var/run/docker.sock:/var/run/docker.sock \
 swarmpit/install:1.9
 
-https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04
+
 
 
 java -jar test-ORC.jar
@@ -141,5 +140,15 @@ byte[] response;
 response = in.readAllBytes();
 received = new String(response);
 
+
+Links that are important
+
+https://generatedata.com
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04
+
+https://www.tecmint.com/install-nfs-server-on-ubuntu/
+
+https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file
+https://programmerall.com/article/62732193206/
 
 

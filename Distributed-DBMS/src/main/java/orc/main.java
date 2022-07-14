@@ -42,12 +42,11 @@ public class main {
 
         String line = null;
         String message = "";
-
-
         while((line = in.readLine()) != null)
         {
             message += line;
             if(line.contains("/EOF")) //have to decide the ending string
+                message = message.substring(0, message.length()-4);
                 break;
         }
 

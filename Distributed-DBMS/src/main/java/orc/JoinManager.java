@@ -75,12 +75,12 @@ public class JoinManager {
 
 
         //TODO: This needs to be fixed
-        File directory = new File("/tmp/join/");
+        File directory = new File("/nfs/tmp/join/");
 
         if(!directory.exists()){
             directory.mkdir();
         }
-        directory = new File("/tmp/results/");
+        directory = new File("/nfs/tmp/results/");
 
         if(!directory.exists()){
             directory.mkdir();
@@ -97,7 +97,7 @@ public class JoinManager {
         String singleFile = "";
         UUID id = UUID.randomUUID();
         for (int i = 0; i < 100; i++) {
-            singleFile = "/tmp/finishedJoin" + i + "_" + id;
+            singleFile = "/nfs/tmp/finishedJoin" + i + "_" + id;
             files.add(singleFile);
             Join tmp = new Join(tableR.readRecords(i), tableS.getFileBuckets(i), singleFile);
             pool.execute(tmp);

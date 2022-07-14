@@ -26,7 +26,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
 
     public String transformSelection(String conditions){
         String cleaned = conditions.replaceAll(" ", "").replaceAll("\\)AND\\(", "\\)&\\(")
-                .replaceAll("\\)OR\\(", "\\)|\\(").replaceAll("::numeric", "")
+                .replaceAll("\\)OR\\(", "\\)|\\(").replaceAll("::numeric", "").replaceAll("::text", "")
                 .replaceAll("\\'", "");
         return cleaned;
     }
@@ -40,7 +40,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             array.add(this.TableFiles.get(i));
             array.add(this.selection);
             array.add(this.projection);
-            this.resultFile.add("/host/QUERY_RESULTS/" + this.hashCode() + i + ".temporc");
+            this.resultFile.add("/nfs/QUERY_RESULTS/" + this.hashCode() + i + ".temporc");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources
             JsonObject obj = new JsonObject();

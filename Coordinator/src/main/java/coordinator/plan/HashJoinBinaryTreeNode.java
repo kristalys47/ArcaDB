@@ -1,6 +1,7 @@
 package coordinator.plan;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.json.JSONObject;
 
 import java.sql.Statement;
@@ -36,19 +37,20 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             this.InnerTableFiles = this.inner.resultFile;
         }
 
-        for (int i = 0; i < this.resultFile.size(); i++) {
+        for (int i = 0; i < this.OuterTableFiles.size(); i++) {
             JsonArray array = new JsonArray();
             array.add("join");
             array.add(this.OuterTableFiles.get(i));
             array.add(this.OuterColumnName);
             array.add(this.InnerTableFiles.get(i));
             array.add(this.InnerColumnName);
-            this.resultFile.add("/host/QUERY_RESULTS/" + this.hashCode() + ".temporc");
+            this.resultFile.add("/nfs/QUERY_RESULTS/" + this.hashCode() + ".temporc");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources and return the node to execute on
-            JSONObject obj = new JSONObject();
-            obj.put("plan", array);
+            JsonObject obj = new JsonObject();
+            obj.add("plan", array);
             connectionWithContainers(obj.toString(), "worker");
         }
+        this.setDone(true);
     }
 }

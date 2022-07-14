@@ -17,6 +17,10 @@ services:
       - POSTGRES_USER=myusername
       - POSTGRES_DB=test
       - POSTGRES_PASSWORD=mypassword
+    volumes:
+      - type: volume
+        source: storage
+        target: /var/lib/postgresql/data
     ports:
       - "5434:5432"
     networks:
@@ -51,9 +55,9 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 8
+      replicas: 6
       placement:
-        max_replicas_per_node: 4
+        max_replicas_per_node: 3
     depends_on:
       - redis
       - coordinator
@@ -66,5 +70,8 @@ networks:
 
 volumes:
   storage:
+    driver: local
     driver_opts:
       type: "nfs"
+      o: "nfsvers=4,addr=136.145.116.85,rw"
+      device: ":/nfs"

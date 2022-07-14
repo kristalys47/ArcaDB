@@ -63,7 +63,7 @@ public class ORCManager {
         projectionForSelection[0] = true;
         for(int i = 0; i< names.size(); i++) {
 
-            if(project.size() == 0 ||  project.contains(names.get(i))){
+            if(project.get(0).equals("") ||  project.contains(names.get(i))){
                 td.addField(names.get(i), new TypeDescription(schema.getChildren().get(i).getCategory()));
                 finalProjection[i+1] = true;
                 projectionForSelection[i+1] = true;
@@ -93,19 +93,27 @@ public class ORCManager {
                 }
             }
             //TODO: make parent node count the occurances in the same loop it evaluates if it should be selected.
-            int[] selected = op.treeEvaluation(row);
-            int include = 0;
-            for (int i = 0; i < batch.size; i++) {
-                if(selected[i] == 1)
-                    include++;
+
+            if(op.root != null) {
+                int[] selected = op.treeEvaluation(row);
+                int include = 0;
+                for (int i = 0; i < batch.size; i++) {
+                    if (selected[i] == 1)
+                        include++;
+                }
+                vv.setFilterContext(true, selected, include);
+                for (int i = 0; i < vv.numCols; i++) {
+                    vv.cols[i].flatten(true, selected, include);
+                }
+            } else {
+                vv.size = batch.size;
             }
-            vv.setFilterContext(true, selected, include);
-            for (int i = 0; i < vv.numCols; i++) {
-                vv.cols[i].flatten(true, selected, include);
-            }
+
             OrcFile.WriterOptions options = OrcFile.writerOptions(conf).overwrite(true).setSchema(td);
             if(vv.count()>0) {
-                Path pathO = new Path(result + "-" + t);
+                //TODO: user folders inteads of files to save intermidiate results
+//                Path pathO = new Path(result + "-" + t);
+                Path pathO = new Path(result);
                 t++;
                 Writer writer = OrcFile.createWriter(pathO, options);
                 writer.addRowBatch(vv);

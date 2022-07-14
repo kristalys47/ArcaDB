@@ -39,7 +39,7 @@ public class GRACEHashArray {
     }
 
     private void flushToFile(int bucket) {
-        String fileName = "/tmp/join/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
+        String fileName = "/nfs/tmp/join/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
         File tempFile = new File(fileName);
         fileBuckets[bucket].add(tempFile);
 

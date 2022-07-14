@@ -141,9 +141,14 @@ public class UTests {
     }
 
     @Test
-
     public void joinManagerTest() throws Exception {
         String[] argsA = {"join", "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk", "/tmp/results/joinresult.json"};
+        WorkerManager.dbms(argsA);
+    }
+
+    @Test
+    public void joinNFS() throws Exception {
+        String[] argsA = {"join", "/nfs/QUERY_RESULTS/21036271910.temporc", "productid",  "/nfs/QUERY_RESULTS/3039440750.temporc", "id", "/nfs/testing.temporc"};
         WorkerManager.dbms(argsA);
     }
 

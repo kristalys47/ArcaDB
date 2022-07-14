@@ -84,6 +84,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public void connectionWithContainers(String args, String containerIP){
         String received = "";
         try {
+//            Jedis jedis = new Jedis("localhost", 6379);
             Jedis jedis = new Jedis("redis", 6379);
 
             String nodes = jedis.get("node");
@@ -111,7 +112,6 @@ public abstract class BinaryTreeNode implements Runnable{
 
             System.out.println("Site: " + containerIP);
             System.out.println("Connected - - - - - -");
-
             Socket socket = new Socket(siteIP, APP_PORT);
             System.out.println("Connected to Server");
 
