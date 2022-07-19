@@ -7,6 +7,8 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public abstract class BinaryTreeNode implements Runnable{
     public static final int APP_PORT  = 7272;
@@ -87,28 +89,16 @@ public abstract class BinaryTreeNode implements Runnable{
 //            Jedis jedis = new Jedis("localhost", 6379);
             Jedis jedis = new Jedis("redis", 6379);
 
-            String nodes = jedis.get("node");
-            String[] site = nodes.split(",");
+            Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
-            for (int i = 0; i < site.length; i++) {
-                String[] status = site[i].split("-");
-                if (status[1].equals("available")) {
-                    siteIP = status[0];
-                    site[i] = status[0] + "-occupied";
+            for (String node: nodes) {
+                String status = jedis.get(node);
+                if (status.equals("available")) {
+                    siteIP = node;
+                    jedis.set
                     break;
                 }
             }
-
-            String nodesChanged = "";
-            for (int i = 0; i < site.length; i++) {
-                if(i == 0){
-                    nodesChanged += site[i];
-                } else {
-                    nodesChanged += "," + site[i];
-                }
-            }
-
-            jedis.set("node", nodesChanged);
 
             System.out.println("Site: " + containerIP);
             System.out.println("Connected - - - - - -");

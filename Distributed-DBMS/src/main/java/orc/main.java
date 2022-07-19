@@ -13,15 +13,8 @@ public class main {
 
         Jedis jedis = new Jedis("redis", 6379);
         String ip = InetAddress.getLocalHost().getHostAddress();
-        String nodes = "";
-        if(jedis.exists("node")){
-            nodes = jedis.get("node");
-            nodes = nodes + "," + ip + "-available";
-        } else {
-            nodes = ip + "-available";
-        }
-
-        jedis.set("node", nodes);
+        jedis.sadd("node", ip);
+        jedis.set(ip, "available");
 
         //TODO: need a better logger when this is working
         //TODO: custom port
