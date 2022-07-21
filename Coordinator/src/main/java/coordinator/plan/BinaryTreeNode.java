@@ -95,7 +95,7 @@ public abstract class BinaryTreeNode implements Runnable{
                 String status = jedis.get(node);
                 if (status.equals("available")) {
                     siteIP = node;
-                    jedis.set
+                    jedis.set(node, "Down");
                     break;
                 }
             }

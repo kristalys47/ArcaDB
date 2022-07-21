@@ -267,7 +267,7 @@ public class UTests {
         test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
         test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
         test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 42);
-        test.toString();
+        System.out.println(test.toString());
 
     }
 
@@ -288,7 +288,7 @@ public class UTests {
         list.add(test);
         list.add(test2);
 
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.116.98:10800");
         try (IgniteClient client = Ignition.startClient(cfg)) {
             ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
             cache.put("/temp/partition/1", list);
@@ -298,7 +298,7 @@ public class UTests {
 
     @Test
     public void testAttributesReadInIgnite() throws Exception {
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.116.98:10800");
         try (IgniteClient client = Ignition.startClient(cfg)) {
             ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
             ArrayList<Tuple> list = cache.get("/temp/partition/1");
@@ -307,6 +307,4 @@ public class UTests {
             }
         }
     }
-
-
 }
