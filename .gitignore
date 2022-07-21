@@ -19,3 +19,7 @@
 /CTests/orc/
 /CTests/cmake-build-debug/
 /CTests/CMakeFiles/
+/Worker/target/
+/Worker/.idea/
+/DumpingGround/Distributed-DBMS/.idea/
+/DumpingGround/Distributed-DBMS/target/
