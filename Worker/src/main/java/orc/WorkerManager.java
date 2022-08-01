@@ -39,7 +39,7 @@ public class WorkerManager {
             JoinManager.joinPartition(arg[1], arg[2], arg[3], arg[4]);
         }
         else if (arg[0].indexOf("joinProbing")>-1) {
-            JoinManager.join(arg[1], arg[2], arg[3], arg[4], arg[5]);
+            JoinManager.joinProbing(arg[1], arg[2], arg[3]);
         }
         else{
             return ORCManager.reader(arg[1], arg[2], arg[3], arg[4]);

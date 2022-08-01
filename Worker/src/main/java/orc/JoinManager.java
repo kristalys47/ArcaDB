@@ -80,7 +80,8 @@ public class JoinManager {
         GRACEHashArrayInParts table = scannedToMap(path, column, relation, Integer.valueOf(buckets));
     }
 
-    public static void joinProbing(String pathS, String pathR, int bucket) throws IOException {
+    public static void joinProbing(String pathS, String pathR, String bucketID) throws IOException {
+        int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
         while(jedis.llen(pathS) > 0){
             try (IgniteClient client = Ignition.startClient(cfg)) {

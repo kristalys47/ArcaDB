@@ -7,11 +7,11 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
+import static coordinator.CommonVariables.*;
+
 public abstract class BinaryTreeNode implements Runnable{
-    public static final int APP_PORT  = 7272;
     public BinaryTreeNode inner;
     public BinaryTreeNode outer;
     public BinaryTreeNode parent;
@@ -21,7 +21,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public ArrayList<String> resultFile;
 
 
-    public enum NodeType {JOIN, SCAN};
+    public enum NodeType {PARALLELJOIN, JOIN, SCAN};
 
     public BinaryTreeNode(NodeType type, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer){
         this.type = type;
@@ -87,7 +87,6 @@ public abstract class BinaryTreeNode implements Runnable{
         String received = "";
         try {
 //            Jedis jedis = new Jedis("localhost", 6379);
-            Jedis jedis = new Jedis("redis", 6379);
 
             Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
