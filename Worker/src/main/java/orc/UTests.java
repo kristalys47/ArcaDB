@@ -1,5 +1,14 @@
 package orc;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import orc.helperClasses.*;
@@ -19,11 +28,14 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMultic
 import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static orc.SharedConnections.*;
 
 public class UTests {
     @Test
@@ -305,6 +317,77 @@ public class UTests {
             for (Tuple tuple : list) {
                 System.out.println(tuple.toString());
             }
+        }
+    }
+
+    @Test
+    public void s3test(){
+        AWSCredentials credentials = new BasicAWSCredentials(
+                "AKIA6E4TYZ3JLKC2LPFR",
+                "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1"
+        );
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        List<Bucket> buckets = s3client.listBuckets();
+        for(Bucket bucket : buckets) {
+            System.out.println(bucket.getName());
+        }
+    }
+    @Test
+    public void s3test2(){
+        AWSCredentials credentials = new BasicAWSCredentials(
+                "AKIA6E4TYZ3JLKC2LPFR",
+                "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1"
+        );
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        s3client.putObject(
+                "testingjoin",
+                "Document/test.orc",
+                new File("C:\\Users\\Abigail\\git-data\\Container-DBMS\\tables\\product.orc")
+        );
+    }
+    @Test
+    public void s3test3(){
+        AWSCredentials credentials = new BasicAWSCredentials(
+                "AKIA6E4TYZ3JLKC2LPFR",
+                "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1"
+        );
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        ObjectListing objectListing = s3client.listObjects("testingjoin");
+        for(S3ObjectSummary os : objectListing.getObjectSummaries()) {
+            System.out.println(os.getKey());
+        }
+    }
+
+    @Test
+    public void joinTestingAWS(){
+        AWSCredentials credentials = new BasicAWSCredentials(
+                "AKIA6E4TYZ3JLKC2LPFR",
+                "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1"
+        );
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        ObjectListing objectListing = s3client.listObjects("testingjoin");
+        for(S3ObjectSummary os : objectListing.getObjectSummaries()) {
+            System.out.println(os.getKey());
         }
     }
 }

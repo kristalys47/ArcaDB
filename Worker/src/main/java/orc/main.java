@@ -1,17 +1,16 @@
 package orc;
 
 import com.google.gson.*;
-import redis.clients.jedis.*;
 
 import java.io.*;
 import java.net.*;
-
+import static orc.SharedConnections.*;
 
 public class main {
 
     static public void main(String[] arg) throws Exception {
 
-        Jedis jedis = new Jedis("redis", 6379);
+
         String ip = InetAddress.getLocalHost().getHostAddress();
         jedis.sadd("node", ip);
         jedis.set(ip, "available");
