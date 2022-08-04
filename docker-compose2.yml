@@ -9,6 +9,7 @@ services:
       cloud:
         aliases:
           - redis
+
   postgresql:
     image: postgres
     container_name: postgres
@@ -16,11 +17,12 @@ services:
       - POSTGRES_USER=myusername
       - POSTGRES_DB=test
       - POSTGRES_PASSWORD=mypassword
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /var/lib/postgresql/data
     ports:
-      - target: 5432
-        published: 5434
-        ho
-        protocol: tcp
+      - "5432:5432"
     networks:
       cloud:
         aliases:
@@ -31,6 +33,10 @@ services:
     container_name: coordinator
     ports:
       - "7271:7271"
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /nfs
     networks:
       cloud:
         aliases:
@@ -40,6 +46,10 @@ services:
 
   worker:
     image: worker
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /nfs
     networks:
       cloud:
         aliases:
@@ -57,3 +67,11 @@ networks:
   cloud:
     driver: overlay
     attachable: true
+#
+#volumes:
+#  storage:
+#    driver: local
+#    driver_opts:
+#      type: "nfs"
+#      o: "nfsvers=4,addr=136.145.116.85,rw"
+#      device: ":/nfs"

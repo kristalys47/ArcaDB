@@ -351,8 +351,13 @@ public class UTests {
 
         s3client.putObject(
                 "testingjoin",
-                "Document/test.orc",
+                "/product/product.orc",
                 new File("C:\\Users\\Abigail\\git-data\\Container-DBMS\\tables\\product.orc")
+        );
+        s3client.putObject(
+                "testingjoin",
+                "/customer/customer.orc",
+                new File("C:\\Users\\Abigail\\git-data\\Container-DBMS\\tables\\customer.orc")
         );
     }
     @Test

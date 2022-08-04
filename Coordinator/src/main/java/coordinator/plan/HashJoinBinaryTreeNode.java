@@ -6,10 +6,11 @@ import org.json.JSONObject;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HashJoinBinaryTreeNode extends BinaryTreeNode{
-    public ArrayList<String> OuterTableFiles;
-    public ArrayList<String> InnerTableFiles;
+    public List<String> OuterTableFiles;
+    public List<String> InnerTableFiles;
     public String OuterColumnName;
     public String InnerColumnName;
 
@@ -27,7 +28,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
     }
 
     @Override
-    public void run() {
+    public void execute() {
         if(this.outer != null){
             this.outer.run();
             this.OuterTableFiles = this.outer.resultFile;
@@ -36,6 +37,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             this.inner.run();
             this.InnerTableFiles = this.inner.resultFile;
         }
+        ArrayList<String> result = new ArrayList<>();
 
         for (int i = 0; i < this.OuterTableFiles.size(); i++) {
             JsonArray array = new JsonArray();
@@ -44,11 +46,12 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             array.add(this.OuterColumnName);
             array.add(this.InnerTableFiles.get(i));
             array.add(this.InnerColumnName);
-            this.resultFile.add("/nfs/QUERY_RESULTS/" + this.hashCode() + ".json");
+            result.add("/nfs/QUERY_RESULTS/" + this.hashCode() + ".json");
             array.add(this.resultFile.get(i));
             //TODO: make request for resources and return the node to execute on
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
+            this.resultFile = result;
             connectionWithContainers(obj.toString(), "worker");
         }
         this.setDone(true);

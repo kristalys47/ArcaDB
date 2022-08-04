@@ -20,7 +20,6 @@ public class ContainerManager extends Thread{
     public void run() {
         String received = "";
         try {
-
             Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
             for (String node: nodes) {

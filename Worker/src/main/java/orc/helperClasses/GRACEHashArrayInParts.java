@@ -15,7 +15,7 @@ public class GRACEHashArrayInParts {
     private int FILE_SIZE = 16384;
     private LinkedList<String>[] fileBuckets;
     private LinkedList<Tuple>[] records;
-    private int recordsLimit = 300;
+    private int recordsLimit = 200;
     private String relation;
 
     // TODO: Create own Linked List that will autoflush.

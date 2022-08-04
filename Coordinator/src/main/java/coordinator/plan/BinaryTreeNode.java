@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static coordinator.CommonVariables.*;
@@ -18,7 +19,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public NodeType type;
     public boolean isLeaf;
     public boolean done;
-    public ArrayList<String> resultFile;
+    public List<String> resultFile;
 
 
     public enum NodeType {PARALLELJOIN, JOIN, SCAN};
@@ -81,7 +82,12 @@ public abstract class BinaryTreeNode implements Runnable{
         isLeaf = leaf;
     }
 
-    public abstract void run();
+    @Override
+    public void run(){
+        execute();
+    }
+
+    public abstract void execute();
 
     public void connectionWithContainers(String args, String containerIP){
         String received = "";
@@ -136,9 +142,10 @@ public abstract class BinaryTreeNode implements Runnable{
 
     static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer){
         NodeType node_type= getType(object.getString("Node Type"));
+//        TODO: depends on the mode we can change this. IMPORTANT
         switch (node_type){
             case JOIN:
-                return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
+                return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
             default:
                 return new ScanBinaryTreeNode(object, cursor, parent, inner, outer);
         }

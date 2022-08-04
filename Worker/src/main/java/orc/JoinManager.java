@@ -98,8 +98,10 @@ public class JoinManager {
             }
         }
 
-        FileOutputStream fileOut = new FileOutputStream("/nfs/tmp/join/" + bucket);
-        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//        FileOutputStream fileOut = new FileOutputStream("/nfs/tmp/join/" + bucket);
+//        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//        FileWriter fr = new FileWriter( "/nfs/tmp/join/" + bucket);
+        boolean first = true;
         while(jedis.llen(pathR) > 0){
             try (IgniteClient client = Ignition.startClient(cfg)) {
                 ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
@@ -110,15 +112,20 @@ public class JoinManager {
                         HashNode<Tuple> current = map.get(key);
                         do {
                             Tuple joined = Tuple.joinTuple(record, current.getElement());
-                            out.writeObject(joined);
-                            out.close();
-                            fileOut.close();
+                            jedis.rpush("result" + bucket, joined.toString());
+//                            fr.write(joined.toString() + "\n");
+//                            out.writeObject(joined);
+
                             current = current.getNext();
                         }while(current != null);
                     }
                 }
             }
         }
+//        fr.flush();
+//        fr.close();
+//        out.close();
+//        fileOut.close();
     }
 
     //, String pathS, String[] columns

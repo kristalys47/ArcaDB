@@ -75,7 +75,8 @@ jdbc:postgresql://postgresql:5432/postgres
 
 docker run --name postgresql -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword -p 5433:5432 -d postgres
 
-
+docker pull apacheignite/ignite
+docker run -d -p 10800:10800 apacheignite/ignite
 
 SWARMPIT -- tracker
 docker run -it --rm \

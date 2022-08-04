@@ -2,17 +2,11 @@ package coordinator;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.orc.tools.JsonFileDump;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.json.JSONObject;
-import org.apache.orc.tools.*;
 
 import java.io.FileReader;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -24,7 +18,7 @@ public class Coordinator {
             JSONObject json  = new JSONObject(request.body());
 //            JsonObject results = new JsonObject();
 //            System.out.println(json.get("query"));
-            ArrayList<String> result;
+            List<String> result;
             try {
                 result = Controller.handleRequest((String) json.get("query"));
 //                Gson gson = new Gson();

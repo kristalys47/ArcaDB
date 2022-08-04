@@ -5,9 +5,11 @@ import org.json.JSONObject;
 import com.google.gson.*;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class ScanBinaryTreeNode extends BinaryTreeNode{
-    public ArrayList<String> TableFiles;
+    public List<String> TableFiles;
     public String selection = "";
     public String projection = "";
 
@@ -15,6 +17,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
     public ScanBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.SCAN, parent, inner, outer);
+        //TODO: you can get the relation from here to send to the hash join make it a variable;
         if (info.has("Relation Name"))
             this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));
         if (info.has("Recheck Cond"))
@@ -32,7 +35,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
     }
 
     @Override
-    public void run() {
+    public void execute() {
         //TODO: This part should definitely have threads  or different nodes to perform each part of the result
         for(int i = 0 ; i < this.TableFiles.size(); ++i){
             JsonArray array = new JsonArray();
