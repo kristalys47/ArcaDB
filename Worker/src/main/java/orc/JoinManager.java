@@ -1,11 +1,18 @@
 package orc;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import orc.helperClasses.*;
 import orc.helperClasses.AES;
 import orc.helperClasses.GRACEHashArray;
 import orc.helperClasses.Join;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
@@ -14,6 +21,7 @@ import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.orc.OrcFile;
 import org.apache.orc.Reader;
 import org.apache.orc.TypeDescription;
@@ -21,6 +29,7 @@ import org.apache.orc.impl.RecordReaderImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -74,16 +83,24 @@ public class JoinManager {
     }
 
     public static void joinPartition(String path, String column, String relation, String buckets) throws IOException {
-        InputStream in = s3client.getObject(s3Bucket, path).getObjectContent();
-        Files.copy(in, Paths.get(path));
-        in.close();
+
+        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
+        FileUtils.copyInputStreamToFile(in, new File(path));
         GRACEHashArrayInParts table = scannedToMap(path, column, relation, Integer.valueOf(buckets));
     }
 
     public static void joinProbing(String pathS, String pathR, String bucketID) throws IOException {
         int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathS) > 0){
+            ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
             try (IgniteClient client = Ignition.startClient(cfg)) {
                 ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
                 LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
@@ -103,6 +120,7 @@ public class JoinManager {
 //        FileWriter fr = new FileWriter( "/nfs/tmp/join/" + bucket);
         boolean first = true;
         while(jedis.llen(pathR) > 0){
+            ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
             try (IgniteClient client = Ignition.startClient(cfg)) {
                 ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
                 LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathR));
@@ -216,10 +234,10 @@ public class JoinManager {
                 Tuple created = new Tuple(batch.cols.length + 1);
                 StringBuilder key = new StringBuilder();
                 for (int j = 0; j < batch.cols.length; j++) {
-                    created.addAttribute(colType.get(j), j+1, colName.get(j), batch.cols[j]);
+                    created.addAttribute(colType.get(j), j+1, colName.get(j), batch.cols[j], r);
                     if(j == joinKey){
                         batch.cols[j].stringifyValue(key, r);
-                        created.addAttribute(Attribute.AttributeType.Integer, 0, colName.get(j), (hashFunction(key.toString(), hashing)));
+                        created.addAttribute(Attribute.AttributeType.Integer, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
                     }
 
                 }

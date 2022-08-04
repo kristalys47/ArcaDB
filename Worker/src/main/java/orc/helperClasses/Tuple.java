@@ -1,5 +1,9 @@
 package orc.helperClasses;
 
+import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.orc.TypeDescription;
 
 import java.io.Serializable;
@@ -13,33 +17,29 @@ public class Tuple implements Serializable {
         this.attributeArrayList = new Attribute[attributesNum];
     }
 
-    public void addAttribute(TypeDescription type, int position, String name, Object value){
+    public void addAttribute(TypeDescription type, int position, String name, ColumnVector value, int index){
+        ColumnVector.Type coltype = Utils.getTypeFromTypeCategory(type.getCategory());
         Attribute.AttributeType typeAttribute = Utils.getAttributeTypeFromTypeCategory(type.getCategory());
         switch (typeAttribute) {
             case Integer:
-                this.attributeArrayList[position] = new IntegerAttribute(name, (Integer) value);
+                LongColumnVector lcv = (LongColumnVector) value;
+                this.attributeArrayList[position] = new IntegerAttribute(name, (int) lcv.vector[index]);
                 break;
             case String:
-                this.attributeArrayList[position] = new StringAttribute(name, (String) value);
+                BytesColumnVector bcv = (BytesColumnVector) value;
+                StringBuilder sb = new StringBuilder();
+                bcv.stringifyValue(sb, index);
+                this.attributeArrayList[position] = new StringAttribute(name, sb.toString());
                 break;
             case Float:
-                this.attributeArrayList[position] = new FloatAttribute(name, (Float) value);
+                DoubleColumnVector dcv = (DoubleColumnVector) value;
+                this.attributeArrayList[position] = new FloatAttribute(name, (float) dcv.vector[index]);
                 break;
         }
     }
 
-    public void addAttribute(Attribute.AttributeType type, int position, String name, Object value){
-        switch (type) {
-            case Integer:
-                this.attributeArrayList[position] = new IntegerAttribute(name, (Integer) value);
-                break;
-            case String:
-                this.attributeArrayList[position] = new StringAttribute(name, (String) value);
-                break;
-            case Float:
-                this.attributeArrayList[position] = new FloatAttribute(name, (Float) value);
-                break;
-        }
+    public void addAttribute(Attribute.AttributeType type, int position, String name, long value, int index){
+        this.attributeArrayList[position] = new IntegerAttribute(name, (int) value);
     }
 
     public Attribute readAttribute(int position){

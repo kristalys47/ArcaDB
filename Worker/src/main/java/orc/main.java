@@ -1,6 +1,7 @@
 package orc;
 
 import com.google.gson.*;
+import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.net.*;
@@ -12,6 +13,7 @@ public class main {
 
 
         String ip = InetAddress.getLocalHost().getHostAddress();
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         jedis.sadd("node", ip);
         jedis.set(ip, "available");
 

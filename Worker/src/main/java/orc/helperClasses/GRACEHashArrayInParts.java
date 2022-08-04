@@ -3,6 +3,8 @@ package orc.helperClasses;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.client.ClientCache;
 import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.configuration.ClientConfiguration;
+import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -52,8 +54,10 @@ public class GRACEHashArrayInParts {
         String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode();
         fileBuckets[bucket].add(fileName);
 
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
 
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
         try (IgniteClient client = Ignition.startClient(cfg)) {
             ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
             cache.put(fileName, records[bucket]);

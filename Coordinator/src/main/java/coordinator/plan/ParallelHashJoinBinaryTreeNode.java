@@ -52,6 +52,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     JsonArray array = new JsonArray();
                     array.add("joinPartition");
                     array.add(relationA.TableFiles.get(i));
+                    array.add(this.OuterColumnName);
                     array.add(this.OuterRelation);
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
@@ -63,6 +64,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     JsonArray array = new JsonArray();
                     array.add("joinPartition");
                     array.add(relationB.TableFiles.get(i));
+                    array.add(this.InnerColumnName);
                     array.add(this.InnerRelation);
                     array.add(buckets);
                     JsonObject obj = new JsonObject();

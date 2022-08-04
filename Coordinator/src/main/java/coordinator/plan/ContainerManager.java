@@ -1,5 +1,7 @@
 package coordinator.plan;
 
+import redis.clients.jedis.Jedis;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Set;
@@ -20,6 +22,7 @@ public class ContainerManager extends Thread{
     public void run() {
         String received = "";
         try {
+            Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
             Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
             for (String node: nodes) {

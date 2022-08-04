@@ -92,8 +92,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public void connectionWithContainers(String args, String containerIP){
         String received = "";
         try {
-//            Jedis jedis = new Jedis("localhost", 6379);
-
+            Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
             Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
             for (String node: nodes) {

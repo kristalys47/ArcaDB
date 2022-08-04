@@ -4,7 +4,10 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
     networks:
       cloud:
         aliases:
@@ -19,25 +22,26 @@ services:
     ports:
       - target: 5432
         published: 5434
-        ho
         protocol: tcp
+        mode: host
     networks:
       cloud:
         aliases:
           - postgresql
-
   coordinator:
     image: coordinator
     container_name: coordinator
     ports:
-      - "7271:7271"
+      - target: 7271
+        published: 7271
+        protocol: tcp
+        mode: host
     networks:
       cloud:
         aliases:
           - coordinator
     depends_on:
       - postgresql
-
   worker:
     image: worker
     networks:

@@ -32,13 +32,13 @@ public class WorkerManager {
             if(arg[0].equals("insertRead"))
                 ORCManager.readerPrint(arg[1]);
         }
-        else if(arg[0].indexOf("join")>-1){
+        else if(arg[0].equals("join")){
             JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5]);
         }
-        else if (arg[0].indexOf("joinPartition")>-1) {
+        else if (arg[0].equals("joinPartition")) {
             JoinManager.joinPartition(arg[1], arg[2], arg[3], arg[4]);
         }
-        else if (arg[0].indexOf("joinProbing")>-1) {
+        else if (arg[0].equals("joinProbing")) {
             JoinManager.joinProbing(arg[1], arg[2], arg[3]);
         }
         else{

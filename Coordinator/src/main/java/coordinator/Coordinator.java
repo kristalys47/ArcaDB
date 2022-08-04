@@ -12,7 +12,7 @@ import static spark.Spark.*;
 
 public class Coordinator {
     public static void main(String[] arg) {
-        port(7271);
+        port(7272);
         //TODO: Create insert function
         get("/database/query", (request, response) -> {
             JSONObject json  = new JSONObject(request.body());

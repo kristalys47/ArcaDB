@@ -273,40 +273,40 @@ public class UTests {
         }
     }
 
-    @Test
-    public void testAttributes(){
-        Tuple test = new Tuple(3);
-        test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
-        test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
-        test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 42);
-        System.out.println(test.toString());
-
-    }
-
-    @Test
-    public void testAttributesSaveInIgnite(){
-        Tuple test = new Tuple(3);
-        test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
-        test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
-        test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 33);
-        System.out.println(test.toString());
-        Tuple test2 = new Tuple(3);
-        test2.addAttribute(Attribute.AttributeType.String,0, "Name", "Abigail");
-        test2.addAttribute(Attribute.AttributeType.Float,1, "Money", 7.6F);
-        test2.addAttribute(Attribute.AttributeType.Integer,2, "Age", 39);
-        System.out.println(test2.toString());
-
-        ArrayList<Tuple> list = new ArrayList<>();
-        list.add(test);
-        list.add(test2);
-
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.116.98:10800");
-        try (IgniteClient client = Ignition.startClient(cfg)) {
-            ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
-            cache.put("/temp/partition/1", list);
-        }
-
-    }
+//    @Test
+//    public void testAttributes(){
+//        Tuple test = new Tuple(3);
+//        test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
+//        test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
+//        test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 42);
+//        System.out.println(test.toString());
+//
+//    }
+//
+//    @Test
+//    public void testAttributesSaveInIgnite(){
+//        Tuple test = new Tuple(3);
+//        test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
+//        test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
+//        test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 33);
+//        System.out.println(test.toString());
+//        Tuple test2 = new Tuple(3);
+//        test2.addAttribute(Attribute.AttributeType.String,0, "Name", "Abigail");
+//        test2.addAttribute(Attribute.AttributeType.Float,1, "Money", 7.6F);
+//        test2.addAttribute(Attribute.AttributeType.Integer,2, "Age", 39);
+//        System.out.println(test2.toString());
+//
+//        ArrayList<Tuple> list = new ArrayList<>();
+//        list.add(test);
+//        list.add(test2);
+//
+//        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.116.98:10800");
+//        try (IgniteClient client = Ignition.startClient(cfg)) {
+//            ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
+//            cache.put("/temp/partition/1", list);
+//        }
+//
+//    }
 
     @Test
     public void testAttributesReadInIgnite() throws Exception {
@@ -394,5 +394,11 @@ public class UTests {
         for(S3ObjectSummary os : objectListing.getObjectSummaries()) {
             System.out.println(os.getKey());
         }
+    }
+
+    @Test
+    public void testingHashProbing() throws Exception {
+        String[] args = {"joinPartition","/customer/customer.orc","id","customer","5"};
+        WorkerManager.dbms(args);
     }
 }
