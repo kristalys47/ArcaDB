@@ -5,7 +5,7 @@ import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.net.*;
-import static orc.SharedConnections.*;
+import static orc.Commons.*;
 
 public class main {
 

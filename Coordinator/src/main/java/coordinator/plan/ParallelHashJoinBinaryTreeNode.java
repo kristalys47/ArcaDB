@@ -47,6 +47,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
             ContainerManager[] threads = new ContainerManager[relationA.TableFiles.size() + relationB.TableFiles.size()];
             int i = 0;
+            int tindex = 0;
             while (i < relationA.TableFiles.size() || i < relationB.TableFiles.size()) {
                 if (i < relationA.TableFiles.size()) {
                     JsonArray array = new JsonArray();
@@ -57,8 +58,9 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    threads[i] = new ContainerManager(obj.toString(), "worker");
-                    threads[i].run();
+                    threads[tindex] = new ContainerManager(obj.toString(), "worker");
+                    threads[tindex].start();
+                    tindex++;
                 }
                 if (i < relationB.TableFiles.size()) {
                     JsonArray array = new JsonArray();
@@ -69,9 +71,9 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    //TODO: HERE I left
-                    threads[i] = new ContainerManager(obj.toString(), "worker");
-                    threads[i].run();
+                    threads[tindex] = new ContainerManager(obj.toString(), "worker");
+                    threads[tindex].start();
+                    tindex++;
                 }
                 i++;
             }
@@ -92,12 +94,21 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 //TODO: choose who is inner and who is outer
                 array.add("/join/" + i1 + "/" + InnerRelation + "/");
                 array.add("/join/" + i1 + "/" + OuterRelation + "/");
-                array.add(i);
+                array.add(i1);
                 JsonObject obj = new JsonObject();
                 obj.add("plan", array);
                 probing[i1] = new ContainerManager(obj.toString(), "worker");
-
+                probing[i1].start();
             }
+
+            for (int i1 = 0; i1 < probing.length; i1++) {
+                try {
+                    probing[i1].join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         } else {
             System.out.println("This case has not been set yet because the leaves are not directly " +
                     "connected to both the relations");

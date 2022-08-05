@@ -131,6 +131,7 @@ array.put(4, "/mytable/hello.orc");
 JSONObject obj = new JSONObject();
 obj.put("plan", array);
 
+apt-get install redis-tools
 
 String args = obj.toString();
 out.write(args.getBytes(StandardCharsets.UTF_8));
@@ -152,4 +153,43 @@ https://www.tecmint.com/install-nfs-server-on-ubuntu/
 https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file
 https://programmerall.com/article/62732193206/
 
+
+things to load:
+docker run -d -p 10800:10800 --name ignite apacheignite/ignite
+docker run -d -p 5434:5432 -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword --name postgres postgres
+docker run -d -p 6379:6379 --name redis redis
+
+
+docker run -d -p 10800:10800 --name ignite --network cloud --network-alias postgresql apacheignite/ignite
+docker run -d -p 5432:5432 --name postgres --network cloud --network-alias postgresql -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword postgres
+docker run -d -p 6379:6379 --name redis --network cloud --network-alias redis redis
+
+#  redis:
+#    image: redis:latest
+#    container_name: redis
+#    ports:
+#      - target: 6379
+#        published: 6379
+#        protocol: tcp
+#        mode: host
+#    networks:
+#      cloud:
+#        aliases:
+#          - redis
+#  postgresql:
+#    image: postgres
+#    container_name: postgres
+#    environment:
+#      - POSTGRES_USER=myusername
+#      - POSTGRES_DB=test
+#      - POSTGRES_PASSWORD=mypassword
+#    ports:
+#      - target: 5432
+#        published: 5434
+#        protocol: tcp
+#        mode: host
+#    networks:
+#      cloud:
+#        aliases:
+#          - postgresql
 

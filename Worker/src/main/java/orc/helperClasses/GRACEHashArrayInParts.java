@@ -7,9 +7,8 @@ import org.apache.ignite.configuration.ClientConfiguration;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import static orc.SharedConnections.*;
+import static orc.Commons.*;
 
 
 public class GRACEHashArrayInParts {
@@ -57,11 +56,14 @@ public class GRACEHashArrayInParts {
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
 
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
-        try (IgniteClient client = Ignition.startClient(cfg)) {
+        try {
+            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
             ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
             cache.put(fileName, records[bucket]);
             records[bucket].clear();
+            client.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

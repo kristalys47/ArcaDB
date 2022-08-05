@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static coordinator.CommonVariables.*;
+import static coordinator.Commons.*;
 
 public abstract class BinaryTreeNode implements Runnable{
     public BinaryTreeNode inner;
@@ -106,7 +106,7 @@ public abstract class BinaryTreeNode implements Runnable{
 
             System.out.println("Site: " + containerIP);
             System.out.println("Connected - - - - - -");
-            Socket socket = new Socket(siteIP, APP_PORT);
+            Socket socket = new Socket(siteIP, WORKER_APP_PORT);
             System.out.println("Connected to Server");
 
             OutputStream outR = socket.getOutputStream();

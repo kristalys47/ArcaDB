@@ -1,16 +1,17 @@
 package coordinator;
 
 import coordinator.plan.*;
-import org.json.JSONArray;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
-import static coordinator.CommonVariables.postgresConnect;
+import static coordinator.Commons.postgresConnect;
 
 public class Controller {
+    private static final Logger logger = LogManager.getLogger(Controller.class);
     public static List<String> handleRequest(String query) throws Exception {
         Statement cursor = postgresConnect();
         String explain_query = "explain (format json, timing false, costs false) " + query;
@@ -23,11 +24,11 @@ public class Controller {
         a = a.substring(1, a.length()-1);
         System.out.println(a);
         JSONObject obj = new JSONObject(a);
-
+        System.out.println("test 1");
         BinaryTreePlan btp = new BinaryTreePlan(obj, cursor);
-
+        System.out.println("test 2");
         btp.headNode.run();
-
+        System.out.println("test 3");
         return btp.headNode.resultFile;
     }
 

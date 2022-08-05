@@ -10,7 +10,6 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import orc.helperClasses.*;
 import orc.helperClasses.GRACEHashArray;
 import orc.helperClasses.TestingUtils;
@@ -23,19 +22,15 @@ import org.apache.ignite.client.IgniteClient;
 import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
-import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder;
 import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import static orc.SharedConnections.*;
 
 public class UTests {
     @Test
@@ -310,13 +305,13 @@ public class UTests {
 
     @Test
     public void testAttributesReadInIgnite() throws Exception {
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.116.98:10800");
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses("172.20.59.90:10800");
         try (IgniteClient client = Ignition.startClient(cfg)) {
             ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
-            ArrayList<Tuple> list = cache.get("/temp/partition/1");
-            for (Tuple tuple : list) {
-                System.out.println(tuple.toString());
-            }
+//            ArrayList<Tuple> list = cache.get("/temp/partition/1");
+//            for (Tuple tuple : list) {
+//                System.out.println(tuple.toString());
+//            }
         }
     }
 
@@ -397,8 +392,13 @@ public class UTests {
     }
 
     @Test
-    public void testingHashProbing() throws Exception {
+    public void testingHashProbing1() throws Exception {
         String[] args = {"joinPartition","/customer/customer.orc","id","customer","5"};
+        WorkerManager.dbms(args);
+    }
+    @Test
+    public void testingHashProbing2() throws Exception {
+        String[] args = {"joinPartition", "/product/product.orc", "id", "product", "5"};;
         WorkerManager.dbms(args);
     }
 }

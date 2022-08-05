@@ -2,10 +2,9 @@ package coordinator.plan;
 
 import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static coordinator.CommonVariables.*;
+import static coordinator.Commons.*;
 
 public class Catalog {
     public static List<String> filesForTable(String tableName){

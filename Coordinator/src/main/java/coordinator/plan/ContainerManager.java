@@ -1,18 +1,23 @@
 package coordinator.plan;
 
+import coordinator.Coordinator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Set;
 
-import static coordinator.CommonVariables.*;
+import static coordinator.Commons.*;
 
 
 public class ContainerManager extends Thread{
     private String containerIP;
     private String plan;
 
+    private static final Logger logger = LogManager.getLogger(ContainerManager.class);
     public ContainerManager (String plan, String containerIP){
         this.containerIP = containerIP;
         this.plan = plan;
@@ -23,20 +28,22 @@ public class ContainerManager extends Thread{
         String received = "";
         try {
             Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-            Set<String> nodes = jedis.smembers("node");
             String siteIP = "";
-            for (String node: nodes) {
-                String status = jedis.get(node);
-                if (status.equals("available")) {
-                    siteIP = node;
-                    jedis.set(node, "Down");
-                    break;
+            while(siteIP.equals("")) {
+                Set<String> nodes = jedis.smembers("node");
+                for (String node : nodes) {
+                    String status = jedis.get(node);
+                    if (status.equals("available")) {
+                        siteIP = node;
+                        jedis.set(node, "Down");
+                        break;
+                    }
                 }
             }
 
             System.out.println("Site: " + containerIP);
             System.out.println("Connected - - - - - -");
-            Socket socket = new Socket(siteIP, APP_PORT);
+            Socket socket = new Socket(siteIP, WORKER_APP_PORT);
             System.out.println("Connected to Server");
 
             OutputStream outR = socket.getOutputStream();
@@ -60,9 +67,9 @@ public class ContainerManager extends Thread{
 
             socket.close();
 
-        } catch (Exception s) {
-            System.out.println(s);
-            throw new RuntimeException("Not working" + s);
+        } catch (Exception e) {
+            logger.error("ERROR", e);
+            e.printStackTrace();
         }
     }
 }

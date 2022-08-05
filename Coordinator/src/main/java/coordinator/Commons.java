@@ -1,28 +1,27 @@
 package coordinator;
 
-import redis.clients.jedis.Jedis;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-public class CommonVariables {
-    static public final String REDIS_HOST = "localhost";
+public class Commons {
+    static public final String REDIS_HOST = "172.20.59.90"; //redis
     static public final int REDIS_PORT = 6379;
 
-    static public final String IGNITE_HOST = "172.25.213.131"; //136.145.116.98
+    static public final String IGNITE_HOST = "172.20.59.90"; //136.145.116.98
     static public final int IGNITE_PORT = 10800;
-    static public final String IGNITE_HOST_PORT = IGNITE_HOST + ":" + IGNITE_PORT;
+//    static public final String IGNITE_HOST_PORT = IGNITE_HOST + ":" + IGNITE_PORT;
 
     static public final String S3_BUCKET= "testingjoin";
     static public final String AWS_S3_ACCESS_KEY = "AKIA6E4TYZ3JLKC2LPFR";
     static public final String AWS_S3_SECRET_KEY = "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";
 
-    static public final int APP_PORT = 7272;
+    static public final int WORKER_APP_PORT = 7272;
+    static public final int COORDINATOR_APP_PORT = 7271;
 
     static public final String POSTGRES_PASSWORD = "mypassword";
     static public final String POSTGRES_USERNAME = "myusername";
-    static public final String POSTGRES_HOST = "localhost";
+    static public final String POSTGRES_HOST = "172.20.59.90"; //postgresql
     static public final int POSTGRES_PORT = 5434;
     static public final String POSTGRES_DB_NAME = "test";
     static public final String POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;

@@ -1,33 +1,5 @@
 version: "3.9"
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - target: 6379
-        published: 6379
-        protocol: tcp
-        mode: host
-    networks:
-      cloud:
-        aliases:
-          - redis
-  postgresql:
-    image: postgres
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=myusername
-      - POSTGRES_DB=test
-      - POSTGRES_PASSWORD=mypassword
-    ports:
-      - target: 5432
-        published: 5434
-        protocol: tcp
-        mode: host
-    networks:
-      cloud:
-        aliases:
-          - postgresql
   coordinator:
     image: coordinator
     container_name: coordinator
@@ -40,8 +12,6 @@ services:
       cloud:
         aliases:
           - coordinator
-    depends_on:
-      - postgresql
   worker:
     image: worker
     networks:
@@ -53,11 +23,11 @@ services:
       placement:
         max_replicas_per_node: 10
     depends_on:
-      - redis
       - coordinator
-    command: ./wait-for-it.sh redis:6379 -- mvn exec:java -Dexec.mainClass="orc.main"
+    command: ./wait-for-it.sh 172.20.59.90:6379 -- mvn exec:java -Dexec.mainClass="orc.main"
 
 networks:
   cloud:
     driver: overlay
     attachable: true
+#    external: true

@@ -6,8 +6,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
 import orc.helperClasses.*;
 import orc.helperClasses.AES;
 import orc.helperClasses.GRACEHashArray;
@@ -32,13 +30,11 @@ import org.json.simple.parser.JSONParser;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static orc.SharedConnections.*;
+import static orc.Commons.*;
 
 public class JoinManager {
 
@@ -100,8 +96,8 @@ public class JoinManager {
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathS) > 0){
-            ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
-            try (IgniteClient client = Ignition.startClient(cfg)) {
+            try {
+                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
                 ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
                 LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
                 for (Tuple record : records) {
@@ -112,6 +108,9 @@ public class JoinManager {
                         map.put(key, new HashNode<Tuple>(record, map.get(key)));
                     }
                 }
+                client.close();
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
 
@@ -121,7 +120,8 @@ public class JoinManager {
         boolean first = true;
         while(jedis.llen(pathR) > 0){
             ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
-            try (IgniteClient client = Ignition.startClient(cfg)) {
+            try {
+                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
                 ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
                 LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathR));
                 for (Tuple record : records) {
@@ -138,6 +138,9 @@ public class JoinManager {
                         }while(current != null);
                     }
                 }
+                client.close();
+            } catch (Exception e){
+                e.printStackTrace();
             }
         }
 //        fr.flush();
