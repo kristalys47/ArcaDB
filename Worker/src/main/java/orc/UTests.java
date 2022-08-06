@@ -13,24 +13,18 @@ import com.google.gson.JsonArray;
 import orc.helperClasses.*;
 import orc.helperClasses.GRACEHashArray;
 import orc.helperClasses.TestingUtils;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.Ignition;
-import org.apache.ignite.binary.BinaryBasicNameMapper;
-import org.apache.ignite.client.ClientCache;
-import org.apache.ignite.client.IgniteClient;
-import org.apache.ignite.configuration.BinaryConfiguration;
-import org.apache.ignite.configuration.ClientConfiguration;
-import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
+import redis.clients.jedis.Jedis;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static orc.Commons.REDIS_HOST;
+import static orc.Commons.REDIS_PORT;
 
 public class UTests {
     @Test
@@ -229,44 +223,44 @@ public class UTests {
         }
     }
 
-    @Test
+//    @Test
     /*
     Created on the go and got local space of time
      */
-    public void singleSideigniteTestCreate() throws Exception {
-        IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(
-                new BinaryConfiguration().setNameMapper(new BinaryBasicNameMapper(true)));
+//    public void singleSideigniteTestCreate() throws Exception {
+//        IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(
+//                new BinaryConfiguration().setNameMapper(new BinaryBasicNameMapper(true)));
+//
+//        // Starting the node
+//        Ignite ignite = Ignition.start(cfg);
+//
+//        IgniteCache<Integer, Person> cache = ignite.getOrCreateCache("person");
+//
+//
+//        cache.put(122, new Person("Kristalys", 109));
+//        Person hello = cache.get(122);
+//        System.out.println(hello.toString());
+//        Ignition.stop(false);
+//    }
 
-        // Starting the node
-        Ignite ignite = Ignition.start(cfg);
-
-        IgniteCache<Integer, Person> cache = ignite.getOrCreateCache("person");
-
-
-        cache.put(122, new Person("Kristalys", 109));
-        Person hello = cache.get(122);
-        System.out.println(hello.toString());
-        Ignition.stop(false);
-    }
-
-    @Test
-    public void igniteTestDockerInsert() throws Exception {
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
-        try (IgniteClient client = Ignition.startClient(cfg)) {
-            ClientCache<Integer, Person> cache = client.getOrCreateCache("person");
-            cache.put(122, new Person("Kristalys", 109));
-        }
-    }
-
-    @Test
-    public void igniteTestDockerRead() throws Exception {
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
-        try (IgniteClient client = Ignition.startClient(cfg)) {
-            ClientCache<Integer, Person> cache = client.getOrCreateCache("person");
-            Person test = cache.get(122);
-            System.out.println(test);
-        }
-    }
+//    @Test
+//    public void igniteTestDockerInsert() throws Exception {
+//        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
+//        try (IgniteClient client = Ignition.startClient(cfg)) {
+//            ClientCache<Integer, Person> cache = client.getOrCreateCache("person");
+//            cache.put(122, new Person("Kristalys", 109));
+//        }
+//    }
+//
+//    @Test
+//    public void igniteTestDockerRead() throws Exception {
+//        ClientConfiguration cfg = new ClientConfiguration().setAddresses("127.0.0.1:10800");
+//        try (IgniteClient client = Ignition.startClient(cfg)) {
+//            ClientCache<Integer, Person> cache = client.getOrCreateCache("person");
+//            Person test = cache.get(122);
+//            System.out.println(test);
+//        }
+//    }
 
 //    @Test
 //    public void testAttributes(){
@@ -303,17 +297,17 @@ public class UTests {
 //
 //    }
 
-    @Test
-    public void testAttributesReadInIgnite() throws Exception {
-        ClientConfiguration cfg = new ClientConfiguration().setAddresses("172.20.59.90:10800");
-        try (IgniteClient client = Ignition.startClient(cfg)) {
-            ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
-//            ArrayList<Tuple> list = cache.get("/temp/partition/1");
-//            for (Tuple tuple : list) {
-//                System.out.println(tuple.toString());
-//            }
-        }
-    }
+//    @Test
+//    public void testAttributesReadInIgnite() throws Exception {
+//        ClientConfiguration cfg = new ClientConfiguration().setAddresses("172.20.59.90:10800");
+//        try (IgniteClient client = Ignition.startClient(cfg)) {
+//            ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
+////            ArrayList<Tuple> list = cache.get("/temp/partition/1");
+////            for (Tuple tuple : list) {
+////                System.out.println(tuple.toString());
+////            }
+//        }
+//    }
 
     @Test
     public void s3test(){
@@ -401,4 +395,30 @@ public class UTests {
         String[] args = {"joinPartition", "/product/product.orc", "id", "product", "5"};;
         WorkerManager.dbms(args);
     }
+    @Test
+    public void testRedisAsIgnitewrite() throws Exception {
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        LinkedList<String> list = new LinkedList<>();
+        list.add("hello");
+        list.add("bye");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream o = new ObjectOutputStream(bos);
+        o.writeObject(list);
+        String jkey = "test";
+        jedis.set(jkey.getBytes(), bos.toByteArray());
+
+
+    }
+    @Test
+    public void testRedisAsIgniteread() throws Exception {
+        String jkey = "test";
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        ByteArrayInputStream b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+        ObjectInputStream o = new ObjectInputStream(b);
+        LinkedList<String> records = (LinkedList<String>) o.readObject();
+        for (String record : records) {
+            System.out.println(record);
+        }
+    }
+
 }

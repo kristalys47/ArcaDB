@@ -88,7 +88,9 @@ public class JoinManager {
                 .build();
         InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
         FileUtils.copyInputStreamToFile(in, new File(path));
-        GRACEHashArrayInParts table = scannedToMap(path, column, relation, Integer.valueOf(buckets));
+        System.out.println("File retrieved from s3");
+        s3client.shutdown();
+        scannedToMap(path, column, relation, Integer.valueOf(buckets));
     }
 
     public static void joinProbing(String pathS, String pathR, String bucketID) throws IOException {
@@ -97,9 +99,15 @@ public class JoinManager {
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathS) > 0){
             try {
-                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
-                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
-                LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
+                String jkey = pathS + jedis.lpop(pathS);
+                ByteArrayInputStream b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                ObjectInputStream o = new ObjectInputStream(b);
+                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+
+//                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
+//                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
+//                LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
+//                client.close();
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if (!map.containsKey(key)) {
@@ -108,7 +116,6 @@ public class JoinManager {
                         map.put(key, new HashNode<Tuple>(record, map.get(key)));
                     }
                 }
-                client.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -121,9 +128,14 @@ public class JoinManager {
         while(jedis.llen(pathR) > 0){
             ClientConfiguration cfg = new ClientConfiguration().setAddresses(IGNITE_HOST_PORT);
             try {
-                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
-                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
-                LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathR));
+                String jkey = pathR + jedis.lpop(pathR);
+                ByteArrayInputStream b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                ObjectInputStream o = new ObjectInputStream(b);
+                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+
+//                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
+//                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
+//                LinkedList<Tuple> records = cache.get(pathR + jedis.lpop(pathR));
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if(map.containsKey(key)){
@@ -138,7 +150,7 @@ public class JoinManager {
                         }while(current != null);
                     }
                 }
-                client.close();
+//                client.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -213,12 +225,13 @@ public class JoinManager {
         }
     }
 
-    public static GRACEHashArrayInParts scannedToMap(String path, String column, String relation, int buckets) throws IOException {
+    public static void scannedToMap(String path, String column, String relation, int buckets) throws IOException {
         Configuration conf = new Configuration();
 
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 //        TypeDescription schema = reader.getSchema();
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
+        System.out.println("crea el reader");
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
         int joinKey = reader.getSchema().getFieldNames().indexOf(column);
         // TODO: size needs to be calculated, make a formula for that.
@@ -230,9 +243,9 @@ public class JoinManager {
         List<String> colName = schema.getFieldNames();
         List<TypeDescription> colType = schema.getChildren();
         GRACEHashArrayInParts table = null;// new GRACEHashArrayInParts(buckets, 100);
-
         AES hashing = new AES("helohelohelohelo");
         while (records.nextBatch(batch)) {
+            System.out.println("reading...");
             for(int r=0; r < batch.size; ++r) {
                 Tuple created = new Tuple(batch.cols.length + 1);
                 StringBuilder key = new StringBuilder();
@@ -242,7 +255,6 @@ public class JoinManager {
                         batch.cols[j].stringifyValue(key, r);
                         created.addAttribute(Attribute.AttributeType.Integer, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
                     }
-
                 }
                 // TODO: create better hashfunction
                 if(table == null) {
@@ -252,11 +264,10 @@ public class JoinManager {
                 table.addRecord(created);
             }
         }
+        System.out.println("Termina el batch");
         records.close();
-        batch.reset();
         table.flushRemainders();
-
-        return table;
+        System.out.println("Termina el batch2");
     }
 
     public static GRACEHashArray orcToMap(String path, String column, int buckets) throws IOException {

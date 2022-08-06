@@ -1,6 +1,5 @@
 package orc;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -36,6 +35,7 @@ public class WorkerManager {
             JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5]);
         }
         else if (arg[0].equals("joinPartition")) {
+            System.out.println("calls function");
             JoinManager.joinPartition(arg[1], arg[2], arg[3], arg[4]);
         }
         else if (arg[0].equals("joinProbing")) {

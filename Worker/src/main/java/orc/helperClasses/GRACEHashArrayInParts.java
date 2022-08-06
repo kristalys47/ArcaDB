@@ -1,9 +1,5 @@
 package orc.helperClasses;
 
-import org.apache.ignite.Ignition;
-import org.apache.ignite.client.ClientCache;
-import org.apache.ignite.client.IgniteClient;
-import org.apache.ignite.configuration.ClientConfiguration;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
@@ -35,7 +31,6 @@ public class GRACEHashArrayInParts {
         }
     }
 
-
     public void addRecord(Tuple record) throws FileNotFoundException {
         IntegerAttribute key = (IntegerAttribute) record.readAttribute(0);
         int hashValue = (int) Math.abs(key.value % buckets);
@@ -57,11 +52,16 @@ public class GRACEHashArrayInParts {
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
 
         try {
-            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
-            ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
-            cache.put(fileName, records[bucket]);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream o = new ObjectOutputStream(bos);
+            o.writeObject(records[bucket]);
+            jedis.set(fileName.getBytes(), bos.toByteArray());
+
+//            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
+//            ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
+//            cache.put(fileName, records[bucket]);
+//            client.close();
             records[bucket].clear();
-            client.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

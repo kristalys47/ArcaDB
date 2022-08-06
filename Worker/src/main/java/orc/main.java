@@ -14,8 +14,7 @@ public class main {
 
         String ip = InetAddress.getLocalHost().getHostAddress();
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-        jedis.sadd("node", ip);
-        jedis.set(ip, "available");
+        jedis.rpush("node", ip);
 
         //TODO: need a better logger when this is working
         //TODO: custom port
@@ -59,6 +58,7 @@ public class main {
             WorkerManager.dbms(args);
         }catch (Exception e){
             System.out.println(e);
+            e.printStackTrace();
             out.println("Something failed: " + e);
         } finally {
             out.println("Successful");
@@ -67,7 +67,5 @@ public class main {
         out.close();
         in.close();
         client.close();
-
-
     }
 }

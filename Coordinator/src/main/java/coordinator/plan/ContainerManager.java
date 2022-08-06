@@ -4,10 +4,13 @@ import coordinator.Coordinator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Transaction;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Set;
 
 import static coordinator.Commons.*;
@@ -16,32 +19,24 @@ import static coordinator.Commons.*;
 public class ContainerManager extends Thread{
     private String containerIP;
     private String plan;
+    private JedisPool jedisPool;
 
     private static final Logger logger = LogManager.getLogger(ContainerManager.class);
-    public ContainerManager (String plan, String containerIP){
+    public ContainerManager (String plan, String containerIP, JedisPool jedisPool){
         this.containerIP = containerIP;
         this.plan = plan;
+        this.jedisPool = jedisPool;
     }
 
     @Override
     public void run() {
         String received = "";
         try {
-            Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-            String siteIP = "";
-            while(siteIP.equals("")) {
-                Set<String> nodes = jedis.smembers("node");
-                for (String node : nodes) {
-                    String status = jedis.get(node);
-                    if (status.equals("available")) {
-                        siteIP = node;
-                        jedis.set(node, "Down");
-                        break;
-                    }
-                }
-            }
+            Jedis jedis = jedisPool.getResource();
+            List<String> result = jedis.blpop(0, "node");
+            String siteIP = result.get(1);
 
-            System.out.println("Site: " + containerIP);
+            System.out.println("Site: " + containerIP + "--" + siteIP);
             System.out.println("Connected - - - - - -");
             Socket socket = new Socket(siteIP, WORKER_APP_PORT);
             System.out.println("Connected to Server");
@@ -64,7 +59,7 @@ public class ContainerManager extends Thread{
                 else
                     throw new Exception("There was an error in the container " + siteIP + " " + message);
             }
-
+            System.out.println("Done:" + siteIP);
             socket.close();
 
         } catch (Exception e) {

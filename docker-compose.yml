@@ -19,12 +19,12 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 10
+      replicas: 7
       placement:
         max_replicas_per_node: 10
     depends_on:
       - coordinator
-    command: ./wait-for-it.sh 172.20.59.90:6379 -- mvn exec:java -Dexec.mainClass="orc.main"
+    command: mvn exec:java -Dexec.mainClass="orc.main" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false
 
 networks:
   cloud:

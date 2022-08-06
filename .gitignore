@@ -12,7 +12,6 @@
 /DumpingGround/TestingDeployment/Coordinator/target/
 /DumpingGround/TestingDeployment/Distributed-DBMS/.idea/
 /DumpingGround/TestingDeployment/Distributed-DBMS/target/
-/Distributed-DBMS/.idea/
 /TestFiles/Testing-main/target/
 /TestFiles/Testing-main/.idea/
 /CTests/build/
@@ -23,3 +22,4 @@
 /Worker/.idea/
 /DumpingGround/Distributed-DBMS/.idea/
 /DumpingGround/Distributed-DBMS/target/
+/.m2/

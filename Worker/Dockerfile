@@ -1,5 +1,5 @@
 FROM maven:latest
-COPY . /Worker/
+COPY ./Worker/ /Worker/
 WORKDIR /Worker
-RUN mvn clean install
+RUN mvn install
 CMD mvn exec:java -Dexec.mainClass="orc.main"
