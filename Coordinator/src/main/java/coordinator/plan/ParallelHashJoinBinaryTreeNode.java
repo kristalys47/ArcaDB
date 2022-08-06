@@ -95,6 +95,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     e.printStackTrace();
                 }
             }
+            System.out.println("PROBING STAGE--------------");
 
             ContainerManager[] probing = new ContainerManager[buckets];
             for (int i1 = 0; i1 < probing.length; i1++) {

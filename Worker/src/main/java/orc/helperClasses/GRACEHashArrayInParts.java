@@ -1,5 +1,10 @@
 package orc.helperClasses;
 
+import org.apache.ignite.Ignition;
+import org.apache.ignite.client.ClientCache;
+import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.configuration.ClientConfiguration;
+
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
@@ -46,11 +51,11 @@ public class GRACEHashArrayInParts {
 
     private void flushToFile(int bucket) {
         String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode();
-        fileBuckets[bucket].add(fileName);
-
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
+        fileBuckets[bucket].add(fileName);
 
+        System.out.println(fileName + " - " + records[bucket].size());
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream o = new ObjectOutputStream(bos);

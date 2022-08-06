@@ -2,6 +2,5 @@
 
 
 docker stack rm testing
-docker volume rm testing_storage
-
-
+#docker volume rm testing_storage
+sh redissetup.sh

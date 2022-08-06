@@ -421,4 +421,20 @@ public class UTests {
         }
     }
 
+    @Test
+    public void workerReadRedis() throws IOException, ClassNotFoundException {
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        String key = "/join/0/product/";
+        String jkey = key + jedis.lindex(key, 0);
+        System.out.println(jkey);
+        byte[] buff = jedis.get(jkey.getBytes());
+        System.out.println(buff.length);
+        ByteArrayInputStream b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+        ObjectInputStream o = new ObjectInputStream(b);
+        LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+        for (Tuple record : records) {
+            System.out.println(record.toString());
+        }
+    }
+
 }
