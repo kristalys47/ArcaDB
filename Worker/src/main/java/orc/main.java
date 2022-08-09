@@ -61,7 +61,11 @@ public class main {
         }
 
         try{
-            WorkerManager.dbms(args);
+            if(gobj.has("outer") && gobj.has("inner")){
+                WorkerManager.dbms(args, gobj);
+            } else {
+                WorkerManager.dbms(args);
+            }
         }catch (Exception e){
             System.out.println(e);
             e.printStackTrace();

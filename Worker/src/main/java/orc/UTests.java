@@ -489,6 +489,24 @@ public class UTests {
         }
     }
 
+    @Test
+    public void testSingleNode() throws Exception {
+        String mm = "{\"plan\":[\"join1\",\"id\",\"customer\",\"id\",\"product\",5],\"outer\":[\"/customer/customer.orc\"],\"inner\":[\"/product/product.orc\"]}";
+        JsonObject gobj = JsonParser.parseString(mm).getAsJsonObject();
+        JsonArray rows = gobj.getAsJsonArray("plan");
+        String[] args = new String[rows.size()];
+
+        for (int i = 0; i < args.length; i++) {
+            args[i] = rows.get(i).getAsString();
+            System.out.println(args[i]);
+        }
+        if(gobj.has("outer") && gobj.has("inner")){
+            WorkerManager.dbms(args, gobj);
+        } else {
+            WorkerManager.dbms(args);
+        }
+    }
+
 
 
 }

@@ -135,6 +135,13 @@ https://programmerall.com/article/62732193206/
 docker build . -f DockerfileCoordinator -t coordinator
 docker build . -f DockerfileWorker -t worker
 
+http://172.28.28.11:7271/database/query
+{
+    "query": "select * from product inner join customer using(id);",
+    "mode": 1,
+    "query1": "select * from customer inner join product using(id) where price>500 or price<12;"
+}
+
 
 things to load:
 docker run -d -p 10800:10800 --name ignite apacheignite/ignite

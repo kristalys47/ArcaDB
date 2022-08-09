@@ -23,6 +23,7 @@ import org.apache.orc.impl.RecordReaderImpl;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.*;
 
 import static orc.Commons.*;
@@ -99,9 +100,16 @@ public class JoinManager {
         }
         while(jedis.llen(pathS) > 0){
             try {
-                getPartitions(pathS, mode, jedis, s3client);
-
-                LinkedList<Tuple> records = getPartitions(pathS, mode, jedis, s3client);
+                String jkey = pathS + jedis.lpop(pathS);
+                ByteArrayInputStream b = null;
+                if (mode == 2) {
+                    InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
+                    b = new ByteArrayInputStream(in.readAllBytes());
+                } else {
+                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                }
+                ObjectInputStream o = new ObjectInputStream(b);
+                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if (!map.containsKey(key)) {
@@ -117,7 +125,16 @@ public class JoinManager {
 
         while(jedis.llen(pathR) > 0){
             try {
-                LinkedList<Tuple> records = getPartitions(pathR, mode, jedis, s3client);
+                String jkey = pathR + jedis.lpop(pathR);
+                ByteArrayInputStream b = null;
+                if (mode == 2) {
+                    InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
+                    b = new ByteArrayInputStream(in.readAllBytes());
+                } else {
+                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                }
+                ObjectInputStream o = new ObjectInputStream(b);
+                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if(map.containsKey(key)){
@@ -146,15 +163,15 @@ public class JoinManager {
         }
         ObjectInputStream o = new ObjectInputStream(b);
         LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+        return records;
 
-//                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
+        //                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
 //                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
 //                LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
 //                client.close();
-        return records;
     }
 
-    public static void join(String pathR, String columnR, String relationR, String pathS, String columnS, String relationS, String buckets, int mode) throws IOException {
+    public static void join(JsonArray pathR, String columnR, String relationR, JsonArray pathS, String columnS, String relationS, String buckets, int mode) throws IOException {
 
         int bucket = Integer.valueOf(buckets);
         //TODO: ******************** what to do if the join is with the same table but different columns
@@ -170,7 +187,8 @@ public class JoinManager {
             String r = "/join/" + i + "/" + relationR + "/";
             String s = "/join/" + i + "/" + relationS + "/";
 
-            joinProbing(r, s, buckets, mode);
+            System.out.println(r + " - " + s);
+            joinProbing(s, r, String.valueOf(i), mode);
         }
     }
     public static void scannedToMap(String path, String column, String relation, int buckets, int mode) throws IOException {
@@ -218,13 +236,22 @@ public class JoinManager {
         System.out.println("Termina el batch2");
     }
 
-    public static void orcToMap(String path, String column, int buckets, String relation, int mode) throws IOException {
+    public static void orcToMap(JsonArray path, String column, int buckets, String relation, int mode) throws IOException {
         Configuration conf = new Configuration();
-        JsonArray gobj = JsonParser.parseString(path).getAsJsonArray();
+        System.out.println(path);
+        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+        AmazonS3 s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
 
         GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, 1, relation, mode);
-        for (int i = 0; i < gobj.size(); i++) {
-            Reader reader = OrcFile.createReader(new Path(gobj.get(i).getAsString()), OrcFile.readerOptions(conf));
+        for (int i = 0; i < path.size(); i++) {
+            InputStream in = s3client.getObject(S3_BUCKET, path.get(i).getAsString()).getObjectContent();
+            FileUtils.copyInputStreamToFile(in, new File(path.get(i).getAsString()));
+            System.out.println("File retrieved from s3");
+            Reader reader = OrcFile.createReader(new Path(path.get(i).getAsString()), OrcFile.readerOptions(conf));
             RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
             VectorizedRowBatch batch = reader.getSchema().createRowBatch();
             int joinKey = reader.getSchema().getFieldNames().indexOf(column);

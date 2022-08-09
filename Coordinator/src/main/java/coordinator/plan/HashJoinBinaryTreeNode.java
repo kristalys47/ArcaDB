@@ -44,20 +44,20 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             for (String tableFile : relationA.TableFiles) {
                 arrayOuter.add(tableFile);
             }
-            array.add(arrayOuter);
             array.add(this.OuterColumnName);
             array.add(this.OuterRelation);
             JsonArray arrayInner = new JsonArray();
             for (String tableFile : relationB.TableFiles) {
                 arrayInner.add(tableFile);
             }
-            array.add(arrayInner);
             array.add(this.InnerColumnName);
             array.add(this.InnerRelation);
             array.add(5);
             //TODO: make request for resources and return the node to execute on
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
+            obj.add("outer", arrayOuter);
+            obj.add("inner", arrayInner);
             ContainerManager threadRun = new ContainerManager(obj.toString(), "worker");
             threadRun.run();
         }

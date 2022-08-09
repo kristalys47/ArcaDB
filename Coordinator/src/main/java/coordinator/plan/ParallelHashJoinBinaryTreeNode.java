@@ -71,7 +71,11 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 }
                 if (i < relationB.TableFiles.size()) {
                     JsonArray array = new JsonArray();
-                    array.add("joinPartition");
+                    if(this.mode == 2){
+                        array.add("joinPartition2");
+                    } else{
+                        array.add("joinPartition3");
+                    }
                     array.add(relationB.TableFiles.get(i));
                     array.add(this.InnerColumnName);
                     array.add(this.InnerRelation);
@@ -105,8 +109,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add("joinProbing3");
                 }
                 //TODO: choose who is inner and who is outer
-                array.add("/join/" + i1 + "/" + InnerRelation + "/");
                 array.add("/join/" + i1 + "/" + OuterRelation + "/");
+                array.add("/join/" + i1 + "/" + InnerRelation + "/");
                 array.add(i1);
                 JsonObject obj = new JsonObject();
                 obj.add("plan", array);

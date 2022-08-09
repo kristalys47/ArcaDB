@@ -1,11 +1,20 @@
 package orc;
 
+import com.google.gson.JsonObject;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
+import java.io.IOException;
 
 public class WorkerManager {
+    static boolean dbms(String[] arg, JsonObject plan) throws IOException {
+        if(arg[0].equals("join1")){
+            JoinManager.join(plan.getAsJsonArray("outer"), arg[1], arg[2], plan.getAsJsonArray("inner"), arg[3], arg[4], arg[5], 3);
+        }
+        return true;
+    }
+
     static boolean dbms(String[] arg)  throws Exception {
 
         //TODO: check that folder does exist
@@ -30,9 +39,6 @@ public class WorkerManager {
             ORCManager.writer(arg[2], arg[3], data);
             if(arg[0].equals("insertRead"))
                 ORCManager.readerPrint(arg[1]);
-        }
-        else if(arg[0].equals("join1")){
-            JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[8], 3);
         }
         else if(arg[0].equals("joinPartition2")){
             JoinManager.joinPartition( arg[1], arg[2], arg[3], arg[4], 2);
