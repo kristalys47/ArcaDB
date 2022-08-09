@@ -1,11 +1,17 @@
 package orc;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.net.*;
-import static orc.Commons.*;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import static orc.Commons.REDIS_HOST;
+import static orc.Commons.REDIS_PORT;
 
 public class main {
 

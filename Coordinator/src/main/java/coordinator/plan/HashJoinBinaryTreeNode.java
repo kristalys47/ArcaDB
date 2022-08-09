@@ -13,6 +13,8 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
     public List<String> InnerTableFiles;
     public String OuterColumnName;
     public String InnerColumnName;
+    private String InnerRelation;
+    private String OuterRelation;
 
     public HashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
@@ -24,11 +26,44 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             String[] inCol = columns[1].split("\\.");
             this.OuterColumnName = outCol[1];
             this.InnerColumnName = inCol[1];
+            this.OuterRelation = outCol[0];
+            this.InnerRelation = inCol[0];
         }
     }
 
     @Override
-    public void execute() {
+    public void execute(){
+        if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
+            //initiante patition
+            int buckets = 5;
+            ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
+            ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
+            JsonArray array = new JsonArray();
+            array.add("join1");
+            JsonArray arrayOuter = new JsonArray();
+            for (String tableFile : relationA.TableFiles) {
+                arrayOuter.add(tableFile);
+            }
+            array.add(arrayOuter);
+            array.add(this.OuterColumnName);
+            array.add(this.OuterRelation);
+            JsonArray arrayInner = new JsonArray();
+            for (String tableFile : relationB.TableFiles) {
+                arrayInner.add(tableFile);
+            }
+            array.add(arrayInner);
+            array.add(this.InnerColumnName);
+            array.add(this.InnerRelation);
+            array.add(5);
+            //TODO: make request for resources and return the node to execute on
+            JsonObject obj = new JsonObject();
+            obj.add("plan", array);
+            ContainerManager threadRun = new ContainerManager(obj.toString(), "worker");
+            threadRun.run();
+        }
+    }
+
+    public void execute1() {
         if(this.outer != null){
             this.outer.run();
             this.OuterTableFiles = this.outer.resultFile;

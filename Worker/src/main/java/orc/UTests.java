@@ -8,23 +8,28 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.google.gson.JsonArray;
-import orc.helperClasses.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import orc.helperClasses.GRACEHashArray;
+import orc.helperClasses.ProjectionTree;
 import orc.helperClasses.TestingUtils;
+import orc.helperClasses.Tuple;
 import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static orc.Commons.REDIS_HOST;
-import static orc.Commons.REDIS_PORT;
+import static orc.Commons.*;
 
 public class UTests {
     @Test
@@ -69,23 +74,23 @@ public class UTests {
 
     @Test
     public  void testConstructorHashJoin() throws FileNotFoundException {
-        GRACEHashArray testObject = new GRACEHashArray(2, 340);
-        testObject.addRecord(2, "Hello");
-        testObject.addRecord(1, "Hello");
-        testObject.addRecord(2, "Hello");
-        testObject.addRecord(2, "Hello");
-        testObject.addRecord(2, "Hello");
+//        GRACEHashArray testObject = new GRACEHashArray(2, 340);
+//        testObject.addRecord(2, "Hello");
+//        testObject.addRecord(1, "Hello");
+//        testObject.addRecord(2, "Hello");
+//        testObject.addRecord(2, "Hello");
+//        testObject.addRecord(2, "Hello");
     }
     @Test
     public  void testReadHashJoin() throws FileNotFoundException {
         int bucket = 2;
-        GRACEHashArray rTable = new GRACEHashArray(bucket, 340);
-        rTable.addRecord(2, "175,Hello,Kristalys,Ruiz");
-        rTable.addRecord(1, "456,Hello");
-        rTable.addRecord(2, "1421,Hello");
-        rTable.addRecord(2, "142,Hello");
-        rTable.addRecord(2, "3325,Hello");
-        rTable.flushRemainders();
+//        GRACEHashArray rTable = new GRACEHashArray(bucket, 340);
+//        rTable.addRecord(2, "175,Hello,Kristalys,Ruiz");
+//        rTable.addRecord(1, "456,Hello");
+//        rTable.addRecord(2, "1421,Hello");
+//        rTable.addRecord(2, "142,Hello");
+//        rTable.addRecord(2, "3325,Hello");
+//        rTable.flushRemainders();
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
@@ -103,14 +108,14 @@ public class UTests {
     @Test
     public void testJoin() throws FileNotFoundException {
         int bucket = 2;
-        GRACEHashArray rTable = new GRACEHashArray(bucket, 340);
-        rTable.addRecord(175, "175,Hello,Kristalys,Ruiz,1757");
-        rTable.addRecord(456, "456,Hello,4556");
-        rTable.addRecord(1421, "1421,Hello,14221");
-        rTable.addRecord(142, "142,Hello,1412");
-        rTable.addRecord(3325, "3325,Hello,31125");
-        rTable.addRecord(142, "142,Hello,1412");
-        rTable.flushRemainders();
+//        GRACEHashArray rTable = new GRACEHashArray(bucket, 340);
+//        rTable.addRecord(175, "175,Hello,Kristalys,Ruiz,1757");
+//        rTable.addRecord(456, "456,Hello,4556");
+//        rTable.addRecord(1421, "1421,Hello,14221");
+//        rTable.addRecord(142, "142,Hello,1412");
+//        rTable.addRecord(3325, "3325,Hello,31125");
+//        rTable.addRecord(142, "142,Hello,1412");
+//        rTable.flushRemainders();
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
 
@@ -151,7 +156,7 @@ public class UTests {
     @Test
     public void joinWholeTest() throws Exception {
         // TODO: treat collisions
-        JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" , "/tmp/results/joinresult.json");
+//        JoinManager.join( "/tmp/tableA.orc", "id",  "/tmp/tableB.orc", "fk" , "/tmp/results/joinresult.json");
     }
 
     @Test
@@ -436,5 +441,55 @@ public class UTests {
             System.out.println(record.toString());
         }
     }
+
+    @Test
+    public void testingbytetos3() throws Exception {
+        ArrayList<String> mmm = new ArrayList<>();
+        mmm.add("mmmm");
+        mmm.add("hellooo");
+        AmazonS3 s3client = null;
+        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+        s3client = AmazonS3ClientBuilder
+                    .standard()
+                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                    .withRegion(Regions.US_EAST_1)
+                    .build();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream o = new ObjectOutputStream(bos);
+        o.writeObject(mmm);
+        InputStream in = new ByteArrayInputStream(bos.toByteArray());
+        s3client.putObject(S3_BUCKET, "kristalys", in, new ObjectMetadata());
+    }
+    @Test
+    public void testingbytefroms3() throws Exception {
+        ByteArrayInputStream b = null;
+        AmazonS3 s3client = null;
+        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+        s3client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+            InputStream in = s3client.getObject(S3_BUCKET, "kristalys").getObjectContent();
+            b = new ByteArrayInputStream(in.readAllBytes());
+
+
+        ObjectInputStream o = new ObjectInputStream(b);
+        ArrayList<String>  records = (ArrayList<String>) o.readObject();
+        for (String record : records) {
+            System.out.println(record);
+        }
+    }
+
+    @Test
+    public void jsonJoinSingle(){
+        String mm = "[\"mmm\", \"jmj\"]";
+        JsonArray gobj = JsonParser.parseString(mm).getAsJsonArray();
+        for (JsonElement jsonElement : gobj) {
+            System.out.println(jsonElement.toString());
+        }
+    }
+
+
 
 }

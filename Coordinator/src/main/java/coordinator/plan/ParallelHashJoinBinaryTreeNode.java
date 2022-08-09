@@ -19,8 +19,9 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
     public ArrayList<String> InnerTableFiles;
     public String OuterColumnName;
     public String InnerColumnName;
+    public int mode;
 
-    public ParallelHashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
+    public ParallelHashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int mode) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.PARALLELJOIN, parent, inner, outer);
         if (info.has("Hash Cond")) {
@@ -33,13 +34,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             this.OuterColumnName = outCol[1];
             this.InnerColumnName = inCol[1];
         }
-    }
-
-    private boolean isSimpleScan(BinaryTreeNode node) {
-        if (node.inner == null && node.outer == null && node.type == NodeType.SCAN) {
-            return true;
-        }
-        return false;
+        this.mode = mode;
     }
 
 
@@ -59,7 +54,11 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             while (i < relationA.TableFiles.size() || i < relationB.TableFiles.size()) {
                 if (i < relationA.TableFiles.size()) {
                     JsonArray array = new JsonArray();
-                    array.add("joinPartition");
+                    if(this.mode == 2){
+                        array.add("joinPartition2");
+                    } else{
+                        array.add("joinPartition3");
+                    }
                     array.add(relationA.TableFiles.get(i));
                     array.add(this.OuterColumnName);
                     array.add(this.OuterRelation);
@@ -100,7 +99,11 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             ContainerManager[] probing = new ContainerManager[buckets];
             for (int i1 = 0; i1 < probing.length; i1++) {
                 JsonArray array = new JsonArray();
-                array.add("joinProbing");
+                if(this.mode == 2){
+                    array.add("joinProbing2");
+                } else{
+                    array.add("joinProbing3");
+                }
                 //TODO: choose who is inner and who is outer
                 array.add("/join/" + i1 + "/" + InnerRelation + "/");
                 array.add("/join/" + i1 + "/" + OuterRelation + "/");

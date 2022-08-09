@@ -5,11 +5,11 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 public class Commons {
-    static public final String REDIS_HOST = "172.18.98.162"; //redis
+    static public final String REDIS_HOST = "172.28.28.11"; //redis
     static public final int REDIS_PORT = 6379;
 
-    static public final String IGNITE_HOST = "172.18.98.162"; //136.145.116.98
-    static public final int IGNITE_PORT = 10800;
+//    static public final String IGNITE_HOST = "172.28.28.11"; //136.145.116.98
+//    static public final int IGNITE_PORT = 10800;
 //    static public final String IGNITE_HOST_PORT = IGNITE_HOST + ":" + IGNITE_PORT;
 
     static public final String S3_BUCKET= "testingjoin";
@@ -21,7 +21,7 @@ public class Commons {
 
     static public final String POSTGRES_PASSWORD = "mypassword";
     static public final String POSTGRES_USERNAME = "myusername";
-    static public final String POSTGRES_HOST = "172.18.98.162"; //postgresql
+    static public final String POSTGRES_HOST = REDIS_HOST; //postgresql ****REMEMBER THAT THIS MAY BE DIFFERENT
     static public final int POSTGRES_PORT = 5434;
     static public final String POSTGRES_DB_NAME = "test";
     static public final String POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;

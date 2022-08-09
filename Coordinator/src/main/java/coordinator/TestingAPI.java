@@ -8,17 +8,17 @@ public class TestingAPI {
 
     @Test
     public void functions() throws Exception {
-        Controller.handleRequest("select * from mytable where mytable.id > 20;");
+        Controller.handleRequest("select * from mytable where mytable.id > 20;", null);
     }
 
     @Test
     public void insertToContainer() throws Exception {
-        Controller.handleRequest("select * from customer inner join product using(id) where price>500 or price<12;");
+        Controller.handleRequest("select * from customer inner join product using(id) where price>500 or price<12;", null);
     }
 
     @Test
     public void querrrryyyy() throws Exception {
-        Controller.handleRequest("select * from product where price>500 or price<12;");
+        Controller.handleRequest("select * from product where price>500 or price<12;", null);
     }
 
 }

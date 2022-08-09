@@ -22,10 +22,10 @@ public class BinaryTreePlan {
         }
     }
 
-    public BinaryTreePlan(JSONObject plan, Statement cursor){
+    public BinaryTreePlan(JSONObject plan, Statement cursor, Integer aCase){
         JSONObject content = plan.getJSONObject("Plan");
         Stack<StackNode> stack = new Stack<>();
-        headNode = BinaryTreeNode.getNodeWithType(content, cursor, null, null, null);
+        headNode = BinaryTreeNode.getNodeWithType(content, cursor, null, null, null, aCase);
         stack.push(new StackNode(content, 0, headNode));
         BinaryTreeNode stackNode = headNode;
         while(!stack.isEmpty()){
@@ -43,7 +43,7 @@ public class BinaryTreePlan {
                                 nodeType.equals("Hash")){
                             peekNode.count++;
                         }
-                        stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, cursor, stackNode, null, null));
+                        stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, cursor, stackNode, null, null, aCase));
                         stackNode = stackNode.getOuter();
                         stack.push(new StackNode(out, 0, stackNode));
                         break;
@@ -57,7 +57,7 @@ public class BinaryTreePlan {
                                 in = in.getJSONArray("Plans").getJSONObject(0);
                             }
                         }
-                        stackNode.setInner(BinaryTreeNode.getNodeWithType(in, cursor, stackNode, null, null));
+                        stackNode.setInner(BinaryTreeNode.getNodeWithType(in, cursor, stackNode, null, null, aCase));
                         stackNode = stackNode.getInner();
                         stack.push(new StackNode(in, 0, stackNode));
                         break;

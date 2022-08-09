@@ -1,22 +1,33 @@
 package orc.helperClasses;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import redis.clients.jedis.Jedis;
+
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static orc.Commons.*;
 
 public class GRACEHashArray {
     private int buckets;
     private int FILE_SIZE = 4096;
-    private LinkedList<File>[] fileBuckets;
-    private LinkedList<String>[] records;
-    private int recordsLimit;
+    private LinkedList<String>[] fileBuckets;
+    private LinkedList<Tuple>[] records;
+    private String relation;
+    private int recordsLimit = 200;
 
     // TODO: Create own Linked List that will autoflush.
 
-    public GRACEHashArray(int buckets, int recordSize) {
+    public GRACEHashArray(int buckets, int recordSize, String relation) {
         this.buckets = buckets;
         this.fileBuckets = new LinkedList[buckets];
-        this.recordsLimit = Math.floorDiv(FILE_SIZE, recordSize);
+//        this.recordsLimit = Math.floorDiv(FILE_SIZE, recordSize);
         this.records = new LinkedList[buckets];
 
         for (int i = 0; i < buckets; i++) {
@@ -26,9 +37,10 @@ public class GRACEHashArray {
     }
 
 
-    public void addRecord(long key, String record) throws FileNotFoundException {
-        int hashValue = (int) Math.abs(key % buckets);
-        records[hashValue].add(key + "," + record);
+    public void addRecord(Tuple record) throws FileNotFoundException {
+        IntegerAttribute key = (IntegerAttribute) record.readAttribute(0);
+        int hashValue = (int) Math.abs(key.value % buckets);
+        records[hashValue].add(record);
         checkFileFull(hashValue);
     }
 
@@ -39,22 +51,40 @@ public class GRACEHashArray {
     }
 
     private void flushToFile(int bucket) {
-        String fileName = "/nfs/tmp/join/temp_" + bucket + "_" + fileBuckets[bucket].size() + "_" + UUID.randomUUID();
-        File tempFile = new File(fileName);
-        fileBuckets[bucket].add(tempFile);
+        //TODO: this can change depending if the container does this think in the disk or in the cache
+        int mode = 2;
+        String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode();
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
+        fileBuckets[bucket].add(fileName);
 
-        try(FileOutputStream fos = new FileOutputStream(tempFile);) {
-            BufferedOutputStream writer = new BufferedOutputStream(fos);
+        System.out.println(fileName + " - " + records[bucket].size());
 
-            //TODO: Implement that the writer is saved and flush as objects are added to avoid the usage of this loop.
-            while(records[bucket].size()>0) {
-                String record = (String) records[bucket].removeFirst() + "\n";
-                writer.write(record.getBytes(StandardCharsets.UTF_8));
+        AmazonS3 s3client = null;
+        if(mode == 2){
+            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+            s3client = AmazonS3ClientBuilder
+                    .standard()
+                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                    .withRegion(Regions.US_EAST_1)
+                    .build();
+        }
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream o = new ObjectOutputStream(bos);
+            o.writeObject(records[bucket]);
+            if(mode == 2) {
+                InputStream in = new ByteArrayInputStream(bos.toByteArray());
+                s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
+            } else {
+                jedis.set(fileName.getBytes(), bos.toByteArray());
             }
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            //TODO: handle error;
+//            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
+//            ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
+//            cache.put(fileName, records[bucket]);
+//            client.close();
+            records[bucket].clear();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -98,7 +128,7 @@ public class GRACEHashArray {
         return map;
     }
 
-    public LinkedList<File> getFileBuckets(int bucket) {
+    public LinkedList<String> getFileBuckets(int bucket) {
         return fileBuckets[bucket];
     }
 

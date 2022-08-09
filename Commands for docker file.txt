@@ -92,44 +92,22 @@ java -jar test-ORC.jar
 
 docker network create -d bridge nettest
 
-Server
-docker run -itd --name test openjdk
-docker network connect --alias server nettest test
-docker cp Main.java test:/
-docker exec -it test bash
-javac Main.Class
-java Main
+        Server
+        docker run -itd --name test openjdk
+        docker network connect --alias server nettest test
+        docker cp Main.java test:/
+        docker exec -it test bash
+        javac Main.Class
+        java Main
 
-Client
-docker run -itd --name test2 openjdk
-docker network connect --alias client nettest test2
-docker cp Main.java test2:/
-docker exec -it test2 bash
-javac Main.Class
-java Main
+        Client
+        docker run -itd --name test2 openjdk
+        docker network connect --alias client nettest test2
+        docker cp Main.java test2:/
+        docker exec -it test2 bash
+        javac Main.Class
+        java Main
 
---------------------------------------------------------------
-
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-int APP_PORT  = 7272;
-Socket socket = new Socket("c1", APP_PORT);
-
-OutputStream out = socket.getOutputStream();
-InputStream in = socket.getInputStream();
-
-
-JSONArray array = new JSONArray();
-array.put(0, "scan");
-array.put(1, "/mytable/hello.orc");
-array.put(2, "id, name");
-array.put(3, "(id>4)");
-array.put(4, "/mytable/hello.orc");
-JSONObject obj = new JSONObject();
-obj.put("plan", array);
 
 apt-get install redis-tools
 
@@ -152,6 +130,10 @@ https://www.tecmint.com/install-nfs-server-on-ubuntu/
 
 https://stackoverflow.com/questions/50042225/how-do-i-combine-or-merge-small-orc-files-into-larger-orc-file
 https://programmerall.com/article/62732193206/
+
+
+docker build . -f DockerfileCoordinator -t coordinator
+docker build . -f DockerfileWorker -t worker
 
 
 things to load:

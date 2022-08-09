@@ -89,6 +89,13 @@ public abstract class BinaryTreeNode implements Runnable{
 
     public abstract void execute();
 
+    public boolean isSimpleScan(BinaryTreeNode node) {
+        if (node.inner == null && node.outer == null && node.type == NodeType.SCAN) {
+            return true;
+        }
+        return false;
+    }
+
     public void connectionWithContainers(String args, String containerIP){
         String received = "";
         try {
@@ -139,12 +146,18 @@ public abstract class BinaryTreeNode implements Runnable{
     }
 
 
-    static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer){
+    static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer aCase){
         NodeType node_type= getType(object.getString("Node Type"));
 //        TODO: depends on the mode we can change this. IMPORTANT
         switch (node_type){
             case JOIN:
-                return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
+                switch (aCase) {
+                    case 1:
+                        return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
+                    default:
+                        return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer, aCase);
+                }
+
             default:
                 return new ScanBinaryTreeNode(object, cursor, parent, inner, outer);
         }

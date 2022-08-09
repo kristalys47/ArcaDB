@@ -27,12 +27,22 @@ public class ContainerManager extends Thread{
         this.plan = plan;
         this.jedisPool = jedisPool;
     }
+    public ContainerManager (String plan, String containerIP){
+        this.containerIP = containerIP;
+        this.plan = plan;
+        this.jedisPool = null;
+    }
 
     @Override
     public void run() {
         String received = "";
         try {
-            Jedis jedis = jedisPool.getResource();
+            Jedis jedis = null;
+            if(this.jedisPool == null){
+                jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+            } else {
+                jedis = jedisPool.getResource();
+            }
             List<String> result = jedis.blpop(0, "node");
             String siteIP = result.get(1);
 
