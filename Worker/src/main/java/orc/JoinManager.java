@@ -160,8 +160,8 @@ public class JoinManager {
         //TODO: ******************** what to do if the join is with the same table but different columns
         //TODO: what to do with the fixed bucket size
         //TODO: where do i save the list?
-        orcToMap(pathR, columnR, bucket,  relationR);
-        orcToMap(pathS, columnS, bucket,  relationS);
+        orcToMap(pathR, columnR, bucket,  relationR, mode);
+        orcToMap(pathS, columnS, bucket,  relationS, mode);
 
         //TODO: Do i want threading?
 //        ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -218,11 +218,11 @@ public class JoinManager {
         System.out.println("Termina el batch2");
     }
 
-    public static void orcToMap(String path, String column, int buckets, String relation) throws IOException {
+    public static void orcToMap(String path, String column, int buckets, String relation, int mode) throws IOException {
         Configuration conf = new Configuration();
         JsonArray gobj = JsonParser.parseString(path).getAsJsonArray();
 
-        GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, 1, relation, 2);
+        GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, 1, relation, mode);
         for (int i = 0; i < gobj.size(); i++) {
             Reader reader = OrcFile.createReader(new Path(gobj.get(i).getAsString()), OrcFile.readerOptions(conf));
             RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());

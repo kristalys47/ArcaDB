@@ -32,7 +32,7 @@ public class WorkerManager {
                 ORCManager.readerPrint(arg[1]);
         }
         else if(arg[0].equals("join1")){
-            JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[8], 2);
+            JoinManager.join( arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[8], 3);
         }
         else if(arg[0].equals("joinPartition2")){
             JoinManager.joinPartition( arg[1], arg[2], arg[3], arg[4], 2);
