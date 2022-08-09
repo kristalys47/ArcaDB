@@ -22,6 +22,6 @@
 /Worker/.idea/
 /DumpingGround/Distributed-DBMS/.idea/
 /DumpingGround/Distributed-DBMS/target/
-/.m2/
-.m2/
+/m2/
+m2/
 .idea/

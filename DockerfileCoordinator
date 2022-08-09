@@ -1,5 +1,5 @@
 FROM maven:latest
-COPY ./.m2/ /root/.m2/
+COPY ./m2/ /root/.m2/
 COPY ./Coordinator/ /Coordinator/
 WORKDIR /Coordinator
 RUN mvn clean install
