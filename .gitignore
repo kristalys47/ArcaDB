@@ -23,5 +23,8 @@
 /DumpingGround/Distributed-DBMS/.idea/
 /DumpingGround/Distributed-DBMS/target/
 /m2/
-m2/
-.idea/
+/.idea/
+/RunResults/target/
+/RunResults/.idea/
+/DumpingGround/Coordinator/.idea/
+/DumpingGround/Coordinator/target/

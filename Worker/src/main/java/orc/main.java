@@ -10,8 +10,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static orc.Commons.REDIS_HOST;
-import static orc.Commons.REDIS_PORT;
+import static orc.Commons.*;
+import static orc.Commons.ip;
 
 public class main {
 
@@ -20,6 +20,7 @@ public class main {
 
         String ip = InetAddress.getLocalHost().getHostAddress();
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
         jedis.rpush("node", ip);
 
         //TODO: need a better logger when this is working
@@ -32,6 +33,8 @@ public class main {
         ServerSocket serverSocket = new ServerSocket(socketPortNumber);
         Socket client = serverSocket.accept();
         System.out.println("Connected - - - - - -");
+
+        long start = System.currentTimeMillis();
 
         OutputStream outR = client.getOutputStream();
         InputStream inR = client.getInputStream();
@@ -73,6 +76,8 @@ public class main {
         } finally {
             out.println("Successful");
         }
+        long end = System.currentTimeMillis();
+        jedisr.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end-start));
 
         out.close();
         in.close();

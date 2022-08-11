@@ -71,15 +71,18 @@ public class JoinManager {
     }
 
     public static void joinPartition(String path, String column, String relation, String buckets, int mode) throws IOException {
-
         AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
         AmazonS3 s3client = AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(Regions.US_EAST_1)
                 .build();
+        long start = System.currentTimeMillis();
         InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
         FileUtils.copyInputStreamToFile(in, new File(path));
+        long end = System.currentTimeMillis();
+        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+        jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println("File retrieved from s3");
         s3client.shutdown();
         scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
@@ -98,6 +101,7 @@ public class JoinManager {
                     .withRegion(Regions.US_EAST_1)
                     .build();
         }
+        long start = System.currentTimeMillis();
         while(jedis.llen(pathS) > 0){
             try {
                 String jkey = pathS + jedis.lpop(pathS);
@@ -122,7 +126,11 @@ public class JoinManager {
                 e.printStackTrace();
             }
         }
+        long end = System.currentTimeMillis();
+        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+        jedisr.rpush("times", "Probing (Create Hash) " + ip + " " + start + " " + end + " " + (end-start));
 
+        start = System.currentTimeMillis();
         while(jedis.llen(pathR) > 0){
             try {
                 String jkey = pathR + jedis.lpop(pathR);
@@ -150,6 +158,8 @@ public class JoinManager {
                 e.printStackTrace();
             }
         }
+        end = System.currentTimeMillis();
+        jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
     }
 
     private static LinkedList<Tuple> getPartitions(String path, int mode, Jedis jedis, AmazonS3 s3client) throws IOException, ClassNotFoundException {
@@ -177,12 +187,18 @@ public class JoinManager {
         //TODO: ******************** what to do if the join is with the same table but different columns
         //TODO: what to do with the fixed bucket size
         //TODO: where do i save the list?
+        long start = System.currentTimeMillis();
         orcToMap(pathR, columnR, bucket,  relationR, mode);
         orcToMap(pathS, columnS, bucket,  relationS, mode);
+        long end = System.currentTimeMillis();
+        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+        jedisr.rpush("times", "Partition Single " + ip + " " + start + " " + end + " " + (end-start));
+
 
         //TODO: Do i want threading?
 //        ExecutorService pool = Executors.newFixedThreadPool(10);
 //        TODO: ****************** select the one with least size to be the map
+        start = System.currentTimeMillis();
         for (int i = 0; i < bucket; i++) {
             String r = "/join/" + i + "/" + relationR + "/";
             String s = "/join/" + i + "/" + relationS + "/";
@@ -190,6 +206,9 @@ public class JoinManager {
             System.out.println(r + " - " + s);
             joinProbing(s, r, String.valueOf(i), mode);
         }
+        end = System.currentTimeMillis();
+        jedisr.rpush("times", "Probing Single " + ip + " " + start + " " + end + " " + (end-start));
+
     }
     public static void scannedToMap(String path, String column, String relation, int buckets, int mode) throws IOException {
         Configuration conf = new Configuration();
@@ -210,6 +229,8 @@ public class JoinManager {
         List<TypeDescription> colType = schema.getChildren();
         GRACEHashArrayInParts table = null;// new GRACEHashArrayInParts(buckets, 100);
         AES hashing = new AES("helohelohelohelo");
+
+        long start = System.currentTimeMillis();
         while (records.nextBatch(batch)) {
             System.out.println("reading...");
             for(int r=0; r < batch.size; ++r) {
@@ -230,6 +251,10 @@ public class JoinManager {
                 table.addRecord(created);
             }
         }
+        long end = System.currentTimeMillis();
+        Jedis jedis = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+        jedis.rpush("times", "Partition (Tuples to Buckets) " + ip + " " + start + " " + end + " " + (end-start));
+
         System.out.println("Termina el batch");
         records.close();
         table.flushRemainders();
@@ -247,9 +272,14 @@ public class JoinManager {
                 .build();
 
         GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, 1, relation, mode);
+        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
         for (int i = 0; i < path.size(); i++) {
+            long start = System.currentTimeMillis();
             InputStream in = s3client.getObject(S3_BUCKET, path.get(i).getAsString()).getObjectContent();
             FileUtils.copyInputStreamToFile(in, new File(path.get(i).getAsString()));
+            long end = System.currentTimeMillis();
+            jedisr.rpush("times", "Partition (Reading File) " + ip + " " + start + " " + end + " " + (end-start));
+
             System.out.println("File retrieved from s3");
             Reader reader = OrcFile.createReader(new Path(path.get(i).getAsString()), OrcFile.readerOptions(conf));
             RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
@@ -262,7 +292,7 @@ public class JoinManager {
             List<String> colName = schema.getFieldNames();
             List<TypeDescription> colType = schema.getChildren();
             AES hashing = new AES("helohelohelohelo");
-
+            start = System.currentTimeMillis();
             while (records.nextBatch(batch)) {
                 for(int r=0; r < batch.size; ++r) {
                     Tuple created = new Tuple(batch.cols.length + 1);
@@ -277,12 +307,12 @@ public class JoinManager {
                     table.addRecord(created);
                 }
             }
+            end = System.currentTimeMillis();
+            jedisr.rpush("times", "Partition (Tuples to bucket) " + ip + " " + start + " " + end + " " + (end-start));
             records.close();
             batch.reset();
-
         }
         table.flushRemainders();
-        //return table;
     }
 
     public static long hashFunction(String s, AES hashing){
