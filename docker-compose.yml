@@ -3,6 +3,10 @@ services:
   coordinator:
     image: coordinator
     container_name: coordinator
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
     ports:
       - target: 7271
         published: 7271
@@ -19,9 +23,9 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 7
+      replicas: 25
       placement:
-        max_replicas_per_node: 10
+        max_replicas_per_node: 8
     depends_on:
       - coordinator
     command: mvn exec:java -Dexec.mainClass="orc.main" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false

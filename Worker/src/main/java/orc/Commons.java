@@ -4,9 +4,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class Commons {
-    static public final String REDIS_HOST = "172.28.28.11"; //redis
+    static public final String REDIS_HOST = "136.145.116.85"; //redis
     static public final int REDIS_PORT = 6379;
-    static public final String REDIS_HOST_TIMES = "172.28.28.11"; //redis
+    static public final String REDIS_HOST_TIMES = "136.145.116.85"; //redis
     static public final int REDIS_PORT_TIMES = 6380;
     static String ip;
     static {
@@ -26,3 +26,4 @@ public class Commons {
     static public final String AWS_S3_SECRET_KEY = "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1";
 
 }
+
