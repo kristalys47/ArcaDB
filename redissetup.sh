@@ -4,9 +4,7 @@ redis-cli -p 6380 flushall
 redis-cli flushall
 redis-cli rpush "product" "/product/product.orc"
 redis-cli rpush "customer" "/customer/customer.orc"
-redis-cli rpush "product" "/product/product.orc"
 redis-cli rpush "customer" "/customer/customer.orc"
-redis-cli rpush "product" "/product/product.orc"
 redis-cli rpush "customer" "/customer/customer.orc"
 
 

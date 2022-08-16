@@ -66,6 +66,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
+                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                 }
                 if (i < relationB.TableFiles.size()) {
@@ -81,6 +82,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
+                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                     tindex++;
                 }

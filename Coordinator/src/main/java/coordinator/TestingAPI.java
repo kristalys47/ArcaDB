@@ -8,7 +8,7 @@ public class TestingAPI {
 
     @Test
     public void functions() throws Exception {
-        Controller.handleRequest("select * from mytable where mytable.id > 20;", null);
+        Controller.handleRequest("select * from product inner join customer using(id);", 3);
     }
 
     @Test
