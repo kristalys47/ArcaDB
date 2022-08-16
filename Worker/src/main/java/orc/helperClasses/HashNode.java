@@ -19,7 +19,7 @@ public class HashNode<T> {
     }
 
     public HashNode<T> getNext() {
-        return next;
+        return this.next;
     }
 
     public void setNext(HashNode<T> next) {

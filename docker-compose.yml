@@ -26,6 +26,8 @@ services:
       replicas: 25
       placement:
         max_replicas_per_node: 8
+        constraints:
+          - "node.role==manager"
     depends_on:
       - coordinator
     command: mvn exec:java -Dexec.mainClass="orc.main" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false

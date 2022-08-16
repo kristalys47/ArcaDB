@@ -71,6 +71,7 @@ public class ContainerManager extends Thread{
             }
             System.out.println("Done:" + siteIP);
             socket.close();
+            jedis.close();
 
         } catch (Exception e) {
             logger.error("ERROR", e);
