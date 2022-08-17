@@ -1,6 +1,7 @@
 FROM maven:latest
 COPY ./m2/ /root/.m2/
 COPY ./Worker/ /Worker/
+COPY env.json /env.json
 WORKDIR /Worker
 RUN mvn clean install
-CMD mvn exec:java -Dexec.mainClass="orc.main"
+CMD mvn exec:java -Dexec.mainClass="orc.main" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false

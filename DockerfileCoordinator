@@ -1,6 +1,7 @@
 FROM maven:latest
 COPY ./m2/ /root/.m2/
 COPY ./Coordinator/ /Coordinator/
+COPY env.json /env.json
 WORKDIR /Coordinator
 RUN mvn clean install
-CMD mvn exec:java -Dexec.mainClass="coordinator.Coordinator"
+CMD mvn exec:java -Dexec.mainClass="coordinator.Coordinator" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false

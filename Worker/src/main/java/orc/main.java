@@ -28,8 +28,6 @@ public class main {
 
         System.out.println("Started");
 
-        int socketPortNumber = 7272;
-
         ServerSocket serverSocket = new ServerSocket(socketPortNumber);
         Socket client = serverSocket.accept();
         System.out.println("Connected - - - - - -");
