@@ -47,10 +47,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             int buckets = 5;
             ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
-            ExecutorService threadPool = Executors.newWorkStealingPool();
-            ContainerManager[] threads1 = new ContainerManager[relationA.TableFiles.size() + relationB.TableFiles.size()];
+            ExecutorService threadPool = Executors.newWorkStealingPool(relationA.TableFiles.size() + relationB.TableFiles.size());
             JedisPoolConfig poolConfig = new JedisPoolConfig();
-            poolConfig.setMaxTotal(10);
             JedisPool jedisPool = new JedisPool(poolConfig, REDIS_HOST, REDIS_PORT);
             int i = 0;
             int tindex = 0;
@@ -68,6 +66,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
+                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                 }
                 if (i < relationB.TableFiles.size()) {
@@ -83,6 +82,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
+                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                     tindex++;
                 }
@@ -94,8 +94,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
 
             System.out.println("PROBING STAGE--------------");
 
-            ExecutorService threadPoolProbing = Executors.newWorkStealingPool();
-            ContainerManager[] probing = new ContainerManager[buckets];
+            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(buckets);
             for (int i1 = 0; i1 < buckets; i1++) {
                 JsonArray array = new JsonArray();
                 if(this.mode == 2){
@@ -109,6 +108,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 array.add(i1);
                 JsonObject obj = new JsonObject();
                 obj.add("plan", array);
+                System.out.println(obj.toString());
                 threadPoolProbing.execute(new ContainerManager(obj.toString(), "worker", jedisPool));
             }
 

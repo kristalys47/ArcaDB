@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 
 public class Commons {
-    static public final String REDIS_HOST = "172.28.28.11"; //redis
+    static public final String REDIS_HOST = "136.145.116.85"; //redis
     static public final int REDIS_PORT = 6379;
 
 //    static public final String IGNITE_HOST = "172.28.28.11"; //136.145.116.98
