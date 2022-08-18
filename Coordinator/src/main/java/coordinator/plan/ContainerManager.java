@@ -47,6 +47,7 @@ public class ContainerManager extends Thread{
             String siteIP = result.get(1);
 
             System.out.println("Site: " + containerIP + "--" + siteIP);
+            System.out.println(plan);
             System.out.println("Connected - - - - - -");
             Socket socket = new Socket(siteIP, WORKER_APP_PORT);
             System.out.println("Connected to Server");

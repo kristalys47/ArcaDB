@@ -11,7 +11,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import static orc.Commons.*;
-import static orc.Commons.ip;
 
 public class main {
 
@@ -21,14 +20,14 @@ public class main {
         String ip = InetAddress.getLocalHost().getHostAddress();
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-        jedis.rpush("node", ip);
 
         //TODO: need a better logger when this is working
         //TODO: custom port
 
         System.out.println("Started");
 
-        ServerSocket serverSocket = new ServerSocket(socketPortNumber);
+        ServerSocket serverSocket = new ServerSocket(WORKER_APP_PORT);
+        jedis.rpush("node", ip);
         Socket client = serverSocket.accept();
         System.out.println("Connected - - - - - -");
 

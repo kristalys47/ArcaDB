@@ -8,6 +8,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,7 +40,91 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         this.mode = mode;
     }
 
+    public void executeWithQueue(){{
+        //TODO: What if the join is in the same table?
+        if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
+            //initiante patition
+            int buckets = 5;
+            ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
+            ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
+            JedisPool jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+            int i = 0;
+            int tindex = 0;
+            while (i < relationA.TableFiles.size() || i < relationB.TableFiles.size()) {
+                if (i < relationA.TableFiles.size()) {
+                    JsonArray array = new JsonArray();
+                    if(this.mode == 2){
+                        array.add("joinPartition2");
+                    } else{
+                        array.add("joinPartition3");
+                    }
+                    array.add(relationA.TableFiles.get(i));
+                    array.add(this.OuterColumnName);
+                    array.add(this.OuterRelation);
+                    array.add(buckets);
+                    JsonObject obj = new JsonObject();
+                    obj.add("plan", array);
+                    jedis.rpush("task", obj.toString());
+                    tindex++;
+                }
+                if (i < relationB.TableFiles.size()) {
+                    JsonArray array = new JsonArray();
+                    if(this.mode == 2){
+                        array.add("joinPartition2");
+                    } else{
+                        array.add("joinPartition3");
+                    }
+                    array.add(relationB.TableFiles.get(i));
+                    array.add(this.InnerColumnName);
+                    array.add(this.InnerRelation);
+                    array.add(buckets);
+                    JsonObject obj = new JsonObject();
+                    obj.add("plan", array);
+                    jedis.rpush("task", obj.toString());
+                    tindex++;
+                }
+                i++;
+            }
 
+            for (int i1 = 0; i1 < tindex; i1++) {
+                List<String> element = blpop("done", 0);
+                System.out.println(element.get(1));
+            }
+
+            System.out.println("PROBING STAGE--------------");
+
+            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(buckets);
+            for (int i1 = 0; i1 < buckets; i1++) {
+                JsonArray array = new JsonArray();
+                if(this.mode == 2){
+                    array.add("joinProbing2");
+                } else{
+                    array.add("joinProbing3");
+                }
+                //TODO: choose who is inner and who is outer
+                array.add("/join/" + i1 + "/" + OuterRelation + "/");
+                array.add("/join/" + i1 + "/" + InnerRelation + "/");
+                array.add(i1);
+                JsonObject obj = new JsonObject();
+                obj.add("plan", array);
+                jedis.rpush("task", obj.toString());
+            }
+            
+            for (int i1 = 0; i1 < tindex; i1++) {
+                List<String> element = blpop("done", 0);
+                System.out.println(element.get(1));
+            }
+
+
+
+        } else {
+            System.out.println("This case has not been set yet because the leaves are not directly " +
+                    "connected to both the relations");
+        }
+
+    }
+
+    }
     public void execute(){
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
@@ -66,7 +151,6 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                 }
                 if (i < relationB.TableFiles.size()) {
@@ -82,7 +166,6 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    System.out.println(obj.toString());
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                     tindex++;
                 }
@@ -108,7 +191,6 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 array.add(i1);
                 JsonObject obj = new JsonObject();
                 obj.add("plan", array);
-                System.out.println(obj.toString());
                 threadPoolProbing.execute(new ContainerManager(obj.toString(), "worker", jedisPool));
             }
 
