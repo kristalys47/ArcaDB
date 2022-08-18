@@ -1,7 +1,6 @@
 FROM maven:latest
 COPY ./m2/ /root/.m2/
 COPY ./Worker/ /Worker/
-COPY env.json /env.json
 WORKDIR /Worker
 RUN mvn clean install
-CMD mvn exec:java -Dexec.mainClass="orc.main" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false
+CMD mvn exec:java -Dexec.mainClass="orc.main" -Dexec.args="${S3_BUCKET} ${AWS_S3_ACCESS_KEY} ${AWS_S3_SECRET_KEY} ${REDIS_HOST} ${REDIS_PORT} ${REDIS_HOST_TIMES} ${REDIS_PORT_TIMES} ${WORKER_APP_PORT} ${COORDINATOR_APP_PORT} ${POSTGRES_PASSWORD} ${POSTGRES_USERNAME} ${POSTGRES_HOST} ${POSTGRES_PORT} ${POSTGRES_DB_NAME} ${MODE}" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false

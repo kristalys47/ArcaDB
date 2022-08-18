@@ -84,10 +84,18 @@ public abstract class BinaryTreeNode implements Runnable{
 
     @Override
     public void run(){
-        execute();
+        switch (MODE) {
+            case "queue":
+                executeWithQueue();
+                break;
+            default:
+                execute();
+                break;
+        }
     }
 
     public abstract void execute();
+    public abstract void executeWithQueue();
 
     public boolean isSimpleScan(BinaryTreeNode node) {
         if (node.inner == null && node.outer == null && node.type == NodeType.SCAN) {

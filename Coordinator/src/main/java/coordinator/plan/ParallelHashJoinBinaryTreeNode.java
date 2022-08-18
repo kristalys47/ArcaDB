@@ -3,6 +3,7 @@ package coordinator.plan;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.json.JSONObject;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -40,14 +41,14 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         this.mode = mode;
     }
 
-    public void executeWithQueue(){{
+    public void executeWithQueue() {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
             int buckets = 5;
             ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
-            JedisPool jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+            Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
             int i = 0;
             int tindex = 0;
             while (i < relationA.TableFiles.size() || i < relationB.TableFiles.size()) {
@@ -87,7 +88,11 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             }
 
             for (int i1 = 0; i1 < tindex; i1++) {
-                List<String> element = blpop("done", 0);
+                List<String> element = jedis.blpop(0, "done");
+                if(!element.get(1).contains("Successful")){
+                    System.out.println("A container failed" + element.get(1));
+                    return;
+                }
                 System.out.println(element.get(1));
             }
 
@@ -109,20 +114,20 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 obj.add("plan", array);
                 jedis.rpush("task", obj.toString());
             }
-            
-            for (int i1 = 0; i1 < tindex; i1++) {
-                List<String> element = blpop("done", 0);
+
+            for (int i1 = 0; i1 < buckets; i1++) {
+                List<String> element = jedis.blpop(0, "done");
+                if(!element.get(1).contains("Successful")){
+                    System.out.println("A container failed" + element.get(1));
+                    return;
+                }
                 System.out.println(element.get(1));
             }
-
-
 
         } else {
             System.out.println("This case has not been set yet because the leaves are not directly " +
                     "connected to both the relations");
         }
-
-    }
 
     }
     public void execute(){

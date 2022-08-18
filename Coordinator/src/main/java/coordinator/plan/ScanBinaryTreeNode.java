@@ -56,4 +56,9 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
         //Assign The files from the catalog
 
     }
+
+    @Override
+    public void executeWithQueue() {
+        //TODO: Complete this method
+    }
 }

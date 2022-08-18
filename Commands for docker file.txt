@@ -146,11 +146,7 @@ docker run -d -p 10800:10800 --name ignite --network cloud --network-alias postg
 
 
 
-things to load:
 
-docker run -d -p 5434:5432 -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword --name postgres postgres
-docker run -d -p 6379:6379 --name redis redis
-docker run -d -p 6380:6379 --name redis_results redis
 
 
 docker run -d -p 5432:5432 --name postgres --network cloud --network-alias postgresql -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword postgres
@@ -185,3 +181,19 @@ docker run -d -p 6379:6379 --name redis --network cloud --network-alias redis re
 #        aliases:
 #          - postgresql
 
+docker compose convert
+
+
+${S3_BUCKET} ${AWS_S3_ACCESS_KEY} ${AWS_S3_SECRET_KEY} ${REDIS_HOST} ${REDIS_PORT} ${REDIS_HOST_TIMES} ${REDIS_PORT_TIMES} ${WORKER_APP_PORT} ${COORDINATOR_APP_PORT} ${POSTGRES_PASSWORD} ${POSTGRES_USERNAME} ${POSTGRES_HOST} ${POSTGRES_PORT} ${POSTGRES_DB_NAME}
+
+things to load:
+
+1. Containers that are needed;
+
+docker run -d -p 5434:5432 -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e POSTGRES_PASSWORD=mypassword --name postgres postgres
+docker run -d -p 6379:6379 --name redis redis
+docker run -d -p 6380:6379 --name redis_results redis
+
+2. Change the env.
+
+3. dont forget to change the commands to start in the compose file in acordance with what you want (queue, sockets)

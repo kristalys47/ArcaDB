@@ -12,8 +12,8 @@
 /DumpingGround/TestingDeployment/Coordinator/target/
 /DumpingGround/TestingDeployment/Distributed-DBMS/.idea/
 /DumpingGround/TestingDeployment/Distributed-DBMS/target/
-/TestFiles/Testing-main/target/
-/TestFiles/Testing-main/.idea/
+/Data/Testing-main/target/
+/Data/Testing-main/.idea/
 /CTests/build/
 /CTests/orc/
 /CTests/cmake-build-debug/

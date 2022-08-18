@@ -1,0 +1,77 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      cloud:
+        aliases:
+          - redis
+
+  postgresql:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=myusername
+      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=mypassword
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      cloud:
+        aliases:
+          - postgresql
+
+  coordinator:
+    image: coordinator
+    container_name: coordinator
+    ports:
+      - "7271:7271"
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /nfs
+    networks:
+      cloud:
+        aliases:
+          - coordinator
+    depends_on:
+      - postgresql
+
+  worker:
+    image: worker
+#    volumes:
+#      - type: volume
+#        source: storage
+#        target: /nfs
+    networks:
+      cloud:
+        aliases:
+          - worker
+    deploy:
+      replicas: 10
+      placement:
+        max_replicas_per_node: 10
+    depends_on:
+      - redis
+      - coordinator
+    command: ./wait-for-it.sh redis:6379 -- mvn exec:java -Dexec.mainClass="orc.main"
+
+networks:
+  cloud:
+    driver: overlay
+    attachable: true
+#
+#volumes:
+#  storage:
+#    driver: local
+#    driver_opts:
+#      type: "nfs"
+#      o: "nfsvers=4,addr=136.145.116.85,rw"
+#      device: ":/nfs"
