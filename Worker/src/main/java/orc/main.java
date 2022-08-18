@@ -15,25 +15,27 @@ import static orc.Commons.*;
 public class main {
 
     static public void main(String[] arg) throws Exception {
-        S3_BUCKET = arg[0];
-        AWS_S3_ACCESS_KEY = arg[1];
-        AWS_S3_SECRET_KEY = arg[2];
-        REDIS_HOST = arg[3];
-        REDIS_PORT = Integer.valueOf(arg[4]);
-        REDIS_HOST_TIMES = arg[5];
-        REDIS_PORT_TIMES = Integer.valueOf(arg[6]);
-        WORKER_APP_PORT = Integer.valueOf(arg[7]);
-        COORDINATOR_APP_PORT = Integer.valueOf(arg[8]);
 
-        POSTGRES_PASSWORD = arg[9];
-        POSTGRES_USERNAME = arg[10];
-        POSTGRES_HOST = arg[11];
-        POSTGRES_PORT = Integer.valueOf(arg[12]);
-        POSTGRES_DB_NAME = arg[13];
-        MODE = arg[14];
+        S3_BUCKET = arg[0].trim();
+        AWS_S3_ACCESS_KEY = arg[1].trim();
+        AWS_S3_SECRET_KEY = arg[2].trim();
+        REDIS_HOST = arg[3].trim();
+        REDIS_PORT = Integer.parseInt(arg[4].trim());
+        REDIS_HOST_TIMES = arg[5].trim();
+        REDIS_PORT_TIMES = Integer.parseInt(arg[6].trim());
+        WORKER_APP_PORT = Integer.parseInt(arg[7].trim());
+        COORDINATOR_APP_PORT = Integer.parseInt(arg[8].trim());
+
+        POSTGRES_PASSWORD = arg[9].trim();
+        POSTGRES_USERNAME = arg[10].trim();
+        POSTGRES_HOST = arg[11].trim();
+        POSTGRES_PORT = Integer.parseInt(arg[12].trim());
+        POSTGRES_DB_NAME = arg[13].trim();
+        MODE = arg[14].trim();
 
         POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
 
+        System.out.println("Started");
         if (MODE.equals("queue")) {
             MainWithQueue.main(null);
         } else {
