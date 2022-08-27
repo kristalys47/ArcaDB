@@ -29,8 +29,8 @@ services:
       replicas: 5
       placement:
         max_replicas_per_node: 5
-        constraints:
-          - "node.role==manager"
+        # constraints:
+        #   - "node.role==manager"
     depends_on:
       - coordinator
     env_file: .env
@@ -39,4 +39,6 @@ networks:
   cloud:
     driver: overlay
     attachable: true
+    driver_opts:
+      com.docker.network.driver.mtu: 1442
 #    external: true
