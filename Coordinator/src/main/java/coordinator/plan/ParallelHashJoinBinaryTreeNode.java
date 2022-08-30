@@ -25,9 +25,9 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
     public String InnerColumnName;
     public int mode;
 
-    public ParallelHashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int mode) {
+    public ParallelHashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int mode, int bucket) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.PARALLELJOIN, parent, inner, outer);
+        super(NodeType.PARALLELJOIN, parent, inner, outer, bucket);
         if (info.has("Hash Cond")) {
             String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
                     .replaceAll("\\)", "").split(" = ");
@@ -45,7 +45,6 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
-            int buckets = 5;
             ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
             Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
@@ -62,7 +61,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(relationA.TableFiles.get(i));
                     array.add(this.OuterColumnName);
                     array.add(this.OuterRelation);
-                    array.add(buckets);
+                    array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
                     jedis.rpush("task", obj.toString());
@@ -78,7 +77,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(relationB.TableFiles.get(i));
                     array.add(this.InnerColumnName);
                     array.add(this.InnerRelation);
-                    array.add(buckets);
+                    array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
                     jedis.rpush("task", obj.toString());
@@ -98,8 +97,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
 
             System.out.println("PROBING STAGE--------------");
 
-            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(buckets);
-            for (int i1 = 0; i1 < buckets; i1++) {
+            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(this.buckets);
+            for (int i1 = 0; i1 < this.buckets; i1++) {
                 JsonArray array = new JsonArray();
                 if(this.mode == 2){
                     array.add("joinProbing2");
@@ -115,7 +114,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 jedis.rpush("task", obj.toString());
             }
 
-            for (int i1 = 0; i1 < buckets; i1++) {
+            for (int i1 = 0; i1 < this.buckets; i1++) {
                 List<String> element = jedis.blpop(0, "done");
                 if(!element.get(1).contains("Successful")){
                     System.out.println("A container failed" + element.get(1));
@@ -134,7 +133,6 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
-            int buckets = 5;
             ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
             ExecutorService threadPool = Executors.newWorkStealingPool(relationA.TableFiles.size() + relationB.TableFiles.size());
@@ -153,7 +151,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(relationA.TableFiles.get(i));
                     array.add(this.OuterColumnName);
                     array.add(this.OuterRelation);
-                    array.add(buckets);
+                    array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
@@ -168,7 +166,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                     array.add(relationB.TableFiles.get(i));
                     array.add(this.InnerColumnName);
                     array.add(this.InnerRelation);
-                    array.add(buckets);
+                    array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
                     threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
@@ -182,8 +180,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
 
             System.out.println("PROBING STAGE--------------");
 
-            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(buckets);
-            for (int i1 = 0; i1 < buckets; i1++) {
+            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(this.buckets);
+            for (int i1 = 0; i1 < this.buckets; i1++) {
                 JsonArray array = new JsonArray();
                 if(this.mode == 2){
                     array.add("joinProbing2");

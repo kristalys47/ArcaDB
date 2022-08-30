@@ -20,9 +20,9 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
     private String InnerRelation;
     private String OuterRelation;
 
-    public HashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
+    public HashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int buckets) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.JOIN, parent, inner, outer);
+        super(NodeType.JOIN, parent, inner, outer, buckets);
         if (info.has("Hash Cond")){
             String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
                     .replaceAll("\\)", "").split(" = ");
@@ -39,7 +39,6 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
     public void execute(){
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
-            int buckets = 5;
             ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
             ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
             JsonArray array = new JsonArray();
@@ -56,7 +55,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
             }
             array.add(this.InnerColumnName);
             array.add(this.InnerRelation);
-            array.add(5);
+            array.add(this.buckets);
             //TODO: make request for resources and return the node to execute on
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
@@ -69,7 +68,6 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
 
     @Override
     public void executeWithQueue() {
-        int buckets = 5;
         ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
         ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
         JsonArray array = new JsonArray();
@@ -86,7 +84,7 @@ public class HashJoinBinaryTreeNode extends BinaryTreeNode{
         }
         array.add(this.InnerColumnName);
         array.add(this.InnerRelation);
-        array.add(5);
+        array.add(this.buckets);
         //TODO: make request for resources and return the node to execute on
         JsonObject obj = new JsonObject();
         obj.add("plan", array);

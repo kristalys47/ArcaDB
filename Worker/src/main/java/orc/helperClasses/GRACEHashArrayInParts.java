@@ -68,7 +68,7 @@ public class GRACEHashArrayInParts {
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
         fileBuckets[bucket].add(fileName);
 
-        System.out.println(fileName + " - " + records[bucket].size());
+//        System.out.println(fileName + " - " + records[bucket].size());
 
         AmazonS3 s3client = null;
         if(mode == 2){

@@ -20,17 +20,19 @@ public abstract class BinaryTreeNode implements Runnable{
     public boolean isLeaf;
     public boolean done;
     public List<String> resultFile;
+    public int buckets;
 
 
     public enum NodeType {PARALLELJOIN, JOIN, SCAN};
 
-    public BinaryTreeNode(NodeType type, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer){
+    public BinaryTreeNode(NodeType type, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int buckets){
         this.type = type;
         this.parent = parent;
         this.outer = outer;
         this.inner = inner;
         this.isLeaf = false;
         this.done = false;
+        this.buckets = buckets;
         this.resultFile = new ArrayList<>();
     }
 
@@ -154,16 +156,16 @@ public abstract class BinaryTreeNode implements Runnable{
     }
 
 
-    static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer aCase){
+    static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer aCase, Integer buckets){
         NodeType node_type= getType(object.getString("Node Type"));
 //        TODO: depends on the mode we can change this. IMPORTANT
         switch (node_type){
             case JOIN:
                 switch (aCase) {
                     case 1:
-                        return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer);
+                        return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer, buckets);
                     default:
-                        return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer, aCase);
+                        return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer, aCase, buckets);
                 }
 
             default:

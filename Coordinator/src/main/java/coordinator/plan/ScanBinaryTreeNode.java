@@ -16,7 +16,8 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
 
     public ScanBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.SCAN, parent, inner, outer);
+        //TODO: Check bucket stuff (Create it for the parent class special constructor. Overload it)
+        super(NodeType.SCAN, parent, inner, outer, -1);
         //TODO: you can get the relation from here to send to the hash join make it a variable;
         if (info.has("Relation Name"))
             this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));

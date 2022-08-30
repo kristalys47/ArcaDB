@@ -37,7 +37,7 @@ public class Coordinator {
 //            System.out.println(json.get("query"));
             boolean result = false;
             try {
-                result = Controller.handleRequest((String) json.get("query"), (Integer) json.get("mode"));
+                result = Controller.handleRequest((String) json.get("query"), (Integer) json.get("mode"), (Integer) json.get("buckets"));
             } catch (Exception e){
                 e.printStackTrace();
                 return e.getMessage();

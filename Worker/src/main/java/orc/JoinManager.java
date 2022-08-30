@@ -67,7 +67,7 @@ public class JoinManager {
         }
         records2.close();
         batch2.reset();
-        System.out.println(hm.toString());
+//        System.out.println(hm.toString());
     }
 
     public static void joinPartition(String path, String column, String relation, String buckets, int mode) throws IOException {
@@ -83,7 +83,7 @@ public class JoinManager {
         long end = System.currentTimeMillis();
         Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
         jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("File retrieved from s3");
+//        System.out.println("File retrieved from s3");
         s3client.shutdown();
         scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
     }
@@ -203,7 +203,7 @@ public class JoinManager {
             String r = "/join/" + i + "/" + relationR + "/";
             String s = "/join/" + i + "/" + relationS + "/";
 
-            System.out.println(r + " - " + s);
+//            System.out.println(r + " - " + s);
             joinProbing(s, r, String.valueOf(i), mode);
         }
         end = System.currentTimeMillis();
@@ -216,7 +216,7 @@ public class JoinManager {
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
 //        TypeDescription schema = reader.getSchema();
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
-        System.out.println("crea el reader");
+//        System.out.println("crea el reader");
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
         int joinKey = reader.getSchema().getFieldNames().indexOf(column);
         // TODO: size needs to be calculated, make a formula for that.
@@ -232,7 +232,7 @@ public class JoinManager {
 
         long start = System.currentTimeMillis();
         while (records.nextBatch(batch)) {
-            System.out.println("reading...");
+//            System.out.println("reading...");
             for(int r=0; r < batch.size; ++r) {
                 Tuple created = new Tuple(batch.cols.length + 1);
                 StringBuilder key = new StringBuilder();
@@ -255,15 +255,15 @@ public class JoinManager {
         Jedis jedis = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
         jedis.rpush("times", "Partition (Tuples to Buckets) " + ip + " " + start + " " + end + " " + (end-start));
 
-        System.out.println("Termina el batch");
+//        System.out.println("Termina el batch");
         records.close();
         table.flushRemainders();
-        System.out.println("Termina el batch2");
+//        System.out.println("Termina el batch2");
     }
 
     public static void orcToMap(JsonArray path, String column, int buckets, String relation, int mode) throws IOException {
         Configuration conf = new Configuration();
-        System.out.println(path);
+//        System.out.println(path);
         AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
         AmazonS3 s3client = AmazonS3ClientBuilder
                 .standard()
@@ -280,7 +280,7 @@ public class JoinManager {
             long end = System.currentTimeMillis();
             jedisr.rpush("times", "Partition (Reading File) " + ip + " " + start + " " + end + " " + (end-start));
 
-            System.out.println("File retrieved from s3");
+//            System.out.println("File retrieved from s3");
             Reader reader = OrcFile.createReader(new Path(path.get(i).getAsString()), OrcFile.readerOptions(conf));
             RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
             VectorizedRowBatch batch = reader.getSchema().createRowBatch();

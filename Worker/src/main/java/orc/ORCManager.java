@@ -190,7 +190,7 @@ public class ORCManager {
 
         batch.reset();
         writer.close();
-        System.out.println("It has been successfully saved in path " + path);
+//        System.out.println("It has been successfully saved in path " + path);
     }
 
     private static void addRow(JSONArray row, ArrayList<TypeDescription> types, VectorizedRowBatch batch, int place) {
