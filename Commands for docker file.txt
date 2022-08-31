@@ -191,6 +191,13 @@ env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy --compose-file docker-
 docker stack deploy -c <(docker-compose config) stack-name-here
 docker stack deploy -c <(docker-compose -f CUSTOM-COMPOSE-FILENAME.yml config) CUSTOM-STACK
 
+
+set
+unset
+source
+grep -o ^[A-Z1-9_]*
+
+
 things to load:
 
 1. Containers that are needed;

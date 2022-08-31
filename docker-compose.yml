@@ -28,7 +28,7 @@ services:
     deploy:
       replicas: 5
       placement:
-        max_replicas_per_node: 5
+        max_replicas_per_node: $(S3_BUCKET)
         # constraints:
         #   - "node.role==manager"
     depends_on:

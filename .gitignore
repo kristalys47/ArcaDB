@@ -30,3 +30,7 @@
 /DumpingGround/Coordinator/target/
 Coordinator/Coordinator.iml
 Coordinator/Coordinator.iml
+/Data/CSVGEn/env/
+/Data/CSVGEn/orc-tools-1.7.5-uber.jar
+/Data/CSVGEn/dbgen/*.tbl
+/Data/CSVGEn/dbgen/*.o

@@ -29,7 +29,7 @@ public class RunResults {
         String jsonString = "{" +
                 "\"query\": \"select * from product inner join customer using(id);\"," +
                 "\"mode\": 3 ," +
-                "\"buckets\": 10 " +
+                "\"buckets\": 30 " +
                 "}";
         RequestSpecification request = RestAssured.given()
                 .baseUri("http://" + DBMS + ":7271/database/query")
