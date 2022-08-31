@@ -2,6 +2,8 @@
 
 redis-cli -h 136.145.77.83 -p 6380 flushall
 redis-cli -h 136.145.77.83 -p 6379 flushall
+redis-cli -h 136.145.77.83 -p 6379 rpush "product_partition_size" "20000"
+redis-cli -h 136.145.77.83 -p 6379 rpush "customer_partition_size" "20000"
 redis-cli -h 136.145.77.83 -p 6379 rpush "product" "/product/product0.orc"
 redis-cli -h 136.145.77.83 -p 6379 rpush "product" "/product/product2.orc"
 redis-cli -h 136.145.77.83 -p 6379 rpush "product" "/product/product1.orc"

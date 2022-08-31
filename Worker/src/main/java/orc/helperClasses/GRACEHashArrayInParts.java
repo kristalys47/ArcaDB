@@ -20,7 +20,9 @@ import static orc.Commons.*;
 
 public class GRACEHashArrayInParts {
     private int buckets;
-    private int FILE_SIZE = 16384;
+    //TODO: In an ideal world, this changes according to what is wanted.
+    // Pass within the metadata of the plan.
+//    private int FILE_SIZE = 16384;
     public LinkedList<String>[] fileBuckets;
     private LinkedList<Tuple>[] records;
     private int recordsLimit = 200;
@@ -35,7 +37,8 @@ public class GRACEHashArrayInParts {
         this.mode = mode;
         this.fileBuckets = new LinkedList[buckets];
         //TODO: get object size
-//        this.recordsLimit = Math.floorDiv(FILE_SIZE, recordSize);
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        this.recordsLimit = Integer.valueOf(jedis.get(relation + "_partition_size"));
         this.records = new LinkedList[buckets];
 
         for (int i = 0; i < buckets; i++) {
