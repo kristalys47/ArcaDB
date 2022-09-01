@@ -19,24 +19,24 @@ session = boto3.Session(
 )
 s3 = session.resource('s3')
 
-def upload_file(file_name, bucket, object_name=None):
-    # If S3 object_name was not specified, use file_name\n",
-    if object_name is None:
-        object_name = os.path.basename(file_name)
-        try:
-            response = s3.upload_file(file_name, S3_BUCKET, object_name)
-        except ClientError as e:
-            logging.error(e)
-            return False
+
+
+def upload_file(file_name, object_name):
+    try:
+        response = s3.Bucket(S3_BUCKET).upload_file(file_name, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
     return True
 
 
 def csv():
-    csv_file = {"dbgen/orders.tbl", "dbgen/supplier.tbl", "dbgen/region.tbl",
-                "dbgen/partsupp.tbl", "dbgen/part.tbl", "dbgen/orders.tbl",
-                "dbgen/nation.tbl", "dbgen/lineitem.tbl", "dbgen/customer.tbl"}
+    # csv_file = {"dbgen/orders.tbl", "dbgen/supplier.tbl", "dbgen/region.tbl",
+    #             "dbgen/partsupp.tbl", "dbgen/part.tbl", "dbgen/orders.tbl",
+    #             "dbgen/nation.tbl", "dbgen/lineitem.tbl", "dbgen/customer.tbl"}
+    csv_file = {"customer.tbl"}
     for n in csv_file:
-        data = pd.read_csv(n, delimiter='|', header=None)
+        data = pd.read_csv("dbgen/" + n, delimiter='|', header=None)
         data = data.iloc[:, :-1]
 
         schema = data.tail(1)
@@ -60,10 +60,12 @@ def csv():
             filenameorc = n.split(".")[0] + str(index) + ".orc"
             df_new.to_csv(filename, header=None, index=None)  # output file
             index = index + 1
-            os.system("java -jar orc-tools-1.7.5-uber.jar convert {} -o {} --schema \'{}>\'".format(filename,
+            print("java -jar orc-tools-1.7.5-uber.jar convert {} -o {} --schema \'{}>\'".format(filename,
                                                                                                    filenameorc,
                                                                                                schema.split(">")[0]))
             os.system('rm {}'.format(filename))
+
+            # upload_file(filenameorc, "/"+n.split(".")[0]+"/"+filenameorc)
 
 
 csv()

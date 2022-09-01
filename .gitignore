@@ -34,3 +34,5 @@ Coordinator/Coordinator.iml
 /Data/CSVGEn/orc-tools-1.7.5-uber.jar
 /Data/CSVGEn/dbgen/*.tbl
 /Data/CSVGEn/dbgen/*.o
+/Data/CSVGEn/venv/
+/Data/CSVGEn/.idea/
