@@ -209,3 +209,6 @@ docker run -d -p 6380:6379 --name redis_results redis
 2. Change the env.
 
 3. dont forget to change the commands to start in the compose file in acordance with what you want (queue, sockets)
+
+
+TODO: remake the docker image

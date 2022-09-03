@@ -36,3 +36,5 @@ Coordinator/Coordinator.iml
 /Data/CSVGEn/dbgen/*.o
 /Data/CSVGEn/venv/
 /Data/CSVGEn/.idea/
+/.ipynb_checkpoints/
+/Data/CSVGEn/1d7a6e36-9a69-4d45-884a-d2bb2e07045b-tpc-h-tool/
