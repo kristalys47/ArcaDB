@@ -7,8 +7,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import orc.helperClasses.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -23,7 +21,6 @@ import org.apache.orc.impl.RecordReaderImpl;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.*;
 
 import static orc.Commons.*;
@@ -218,7 +215,7 @@ public class JoinManager {
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
 //        System.out.println("crea el reader");
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
-        int joinKey = reader.getSchema().getFieldNames().indexOf(column);
+        int joinKey = reader.getSchema().getFieldNames().indexOf(column.replace("\"", ""));
         // TODO: size needs to be calculated, make a formula for that.
 
         //TODO: Generate this key
@@ -240,7 +237,7 @@ public class JoinManager {
                     created.addAttribute(colType.get(j), j+1, colName.get(j), batch.cols[j], r);
                     if(j == joinKey){
                         batch.cols[j].stringifyValue(key, r);
-                        created.addAttribute(Attribute.AttributeType.Integer, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
+                        created.addAttribute(Attribute.AttributeType.Long, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
                     }
                 }
                 // TODO: create better hashfunction
@@ -301,7 +298,7 @@ public class JoinManager {
                         created.addAttribute(colType.get(j), j+1, colName.get(j), batch.cols[j], r);
                         if(j == joinKey){
                             batch.cols[j].stringifyValue(key, r);
-                            created.addAttribute(Attribute.AttributeType.Integer, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
+                            created.addAttribute(Attribute.AttributeType.Long, 0, colName.get(j), (hashFunction(key.toString(), hashing)), r);
                         }
                     }
                     table.addRecord(created);

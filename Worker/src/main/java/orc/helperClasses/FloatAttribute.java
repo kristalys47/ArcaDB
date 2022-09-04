@@ -4,7 +4,7 @@ public class FloatAttribute extends Attribute{
     public Float value;
 
     public FloatAttribute(String column, Float value) {
-        super(column, AttributeType.Float);
+        super(column, AttributeType.Decimal);
         this.value = value;
     }
 

@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 

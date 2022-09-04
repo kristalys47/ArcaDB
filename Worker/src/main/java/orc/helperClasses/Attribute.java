@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public abstract class Attribute implements Serializable {
     //TODO: add Long and Double
-    public enum AttributeType {String, Integer, Float};
+    public enum AttributeType {String, Long, Decimal, Double};
     public String column;
     public AttributeType type;
 

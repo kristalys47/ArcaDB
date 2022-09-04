@@ -25,23 +25,47 @@ public class Utils {
         }
     }
 
-    public static Attribute.AttributeType getAttributeTypeFromTypeCategory(TypeDescription.Category type) {
-        switch (type){
-            case DECIMAL:
-            case DOUBLE:
-            case FLOAT:
-                return Attribute.AttributeType.Float;
-            case BOOLEAN:
-            case INT:
-            case LONG:
-            case SHORT:
-                return Attribute.AttributeType.Integer;
-            case BYTE:
-            case CHAR:
-            case VARCHAR:
-            case STRING:
-            default:
+//    public static Attribute.AttributeType getAttributeTypeFromTypeCategory(TypeDescription.Category type) {
+//        switch (type){
+//            case DECIMAL:
+//            case DOUBLE:
+//            case FLOAT:
+//                return Attribute.AttributeType.Float;
+//            case BOOLEAN:
+//            case INT:
+//            case LONG:
+//            case SHORT:
+//                return Attribute.AttributeType.Integer;
+//            case BYTE:
+//            case CHAR:
+//            case VARCHAR:
+//            case STRING:
+//            default:
+//                return Attribute.AttributeType.String;
+//        }
+//    }
+    public static Attribute.AttributeType getAttributeTypeFromType(TypeDescription type) {
+        switch (type.toString()){
+            case "binary":
+            case "char":
+            case "string":
+            case "varchar":
                 return Attribute.AttributeType.String;
+            case "bigint":
+            case "boolean":
+            case "date":
+            case "int":
+            case "smallint":
+            case "tinyint":
+                return Attribute.AttributeType.Long;
+            case "float":
+            case "double":
+                return Attribute.AttributeType.Double;
+            default:
+                if(type.toString().contains("decimal"))
+                    return Attribute.AttributeType.Decimal;
+                else
+                    return null;
         }
     }
 }

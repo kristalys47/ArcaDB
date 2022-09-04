@@ -53,7 +53,7 @@ public class GRACEHashArrayInParts {
     }
 
     public void addRecord(Tuple record) {
-        IntegerAttribute key = (IntegerAttribute) record.readAttribute(0);
+        LongAttribute key = (LongAttribute) record.readAttribute(0);
         int hashValue = (int) Math.abs(key.value % buckets);
         records[hashValue].add(record);
         checkFileFull(hashValue);

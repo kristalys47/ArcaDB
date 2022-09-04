@@ -1,9 +1,6 @@
 package orc.helperClasses;
 
-import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.*;
 import org.apache.orc.TypeDescription;
 
 import java.io.Serializable;
@@ -18,12 +15,11 @@ public class Tuple implements Serializable {
     }
 
     public void addAttribute(TypeDescription type, int position, String name, ColumnVector value, int index){
-        ColumnVector.Type coltype = Utils.getTypeFromTypeCategory(type.getCategory());
-        Attribute.AttributeType typeAttribute = Utils.getAttributeTypeFromTypeCategory(type.getCategory());
+        Attribute.AttributeType typeAttribute = Utils.getAttributeTypeFromType(type);
         switch (typeAttribute) {
-            case Integer:
+            case Long:
                 LongColumnVector lcv = (LongColumnVector) value;
-                this.attributeArrayList[position] = new IntegerAttribute(name, (int) lcv.vector[index]);
+                this.attributeArrayList[position] = new LongAttribute(name, lcv.vector[index]);
                 break;
             case String:
                 BytesColumnVector bcv = (BytesColumnVector) value;
@@ -31,15 +27,20 @@ public class Tuple implements Serializable {
                 bcv.stringifyValue(sb, index);
                 this.attributeArrayList[position] = new StringAttribute(name, sb.toString());
                 break;
-            case Float:
-                DoubleColumnVector dcv = (DoubleColumnVector) value;
-                this.attributeArrayList[position] = new FloatAttribute(name, (float) dcv.vector[index]);
+            case Double:
+                DoubleColumnVector ddcv = (DoubleColumnVector) value;
+                this.attributeArrayList[position] = new DoubleAttribute(name, ddcv.vector[index]);
+                break;
+            case Decimal:
+                DecimalColumnVector dcv = (DecimalColumnVector) value;
+                //TODO: This can be int/long + double/float or just double or float
+                this.attributeArrayList[position] = new FloatAttribute(name, dcv.vector[index].floatValue());
                 break;
         }
     }
 
     public void addAttribute(Attribute.AttributeType type, int position, String name, long value, int index){
-        this.attributeArrayList[position] = new IntegerAttribute(name, (int) value);
+        this.attributeArrayList[position] = new LongAttribute(name, (long) value);
     }
 
     public Attribute readAttribute(int position){

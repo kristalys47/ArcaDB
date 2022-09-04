@@ -507,6 +507,37 @@ public class UTests {
         }
     }
 
+    @Test
+    public void debuggingStuff() throws Exception {
+        String[] hellooooo = {"testingjoin",
+        "AKIA6E4TYZ3JLKC2LPFR",
+        "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1",
+        "136.145.77.83",
+        "6379",
+        "136.145.77.83",
+        "6380",
+        "7272",
+        "7271",
+        "mypassword",
+        "myusername",
+        "136.145.77.83",
+        "5434",
+        "test",
+        "queue"};
+        Jedis jedis = new Jedis("136.145.77.83", 6379);
+        jedis.rpush("task", "{\"plan\":[\"joinPartition3\",\"/lineitem/lineitem0.orc\",\"\\\"01\\\"\",\"lineitem\",10]}");
+
+
+        main.main(hellooooo);
+
+
+
+
+
+
+
+    }
+
 
 
 }

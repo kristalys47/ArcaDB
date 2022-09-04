@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   coordinator:
-    image: kristalys/dbms-coordinator:latest
+    image: kristalys/dbms-coordinator:1.1
     container_name: coordinator
     deploy:
       placement:
@@ -20,7 +20,7 @@ services:
         aliases:
           - coordinator
   worker:
-    image: kristalys/dbms-worker:latest
+    image: kristalys/dbms-worker:1.2
     networks:
       cloud:
         aliases:
@@ -28,7 +28,7 @@ services:
     deploy:
       replicas: 5
       placement:
-        max_replicas_per_node: $(S3_BUCKET)
+        max_replicas_per_node: 25
         # constraints:
         #   - "node.role==manager"
     depends_on:
