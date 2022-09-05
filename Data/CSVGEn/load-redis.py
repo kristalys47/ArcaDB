@@ -17,7 +17,5 @@ for n in range(132):
     for index in range(len(tables)):
         if(n < numbers[index]):
             r.rpush(tables[index], "/" + tables[index] + "/" + tables[index] + str(n) + ".orc")
-        else:
-            break
 
 
