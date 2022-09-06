@@ -40,8 +40,8 @@ java -cp target/testORC-1.0.jar orc.main "insert" "/JavaCode/testORC/testFile.or
 
 
 
-
-
+How to add credentials so i dont have to ssh with password
+http://www.linuxproblem.org/art_9.html
 
 
 TODO:
@@ -216,3 +216,7 @@ TODO: remake the docker image
 TODO: add python to the image intallation
 
 if the project is not being recognize you need to invalidate the caches.
+
+docker run -d --rm --net=host --name alluxios-master -e ALLUXIO_JAVA_OPTS="-DAlluxio.master.hostname=localhost" alluxio/alluxio-enterprise master
+
+docker run -d --rm --net=host --name=alluxio-worker --shm-size=60G -e ALLUXIO_JAVA_OPTS="-Dalluxio.worker.ramdisk.size=60G -Dalluxio.master.hostname=136.145.77.83" alluxio/alluxio-enterprise worker

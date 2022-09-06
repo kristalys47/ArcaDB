@@ -128,6 +128,9 @@ public class JoinManager {
         jedisr.rpush("times", "Probing (Create Hash) " + ip + " " + start + " " + end + " " + (end-start));
 
         start = System.currentTimeMillis();
+
+        //REdefinition of broken pipe
+        jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathR) > 0){
             try {
                 String jkey = pathR + jedis.lpop(pathR);

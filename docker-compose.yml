@@ -20,7 +20,7 @@ services:
         aliases:
           - coordinator
   worker:
-    image: kristalys/dbms-worker:1.2
+    image: kristalys/dbms-worker:1.2.1
     networks:
       cloud:
         aliases:

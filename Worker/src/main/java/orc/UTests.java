@@ -1,5 +1,12 @@
 package orc;
 
+import alluxio.Constants;
+import alluxio.client.file.FileOutStream;
+import alluxio.client.file.FileSystem;
+import alluxio.AlluxioURI;
+import alluxio.conf.*;
+import alluxio.exception.AlluxioException;
+import alluxio.grpc.CreateFilePOptions;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -14,14 +21,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import orc.helperClasses.Attribute;
 import orc.helperClasses.ProjectionTree;
 import orc.helperClasses.TestingUtils;
 import orc.helperClasses.Tuple;
+import org.apache.ignite.Ignition;
+import org.apache.ignite.client.ClientCache;
+import org.apache.ignite.client.IgniteClient;
+import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.orc.TypeDescription;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -280,7 +293,7 @@ public class UTests {
 //    public void testAttributesSaveInIgnite(){
 //        Tuple test = new Tuple(3);
 //        test.addAttribute(Attribute.AttributeType.String,0, "Name", "Kristalys");
-//        test.addAttribute(Attribute.AttributeType.Float,1, "Money", 13.5F);
+//        test.addAttribute(Attribute.AttributeType.Double,1, "Money", 13.5F);
 //        test.addAttribute(Attribute.AttributeType.Integer,2, "Age", 33);
 //        System.out.println(test.toString());
 //        Tuple test2 = new Tuple(3);
@@ -301,17 +314,33 @@ public class UTests {
 //
 //    }
 
-//    @Test
-//    public void testAttributesReadInIgnite() throws Exception {
-//        ClientConfiguration cfg = new ClientConfiguration().setAddresses("172.20.59.90:10800");
-//        try (IgniteClient client = Ignition.startClient(cfg)) {
-//            ClientCache<String, ArrayList<Tuple>> cache = client.getOrCreateCache("cacheTest");
-////            ArrayList<Tuple> list = cache.get("/temp/partition/1");
-////            for (Tuple tuple : list) {
-////                System.out.println(tuple.toString());
-////            }
-//        }
-//    }
+    @Test
+    public void testAttributesSaveInIgnite(){
+
+        ArrayList<String > list = new ArrayList<>();
+        list.add("mmmm");
+        list.add("quizas?");
+        list.add("PORQUWWWWWWW");
+
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.77.83:10800");
+        try (IgniteClient client = Ignition.startClient(cfg)) {
+            ClientCache<String, ArrayList<String>> cache = client.getOrCreateCache("cacheTest");
+            cache.put("/temp/partition/1", list);
+        }
+
+    }
+
+    @Test
+    public void testAttributesReadInIgnite() throws Exception {
+        ClientConfiguration cfg = new ClientConfiguration().setAddresses("136.145.77.83:10800");
+        try (IgniteClient client = Ignition.startClient(cfg)) {
+            ClientCache<String, ArrayList<String>> cache = client.getOrCreateCache("cacheTest");
+            ArrayList<String> list = cache.get("/temp/partition/1");
+            for (String tuple : list) {
+                System.out.println(tuple);
+            }
+        }
+    }
 
     @Test
     public void s3test(){
@@ -531,10 +560,30 @@ public class UTests {
         main.main(hellooooo);
 
 
+    }
+
+    @Test
+    public void tryingAlluxios() throws IOException, AlluxioException {
+//        InstancedConfiguration conf = new InstancedConfiguration(new AlluxioProperties().put(PropertyKey.MASTER_WEB_HOSTNAME, "136.145.77.83", ););
+//        conf.set(PropertyKey.MASTER_WEB_HOSTNAME, "136.145.77.83");
 
 
+//        Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+        Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.68");
+        Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
+        FileSystem fs = FileSystem.Factory.create();
 
+        AlluxioURI path = new AlluxioURI("alluxio://136.145.77.68:19998/testing.txt");
+
+//        CreateFilePOptions options = CreateFilePOptions
+//                .newBuilder()
+//                .setBlockSizeBytes(64 * Constants.MB)
+//                .build();
+        FileOutStream out = fs.createFile(path);
+        out.write("This is me testing and exploting this ship up.".getBytes(StandardCharsets.UTF_8));
+
+        out.close();
 
     }
 

@@ -18,32 +18,34 @@ public class RunResults {
     static public final int REDIS_PORT_TIMES = 6380;
     static public final int REDIS_PORT = 6379;
     static public void main(String[] arg) throws IOException {
+
+//
+        int buckets = 5;
+
         Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+
+
 //        Jedis jedisCache = new Jedis(REDIS_HOST_TIMES, REDIS_PORT);
 //
 //        jedisCache.flushAll();
 //        jedisTime.flushAll();
-//
-        int buckets = 5;
-        String jsonString = "{" +
-                "\"mode\": 3," +
-                "\"buckets\": " + buckets + "," +
-                "\"query\": \"select * from lineitem, part where lineitem.\"01\" = part.\"00\"; " +
-                "}";
+//        String jsonString = "{" +
+//                "\"mode\": 3," +
+//                "\"buckets\": " + buckets + "," +
+//                "\"query\": \"select * from lineitem, part where lineitem.\"01\" = part.\"00\"; " +
+//                "}";
+//        RequestSpecification request = RestAssured.given()
+//                .baseUri("http://" + DBMS + ":7271/database/query");
+//                .body(jsonString);
+//        Response response = request.get();
+//        long c = request.get().getTimeIn(TimeUnit.MILLISECONDS);
+//        System.out.println(request.response());
+
 
         OutputStreamWriter writer = new OutputStreamWriter(
                 new FileOutputStream("results" + buckets + ".csv"), "UTF-8");
 
         BufferedWriter bufWriter = new BufferedWriter(writer);
-
-        RequestSpecification request = RestAssured.given()
-                .baseUri("http://" + DBMS + ":7271/database/query");
-//                .body(jsonString);
-
-        Response response = request.get();
-        long c = request.get().getTimeIn(TimeUnit.MILLISECONDS);
-        System.out.println(request.response());
-        bufWriter.write(c + "\n");
         List<String> results = jedisTime.lrange("times", 0 , -1);
         Map<String, String> maps = new HashMap<>();
         boolean probing = true;
