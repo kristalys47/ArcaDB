@@ -39,6 +39,7 @@ public class main {
             MainWithQueue.main(null);
         } else {
 
+            //TODO: CLOSE JEDIS Connections
             Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
             Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 

@@ -12,13 +12,13 @@ import static orc.Commons.*;
 public class MainWithQueue {
     static public void main(String[] arg) throws Exception {
 
-        Jedis jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
-        Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+
 
         //TODO: need a better logger when this is working
         //TODO: custom port
 
         while (true) {
+            Jedis jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
             List<String> task = jedisControl.blpop(0, "task");
             System.out.println("Connected - - - - - -");
             long start = System.currentTimeMillis();
@@ -48,7 +48,10 @@ public class MainWithQueue {
                 jedisControl.rpush("done", ip + "\nSomething failed in container: " + message + " " + e);
             }
             long end = System.currentTimeMillis();
+            Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
             jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
+            jedisResult.close();
+            jedisControl.close();
         }
     }
 }

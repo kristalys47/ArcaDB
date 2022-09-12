@@ -1,5 +1,10 @@
 package orc;
 
+import alluxio.AlluxioURI;
+import alluxio.client.file.FileInStream;
+import alluxio.client.file.FileSystem;
+
+import alluxio.conf.PropertyKey;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -107,7 +112,15 @@ public class JoinManager {
                     InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
                     b = new ByteArrayInputStream(in.readAllBytes());
                 } else {
-                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+
+                    FileSystem fs = FileSystem.Factory.get();
+                    AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
+                    FileInStream in = fs.openFile(path);
+                    b = new ByteArrayInputStream(in.readAllBytes());
+//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+                    in.close();
                 }
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
@@ -122,6 +135,9 @@ public class JoinManager {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            //Making sure the connection exits
+            jedis.close();
+            jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         }
         long end = System.currentTimeMillis();
         Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
@@ -139,7 +155,17 @@ public class JoinManager {
                     InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
                     b = new ByteArrayInputStream(in.readAllBytes());
                 } else {
-                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
+
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+
+                    FileSystem fs = FileSystem.Factory.get();
+                    AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
+                    FileInStream in = fs.openFile(path);
+                    b = new ByteArrayInputStream(in.readAllBytes());
+                    in.close();
+
+//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
                 }
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
@@ -157,9 +183,14 @@ public class JoinManager {
             } catch (Exception e){
                 e.printStackTrace();
             }
+            //Making sure it exist for the next loop
+            jedis.close();
+            jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         }
         end = System.currentTimeMillis();
         jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
+        jedis.close();
+        jedisr.close();
     }
 
     private static LinkedList<Tuple> getPartitions(String path, int mode, Jedis jedis, AmazonS3 s3client) throws IOException, ClassNotFoundException {

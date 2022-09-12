@@ -30,5 +30,9 @@ public class Commons {
             e.printStackTrace();
         }
     }
+
+    static public void createConnectiontoAlluxios(){
+
+    }
 }
 

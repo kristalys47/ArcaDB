@@ -569,20 +569,23 @@ public class UTests {
 
 
 //        Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-        Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.68");
+//        Configuration.set(PropertyKey.MASTER_HOSTNAME, "admws04.ece.uprm.edu");
+        Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
         Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
         FileSystem fs = FileSystem.Factory.create();
 
-        AlluxioURI path = new AlluxioURI("alluxio://136.145.77.68:19998/testing.txt");
-
-//        CreateFilePOptions options = CreateFilePOptions
-//                .newBuilder()
+//        AlluxioURI path = new AlluxioURI("alluxio://admws04.ece.uprm.edu:19998/users/puessiii.txt");
+        AlluxioURI base = new AlluxioURI("alluxio://136.145.77.83:19998");
+        AlluxioURI path = new AlluxioURI(base, "/mmm/puessiii.txt", true);
+        CreateFilePOptions options = CreateFilePOptions
+                .newBuilder()
+                .setRecursive(true)
 //                .setBlockSizeBytes(64 * Constants.MB)
-//                .build();
-        FileOutStream out = fs.createFile(path);
+                .build();
+        FileOutStream out = fs.createFile(path, options);
         out.write("This is me testing and exploting this ship up.".getBytes(StandardCharsets.UTF_8));
-
+        out.flush();
         out.close();
 
     }
