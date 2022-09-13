@@ -170,7 +170,8 @@ public class JoinManager {
 
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                BufferStructure results = new BufferStructure("", 200000);
+                jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+                BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if(map.containsKey(key)){
@@ -182,7 +183,7 @@ public class JoinManager {
                         }while(current != null);
                     }
                 }
-
+                results.flushRemainders();
             } catch (Exception e){
                 e.printStackTrace();
             }

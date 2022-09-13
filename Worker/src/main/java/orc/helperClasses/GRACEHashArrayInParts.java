@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
+import java.util.UUID;
 
 import static orc.Commons.*;
 
@@ -74,9 +75,10 @@ public class GRACEHashArrayInParts {
     }
 
     private void flushToFile(int bucket) {
-        String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode();
+        String uuid = UUID.randomUUID().toString();
+        String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid;
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-        jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode());
+        jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid);
         fileBuckets[bucket].add(fileName);
 
 //        System.out.println(fileName + " - " + records[bucket].size());

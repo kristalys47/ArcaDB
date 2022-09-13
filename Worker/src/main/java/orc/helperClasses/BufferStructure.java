@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import redis.clients.jedis.Jedis;
+import java.util.UUID;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,7 @@ public class BufferStructure {
     private LinkedList<Tuple> records;
     private int recordsLimit = 200;
     private String result;
+    private int count = 0;
 
     public BufferStructure(String result, int recordsLimit){
         this.result = result;
@@ -48,7 +50,8 @@ public class BufferStructure {
     }
 
     private void flushToFile() {
-        String fileName = "/results/" + ip + this.hashCode();
+        String fileName = "/results/" + ip + "_" + this.hashCode() + "_" + UUID.randomUUID().toString();
+        this.count++;
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         jedis.rpush("result", fileName);
 
