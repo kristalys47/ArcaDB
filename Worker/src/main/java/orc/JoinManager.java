@@ -149,7 +149,6 @@ public class JoinManager {
         jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathR) > 0){
             try {
-                long starm2 = System.currentTimeMillis();
                 String jkey = pathR + jedis.lpop(pathR);
                 ByteArrayInputStream b = null;
                 if (mode == 2) {
@@ -168,31 +167,22 @@ public class JoinManager {
 
 //                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
                 }
-                long endm2 = System.currentTimeMillis();
-                jedisr.rpush("times", "Probing (Join) -Inspect alluxio" + ip + " " + starm2 + " " + endm2 + " " + (endm2-starm2));
-                long starm3 = System.currentTimeMillis();
+
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                long endm3 = System.currentTimeMillis();
-                jedisr.rpush("times", "Probing (Join) -Inspect write buffer to list" + ip + " " + starm3 + " " + endm3 + " " + (endm3-starm3));
-                long starm1 = System.currentTimeMillis();
+                BufferStructure results = new BufferStructure("", 200000);
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
                     if(map.containsKey(key)){
                         HashNode<Tuple> current = map.get(key);
                         do {
                             Tuple joined = Tuple.joinTuple(record, current.getElement());
-                            long starm4 = System.currentTimeMillis();
-                            jedis.rpush("result" + bucket, joined.toString());
-                            long endm4 = System.currentTimeMillis();
-                            jedisr.rpush("times", "Probing (Join) -Inspect write to redis" + ip + " " + starm4 + " " + endm4 + " " + (endm4-starm4));
-
+                            results.addRecord(joined);
                             current = current.getNext();
                         }while(current != null);
                     }
                 }
-                long endm1 = System.currentTimeMillis();
-                jedisr.rpush("times", "Probing (Join) -Inspect actual join " + ip + " " + starm1 + " " + endm1 + " " + (endm1-starm1));
+
             } catch (Exception e){
                 e.printStackTrace();
             }
