@@ -1,6 +1,7 @@
 import io.restassured.*;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import jdk.jfr.ContentType;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
@@ -20,30 +21,31 @@ public class RunResults {
     static public void main(String[] arg) throws IOException {
 
 //
-        int buckets = 5;
+        int buckets = 20;
 
         Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-
-
-//        Jedis jedisCache = new Jedis(REDIS_HOST_TIMES, REDIS_PORT);
 //
-//        jedisCache.flushAll();
-//        jedisTime.flushAll();
+//
+////        Jedis jedisCache = new Jedis(REDIS_HOST_TIMES, REDIS_PORT);
+////
+////        jedisCache.flushAll();
+////        jedisTime.flushAll();
 //        String jsonString = "{" +
 //                "\"mode\": 3," +
 //                "\"buckets\": " + buckets + "," +
 //                "\"query\": \"select * from lineitem, part where lineitem.\"01\" = part.\"00\"; " +
 //                "}";
 //        RequestSpecification request = RestAssured.given()
-//                .baseUri("http://" + DBMS + ":7271/database/query");
+//                .baseUri("http://" + DBMS + ":7271/database/query")
+//                .header("Content-Type", "application/json")
 //                .body(jsonString);
-//        Response response = request.get();
+////        Response response = request.get();
 //        long c = request.get().getTimeIn(TimeUnit.MILLISECONDS);
 //        System.out.println(request.response());
-
+//
 
         OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream("results" + buckets + ".csv"), "UTF-8");
+                new FileOutputStream("results" + buckets + "-20-5-4" + ".csv"), "UTF-8");
 
         BufferedWriter bufWriter = new BufferedWriter(writer);
         List<String> results = jedisTime.lrange("times", 0 , -1);
@@ -69,6 +71,8 @@ public class RunResults {
                 maps.put(strarr[2], maps.get(strarr[2]) + "," + strarr[5]);
             }
         }
+        bufWriter.flush();
+        bufWriter.close();
     }
 
 }

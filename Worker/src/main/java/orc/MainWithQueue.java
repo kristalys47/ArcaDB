@@ -16,10 +16,11 @@ public class MainWithQueue {
 
         //TODO: need a better logger when this is working
         //TODO: custom port
-
+        Jedis jedisControl;
         while (true) {
-            Jedis jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
+            jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
             List<String> task = jedisControl.blpop(0, "task");
+            jedisControl.close();
             System.out.println("Connected - - - - - -");
             long start = System.currentTimeMillis();
             String message = task.get(1);
@@ -41,17 +42,22 @@ public class MainWithQueue {
                 } else {
                     WorkerManager.dbms(args);
                 }
+                jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
                 jedisControl.rpush("done", ip + "\nSuccessful: " + message);
+                jedisControl.close();
             } catch (Exception e) {
                 System.out.println(e);
                 e.printStackTrace();
+                jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
                 jedisControl.rpush("done", ip + "\nSomething failed in container: " + message + " " + e);
+                jedisControl.close();
             }
             long end = System.currentTimeMillis();
             Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
             jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
             jedisResult.close();
-            jedisControl.close();
+            //Let see what happens
+            System.gc();
         }
     }
 }

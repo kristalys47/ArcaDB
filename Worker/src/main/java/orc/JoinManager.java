@@ -146,6 +146,7 @@ public class JoinManager {
         start = System.currentTimeMillis();
 
         //REdefinition of broken pipe
+        jedis.close();
         jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathR) > 0){
             try {
@@ -191,9 +192,9 @@ public class JoinManager {
             jedis.close();
             jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         }
+        jedis.close();
         end = System.currentTimeMillis();
         jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
-        jedis.close();
         jedisr.close();
     }
 

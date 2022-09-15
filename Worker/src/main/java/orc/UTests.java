@@ -1,6 +1,7 @@
 package orc;
 
 import alluxio.Constants;
+import alluxio.client.file.FileInStream;
 import alluxio.client.file.FileOutStream;
 import alluxio.client.file.FileSystem;
 import alluxio.AlluxioURI;
@@ -478,10 +479,10 @@ public class UTests {
         AmazonS3 s3client = null;
         AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
         s3client = AmazonS3ClientBuilder
-                    .standard()
-                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withRegion(Regions.US_EAST_1)
-                    .build();
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_EAST_1)
+                .build();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(bos);
         o.writeObject(mmm);
@@ -498,8 +499,8 @@ public class UTests {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(Regions.US_EAST_1)
                 .build();
-            InputStream in = s3client.getObject(S3_BUCKET, "kristalys").getObjectContent();
-            b = new ByteArrayInputStream(in.readAllBytes());
+        InputStream in = s3client.getObject(S3_BUCKET, "kristalys").getObjectContent();
+        b = new ByteArrayInputStream(in.readAllBytes());
 
 
         ObjectInputStream o = new ObjectInputStream(b);
@@ -539,20 +540,20 @@ public class UTests {
     @Test
     public void debuggingStuff() throws Exception {
         String[] hellooooo = {"testingjoin",
-        "AKIA6E4TYZ3JLKC2LPFR",
-        "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1",
-        "136.145.77.83",
-        "6379",
-        "136.145.77.83",
-        "6380",
-        "7272",
-        "7271",
-        "mypassword",
-        "myusername",
-        "136.145.77.83",
-        "5434",
-        "test",
-        "queue"};
+                "AKIA6E4TYZ3JLKC2LPFR",
+                "UaMYsDlAzWeFCx0r1So4/gZLZIkbgO21kVXiDoP1",
+                "136.145.77.83",
+                "6379",
+                "136.145.77.83",
+                "6380",
+                "7272",
+                "7271",
+                "mypassword",
+                "myusername",
+                "136.145.77.83",
+                "5434",
+                "test",
+                "queue"};
         Jedis jedis = new Jedis("136.145.77.83", 6379);
         jedis.rpush("task", "{\"plan\":[\"joinPartition3\",\"/lineitem/lineitem0.orc\",\"\\\"01\\\"\",\"lineitem\",10]}");
 
@@ -590,6 +591,19 @@ public class UTests {
 
     }
 
+    @Test
+    public void testingCorrectResult() throws IOException, ClassNotFoundException {
+        String here = "10.0.40.121830703361_024dff36-67d9-4613-a392-f053d7c9f7b4";
 
+        InputStream is = new FileInputStream(new File(here));
+        ByteArrayInputStream b = new ByteArrayInputStream(is.readAllBytes());
+        is.close();
 
+        ObjectInputStream o = new ObjectInputStream(b);
+        LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+
+        for (Tuple record : records) {
+            System.out.println(record);
+        }
+    }
 }
