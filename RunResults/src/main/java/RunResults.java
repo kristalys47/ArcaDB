@@ -21,7 +21,7 @@ public class RunResults {
     static public void main(String[] arg) throws IOException {
 
 //
-        int buckets = 20;
+        int buckets = 30;
 
         Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //
@@ -45,7 +45,7 @@ public class RunResults {
 //
 
         OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream("results" + buckets + "-20-5-4" + ".csv"), "UTF-8");
+                new FileOutputStream("results" + buckets + "-check no overhead 2" + ".csv"), "UTF-8");
 
         BufferedWriter bufWriter = new BufferedWriter(writer);
         List<String> results = jedisTime.lrange("times", 0 , -1);

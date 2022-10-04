@@ -42,20 +42,22 @@ public class MainWithQueue {
                 } else {
                     WorkerManager.dbms(args);
                 }
-                jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
                 jedisControl.rpush("done", ip + "\nSuccessful: " + message);
-                jedisControl.close();
             } catch (Exception e) {
                 System.out.println(e);
                 e.printStackTrace();
-                jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
                 jedisControl.rpush("done", ip + "\nSomething failed in container: " + message + " " + e);
-                jedisControl.close();
             }
             long end = System.currentTimeMillis();
-            Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-            jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
-            jedisResult.close();
+            jedisControl.close();
+//            Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+//            jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
+//            jedisResult.close();
+            if (args[0].contains("joinPartition")) {
+                System.out.println("TIME_LOG1: Container " + ip + " " + start + " " + end + " " + (end - start));
+            }else{
+                System.out.println("TIME_LOG2: Container " + ip + " " + start + " " + end + " " + (end - start));
+            }
             //Let see what happens
             System.gc();
         }

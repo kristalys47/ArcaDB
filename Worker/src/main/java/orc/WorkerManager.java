@@ -47,7 +47,7 @@ public class WorkerManager {
             JoinManager.joinProbing( arg[1], arg[2], arg[3], 2);
         }
         else if (arg[0].equals("joinPartition3")) {
-            System.out.println("calls function");
+//            System.out.println("calls function");
             JoinManager.joinPartition(arg[1], arg[2], arg[3], arg[4], 3);
         }
         else if (arg[0].equals("joinProbing3")) {
