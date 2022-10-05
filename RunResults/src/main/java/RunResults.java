@@ -22,8 +22,6 @@ public class RunResults {
         String inputFile = "logs.log";
         String outputFile = "output.txt";
 
-
-
         FileReader fileReader = new FileReader(inputFile);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String inputLine;
@@ -46,33 +44,45 @@ public class RunResults {
         out.close();
         fileWriter.close();
 
+        List<List<String>> results = new ArrayList<List<String>>(3);
+        int reps = 3;
+        for (int k = 0; k < reps; k++) {
+            results.add(new ArrayList<>());
+        }
 
-//        Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-//
+        int size = lineList.size();
+        int parts = size/reps;
+        int index = 0;
+        int count = 0;
+        while (index<reps) {
 
+            if(count == parts) {
+                count = 0;
+                index++;
+                if(index == reps){
+                    break;
+                }
+                System.out.println(lineList.size());
+            }
+            results.get(index).add(lineList.remove(0).split("TIME_LOG: ")[1]);
+            count++;
 
-        List<String>[] results;
+        }
 
-
-        List<String> results = lineList;
-
-            results.add(line.split("TIME_LOG: ")[1]);
-
-
-        for (String s : results) {
+        for (String s : results.get(1)) {
             System.out.println(s);
         }
 
-        for (int j = 1; j <=3; j++) {
-            String finalOutput = "results-c30-b30-n6-c_n5-v" + j + ".csv";
+
+        for (int j = 0; j <reps; j++) {
+            String finalOutput = "results-c30-b30-n6-c_n5-v" + (j+1) + ".csv";
             OutputStreamWriter writer = new OutputStreamWriter(
                     new FileOutputStream(finalOutput), "UTF-8");
             BufferedWriter bufWriter = new BufferedWriter(writer);
-//        List<String> results = jedisTime.lrange("times", 0 , -1);
             Map<String, String> maps = new HashMap<>();
             boolean probing = true;
-            for (int i = 0; i < results[j].size(); i++) {
-                String str = results.get(i);
+            for (int i = 0; i < results.get(j).size(); i++) {
+                String str = results.get(j).get(i);
                 String[] strarr = str.split(" ");
                 if (str.contains("Partition (Read File)")) {
                     maps.put(strarr[3], strarr[6]);
