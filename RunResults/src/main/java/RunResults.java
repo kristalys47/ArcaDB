@@ -19,9 +19,10 @@ public class RunResults {
 
     static public void main(String[] arg) throws IOException {
 
-        String inputFile = "t.txt";
+        String inputFile = "logs.log";
         String outputFile = "output.txt";
-        String finalOutput = "results-c20-b20-n6-c_n5" + ".csv";
+
+
 
         FileReader fileReader = new FileReader(inputFile);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -48,51 +49,51 @@ public class RunResults {
 
 //        Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //
-        OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream(finalOutput), "UTF-8");
-//
 
-        File file = new File(outputFile);    //creates a new file instance
-        FileReader fr = new FileReader(file);   //reads the file
-        BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
-        List<String> results = new ArrayList<>();    //constructs a string buffer with no characters
-        String line;
-        boolean first = true;
-        while ((line = br.readLine()) != null) {
+
+        List<String>[] results;
+
+
+        List<String> results = lineList;
+
             results.add(line.split("TIME_LOG: ")[1]);
 
-        }
+
         for (String s : results) {
             System.out.println(s);
         }
 
-
-        BufferedWriter bufWriter = new BufferedWriter(writer);
+        for (int j = 1; j <=3; j++) {
+            String finalOutput = "results-c30-b30-n6-c_n5-v" + j + ".csv";
+            OutputStreamWriter writer = new OutputStreamWriter(
+                    new FileOutputStream(finalOutput), "UTF-8");
+            BufferedWriter bufWriter = new BufferedWriter(writer);
 //        List<String> results = jedisTime.lrange("times", 0 , -1);
-        Map<String, String> maps = new HashMap<>();
-        boolean probing = true;
-        for (int i = 0; i < results.size(); i++) {
-            String str = results.get(i);
-            String[] strarr = str.split(" ");
-            if(str.contains("Partition (Read File)")){
-                maps.put(strarr[3], strarr[6]);
-            } else if (str.contains("Partition (Tuples to Buckets)")){
-                maps.put(strarr[4], maps.get(strarr[4]) + "," + strarr[7]);
-            } else if (str.contains("Container")){
-                bufWriter.write(maps.get(strarr[1]) + "," + strarr[4] + "\n");
-                maps.remove(strarr[1]);
-            } else if (str.contains("Probing (Create Hash)")){
-                if(probing){
-                    probing = false;
-                    bufWriter.write("-Probing-" + "\n");
+            Map<String, String> maps = new HashMap<>();
+            boolean probing = true;
+            for (int i = 0; i < results[j].size(); i++) {
+                String str = results.get(i);
+                String[] strarr = str.split(" ");
+                if (str.contains("Partition (Read File)")) {
+                    maps.put(strarr[3], strarr[6]);
+                } else if (str.contains("Partition (Tuples to Buckets)")) {
+                    maps.put(strarr[4], maps.get(strarr[4]) + "," + strarr[7]);
+                } else if (str.contains("Container")) {
+                    bufWriter.write(maps.get(strarr[1]) + "," + strarr[4] + "\n");
+                    maps.remove(strarr[1]);
+                } else if (str.contains("Probing (Create Hash)")) {
+                    if (probing) {
+                        probing = false;
+                        bufWriter.write("-Probing-" + "\n");
+                    }
+                    maps.put(strarr[3], strarr[6]);
+                } else if (str.contains("Probing (Join)")) {
+                    maps.put(strarr[2], maps.get(strarr[2]) + "," + strarr[5]);
                 }
-                maps.put(strarr[3], strarr[6]);
-            } else if (str.contains("Probing (Join)")){
-                maps.put(strarr[2], maps.get(strarr[2]) + "," + strarr[5]);
             }
+            bufWriter.flush();
+            bufWriter.close();
         }
-        bufWriter.flush();
-        bufWriter.close();
     }
 
 }
