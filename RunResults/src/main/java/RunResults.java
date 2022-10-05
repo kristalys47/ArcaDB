@@ -8,9 +8,7 @@ import java.io.*;
 
 import com.opencsv.CSVWriter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class RunResults {
@@ -18,37 +16,59 @@ public class RunResults {
     static public final String REDIS_HOST_TIMES = "136.145.77.83"; //redis
     static public final int REDIS_PORT_TIMES = 6380;
     static public final int REDIS_PORT = 6379;
+
     static public void main(String[] arg) throws IOException {
 
-//
-        int buckets = 30;
+        String inputFile = "t.txt";
+        String outputFile = "output.txt";
+        String finalOutput = "results-c20-b20-n6-c_n5" + ".csv";
 
-        Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-//
-//
-////        Jedis jedisCache = new Jedis(REDIS_HOST_TIMES, REDIS_PORT);
-////
-////        jedisCache.flushAll();
-////        jedisTime.flushAll();
-//        String jsonString = "{" +
-//                "\"mode\": 3," +
-//                "\"buckets\": " + buckets + "," +
-//                "\"query\": \"select * from lineitem, part where lineitem.\"01\" = part.\"00\"; " +
-//                "}";
-//        RequestSpecification request = RestAssured.given()
-//                .baseUri("http://" + DBMS + ":7271/database/query")
-//                .header("Content-Type", "application/json")
-//                .body(jsonString);
-////        Response response = request.get();
-//        long c = request.get().getTimeIn(TimeUnit.MILLISECONDS);
-//        System.out.println(request.response());
-//
+        FileReader fileReader = new FileReader(inputFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String inputLine;
+        List<String> lineList = new ArrayList<String>();
+        while ((inputLine = bufferedReader.readLine()) != null) {
+            if (inputLine.contains("TIME_LOG")) {
+                lineList.add(inputLine);
+            }
+        }
+        fileReader.close();
 
+        Collections.sort(lineList);
+
+        FileWriter fileWriter = new FileWriter(outputFile);
+        PrintWriter out = new PrintWriter(fileWriter);
+        for (String outputLine : lineList) {
+            out.println(outputLine);
+        }
+        out.flush();
+        out.close();
+        fileWriter.close();
+
+
+//        Jedis jedisTime = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
+//
         OutputStreamWriter writer = new OutputStreamWriter(
-                new FileOutputStream("results" + buckets + "-check no overhead 2" + ".csv"), "UTF-8");
+                new FileOutputStream(finalOutput), "UTF-8");
+//
+
+        File file = new File(outputFile);    //creates a new file instance
+        FileReader fr = new FileReader(file);   //reads the file
+        BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
+        List<String> results = new ArrayList<>();    //constructs a string buffer with no characters
+        String line;
+        boolean first = true;
+        while ((line = br.readLine()) != null) {
+            results.add(line.split("TIME_LOG: ")[1]);
+
+        }
+        for (String s : results) {
+            System.out.println(s);
+        }
+
 
         BufferedWriter bufWriter = new BufferedWriter(writer);
-        List<String> results = jedisTime.lrange("times", 0 , -1);
+//        List<String> results = jedisTime.lrange("times", 0 , -1);
         Map<String, String> maps = new HashMap<>();
         boolean probing = true;
         for (int i = 0; i < results.size(); i++) {

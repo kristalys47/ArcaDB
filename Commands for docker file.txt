@@ -222,6 +222,10 @@ docker run -d --rm --net=host --name alluxios-master -e ALLUXIO_JAVA_OPTS="-DAll
 docker run -d --rm --net=host --name=alluxio-worker --shm-size=60G -e ALLUXIO_JAVA_OPTS="-Dalluxio.worker.ramdisk.size=60G -Dalluxio.master.hostname=136.145.77.83" alluxio/alluxio-enterprise worker
 
 
+curl -O https://downloads.alluxio.io/downloads/files/2.8.1/alluxio-2.8.1-bin.tar.gz
+  233  tar -xvzpf alluxio-2.8.0-2.1-bin.tar.gz
+  234  tar -xvzpf alluxio-2.8.1-bin.tar.gz
+
 MTU 
 
 You have to remove the network with the MTU and recreate it with the correct MTU

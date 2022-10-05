@@ -53,11 +53,11 @@ public class MainWithQueue {
 //            Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //            jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
 //            jedisResult.close();
-            if (args[0].contains("joinPartition")) {
-                System.out.println("TIME_LOG1: Container " + ip + " " + start + " " + end + " " + (end - start));
-            }else{
-                System.out.println("TIME_LOG2: Container " + ip + " " + start + " " + end + " " + (end - start));
-            }
+//            if (args[0].contains("joinPartition")) {
+            System.out.println("TIME_LOG: Container " + ip + " " + start + " " + end + " " + (end - start));
+//            }else{
+//                System.out.println("TIME_LOG2: Container " + ip + " " + start + " " + end + " " + (end - start));
+//            }
             //Let see what happens
             System.gc();
         }
