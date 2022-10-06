@@ -12,10 +12,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class RunResults {
-    static public final String DBMS = "136.145.77.80";
-    static public final String REDIS_HOST_TIMES = "136.145.77.83"; //redis
-    static public final int REDIS_PORT_TIMES = 6380;
-    static public final int REDIS_PORT = 6379;
 
     static public void main(String[] arg) throws IOException {
 
@@ -75,7 +71,7 @@ public class RunResults {
 
 
         for (int j = 0; j <reps; j++) {
-            String finalOutput = "results-c30-b30-n6-c_n5-v" + (j+1) + ".csv";
+            String finalOutput = "results-c25-b25-n6-c_n5-v" + (j+1) + ".csv";
             OutputStreamWriter writer = new OutputStreamWriter(
                     new FileOutputStream(finalOutput), "UTF-8");
             BufferedWriter bufWriter = new BufferedWriter(writer);

@@ -30,12 +30,9 @@ public class MainWithQueue {
             JsonObject gobj = JsonParser.parseString(message).getAsJsonObject();
             JsonArray rows = gobj.getAsJsonArray("plan");
             String[] args = new String[rows.size()];
-
             for (int i = 0; i < args.length; i++) {
                 args[i] = rows.get(i).getAsString();
-                System.out.println(args[i]);
             }
-
             try {
                 if (gobj.has("outer") && gobj.has("inner")) {
                     WorkerManager.dbms(args, gobj);

@@ -26,6 +26,8 @@ import org.apache.orc.impl.RecordReaderImpl;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static orc.Commons.*;
@@ -81,14 +83,18 @@ public class JoinManager {
                 .withRegion(Regions.US_EAST_1)
                 .build();
         InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
-        FileUtils.copyInputStreamToFile(in, new File(path));
+        File f = new File(path);
+        FileUtils.copyInputStreamToFile(in, f);
         long end = System.currentTimeMillis();
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //        jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println("TIME_LOG: Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
 //        System.out.println("File retrieved from s3");
         scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
+//        Files.deleteIfExists(Paths.get(path));
+        f.delete();
     }
+
 
     public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
         int bucket = Integer.valueOf(bucketID);
