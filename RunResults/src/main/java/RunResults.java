@@ -69,7 +69,6 @@ public class RunResults {
             System.out.println(s);
         }
 
-
         for (int j = 0; j <reps; j++) {
             String finalOutput = "results-c25-b25-n6-c_n5-v" + (j+1) + ".csv";
             OutputStreamWriter writer = new OutputStreamWriter(
