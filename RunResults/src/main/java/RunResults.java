@@ -39,9 +39,9 @@ public class RunResults {
         out.flush();
         out.close();
         fileWriter.close();
+        int reps = 1;
+        List<List<String>> results = new ArrayList<List<String>>(reps);
 
-        List<List<String>> results = new ArrayList<List<String>>(3);
-        int reps = 3;
         for (int k = 0; k < reps; k++) {
             results.add(new ArrayList<>());
         }
@@ -65,12 +65,13 @@ public class RunResults {
 
         }
 
-        for (String s : results.get(1)) {
+        for (String s : results.get(0)) {
             System.out.println(s);
         }
 
         for (int j = 0; j <reps; j++) {
-            String finalOutput = "results-c25-b25-n6-c_n5-v" + (j+1) + ".csv";
+//            String finalOutput = "results-c30-b30-n6-c_n5-v" + (j+1) + "-alluxio.csv";
+            String finalOutput = "100" + (j+1) + "-alluxio.csv";
             OutputStreamWriter writer = new OutputStreamWriter(
                     new FileOutputStream(finalOutput), "UTF-8");
             BufferedWriter bufWriter = new BufferedWriter(writer);
