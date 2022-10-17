@@ -5,6 +5,7 @@ import alluxio.client.file.FileInStream;
 import alluxio.client.file.FileSystem;
 
 import alluxio.conf.PropertyKey;
+import alluxio.exception.AlluxioException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -74,15 +75,22 @@ public class JoinManager {
 //        System.out.println(hm.toString());
     }
 
-    public static void joinPartition(String path, String column, String relation, String buckets, int mode) throws IOException {
+    public static void joinPartition(String path, String column, String relation, String buckets, int mode) throws IOException, AlluxioException {
         long start = System.currentTimeMillis();
-        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
-        AmazonS3 s3client = AmazonS3ClientBuilder
-                .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_EAST_1)
-                .build();
-        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
+//        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+//        AmazonS3 s3client = AmazonS3ClientBuilder
+//                .standard()
+//                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+//                .withRegion(Regions.US_EAST_1)
+//                .build();
+//        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
+
+        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
+        alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+
+        FileSystem fs = FileSystem.Factory.get();
+        AlluxioURI pathAlluxio = new AlluxioURI("alluxio://136.145.77.107:19998"+path);
+        FileInStream in = fs.openFile(pathAlluxio);
         File f = new File(path);
         FileUtils.copyInputStreamToFile(in, f);
         long end = System.currentTimeMillis();
@@ -99,18 +107,19 @@ public class JoinManager {
     public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
         int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
-        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        Jedis jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
         AmazonS3 s3client = null;
         if(mode == 2){
-            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
-            s3client = AmazonS3ClientBuilder
-                    .standard()
-                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                    .withRegion(Regions.US_EAST_1)
-                    .build();
+//            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
+//            s3client = AmazonS3ClientBuilder
+//                    .standard()
+//                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
+//                    .withRegion(Regions.US_EAST_1)
+//                    .build();
         }
         long start = System.currentTimeMillis();
-        while(jedis.llen(pathS) > 0){
+        long lenght = jedis.llen(pathS);
+        while(lenght > 0){
             try {
                 String jkey = pathS + jedis.lpop(pathS);
                 ByteArrayInputStream b = null;
@@ -125,6 +134,8 @@ public class JoinManager {
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
                     FileInStream in = fs.openFile(path);
                     b = new ByteArrayInputStream(in.readAllBytes());
+                    fs.delete(path);
+                    fs.close();
 //                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
                     in.close();
                 }
@@ -143,7 +154,8 @@ public class JoinManager {
             }
             //Making sure the connection exits
             jedis.close();
-            jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+            jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+            lenght = jedis.llen(pathS);
         }
         long end = System.currentTimeMillis();
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
@@ -153,7 +165,7 @@ public class JoinManager {
 
         //REdefinition of broken pipe
         jedis.close();
-        jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
         while(jedis.llen(pathR) > 0){
             try {
                 String jkey = pathR + jedis.lpop(pathR);
@@ -170,6 +182,8 @@ public class JoinManager {
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
                     FileInStream in = fs.openFile(path);
                     b = new ByteArrayInputStream(in.readAllBytes());
+                    fs.delete(path);
+                    fs.close();
                     in.close();
 
 //                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
@@ -177,7 +191,8 @@ public class JoinManager {
 
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+                jedis.close();
+                jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
                 BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
@@ -196,7 +211,7 @@ public class JoinManager {
             }
             //Making sure it exist for the next loop
             jedis.close();
-            jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+            jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
         }
         jedis.close();
         end = System.currentTimeMillis();

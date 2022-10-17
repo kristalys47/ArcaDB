@@ -1,5 +1,7 @@
 package orc;
 
+import redis.clients.jedis.Jedis;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -29,6 +31,20 @@ public class Commons {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }
+
+    static public Jedis newJedisConnection(String host, int port){
+        boolean tries = false;
+        Jedis jedis = null;
+        do{
+            try{
+                jedis = new Jedis(host, port);
+                return jedis;
+            } catch (Exception e){
+                tries = true;
+            }
+        } while (tries);
+        return jedis;
     }
 
     static public void createConnectiontoAlluxios(){

@@ -18,7 +18,7 @@ public class MainWithQueue {
         //TODO: custom port
         Jedis jedisControl;
         while (true) {
-            jedisControl = new Jedis(REDIS_HOST, REDIS_PORT);
+            jedisControl = newJedisConnection(REDIS_HOST, REDIS_PORT);
             List<String> task = jedisControl.blpop(0, "task");
             jedisControl.close();
             System.out.println("Connected - - - - - -");

@@ -10,8 +10,8 @@ import math
 stream = os.popen('cat /home/kristalys/git/Container-DBMS/redissetupAlreadyUp.sh')
 n = stream.read()
 PAGE_SIZE = 256*1024*1024
-AWS_S3_ACCESS_KEY = 'AKIA6E4TYZ3JLKC2LPFR'
-AWS_S3_SECRET_KEY = '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'
+# AWS_S3_ACCESS_KEY = 'AKIA6E4TYZ3JLKC2LPFR'
+# AWS_S3_SECRET_KEY = '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'
 S3_BUCKET = "testingjoin"
 session = boto3.Session(
     aws_access_key_id=AWS_S3_ACCESS_KEY,
