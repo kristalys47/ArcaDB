@@ -20,17 +20,22 @@ services:
         aliases:
           - coordinator
   worker:
-    image: kristalys/dbms-worker:1.2.1
+    image: kristalys/dbms-worker:1.3.3
+    logging:
+        driver: local
+        options:
+            max-size: "100m"
+            max-file: "5"
     networks:
       cloud:
         aliases:
           - worker
     deploy:
-      replicas: 5
+      replicas: 60
       placement:
-        max_replicas_per_node: 25
-        # constraints:
-        #   - "node.role==manager"
+        max_replicas_per_node: 6
+        constraints:
+          - "node.role==worker"
     depends_on:
       - coordinator
     env_file: .env

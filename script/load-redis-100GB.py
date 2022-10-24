@@ -11,7 +11,7 @@ r.set("joinTupleLength", 1000000)
 for table in tables:
     r.set(table+"_partition_size", "20000")
 
-for n in range(132):
+for n in range(1201):
     for index in range(len(tables)):
         if(n < numbers[index]):
             r.rpush(tables[index], "/db100GB/" + tables[index] + "/" + tables[index] + str(n) + ".orc")

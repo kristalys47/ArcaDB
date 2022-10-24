@@ -82,11 +82,9 @@ def csv2():
             # upload_file(filenameorc, "/"+n.split(".")[0]+"/"+filenameorc)
 
 def csv():
-    # csv_file = {"orders.tbl", "supplier.tbl", "region.tbl",
-    #                 "partsupp.tbl", "part.tbl", "nation.tbl",
-    #                 "customer.tbl", "lineitem.tbl"}
-    csv_file = {"orders.tbl", "part.tbl", "customer.tbl", "lineitem.tbl"}
-    # csv_file = {"supplier.tbl", "region.tbl", "partsupp.tbl", "nation.tbl"}
+    csv_file = {"orders.tbl", "supplier.tbl", "region.tbl",
+                    "partsupp.tbl", "part.tbl", "nation.tbl",
+                    "customer.tbl", "lineitem.tbl"}
 
     for n in csv_file:
         print(n)

@@ -32,6 +32,7 @@ public class Coordinator {
         port(COORDINATOR_APP_PORT);
         //TODO: Create insert function
         get("/database/query", (request, response) -> {
+            long start = System.currentTimeMillis();
             JSONObject json  = new JSONObject(request.body());
 //            JsonObject results = new JsonObject();
 //            System.out.println(json.get("query"));
@@ -42,7 +43,10 @@ public class Coordinator {
                 e.printStackTrace();
                 return e.getMessage();
             }
+            long end = System.currentTimeMillis();
+            System.out.println("TIME_LOG: RESPONSE TIME " + start + " " + end + " " + (end - start));
             return result? "Done": "Failed";
+
         });
     }
 }

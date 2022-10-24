@@ -17,7 +17,8 @@ public class RunResults {
 
         String inputFile = "logs.log";
         String outputFile = "output.txt";
-
+        String id = "c60-b60-n10-c_n6-al";
+        int reps = 3;
         FileReader fileReader = new FileReader(inputFile);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String inputLine;
@@ -32,14 +33,21 @@ public class RunResults {
         Collections.sort(lineList);
 
         FileWriter fileWriter = new FileWriter(outputFile);
+        FileWriter fileWriter2 = new FileWriter(id + ".backup");
         PrintWriter out = new PrintWriter(fileWriter);
+        PrintWriter out2 = new PrintWriter(fileWriter2);
         for (String outputLine : lineList) {
             out.println(outputLine);
+            out2.println(outputLine);
+
         }
         out.flush();
         out.close();
         fileWriter.close();
-        int reps = 1;
+        out2.flush();
+        out2.close();
+        fileWriter2.close();
+
         List<List<String>> results = new ArrayList<List<String>>(reps);
 
         for (int k = 0; k < reps; k++) {
@@ -71,15 +79,20 @@ public class RunResults {
 
         for (int j = 0; j <reps; j++) {
 //            String finalOutput = "results-c30-b30-n6-c_n5-v" + (j+1) + "-alluxio.csv";
-            String finalOutput = "100" + (j+1) + "-alluxio.csv";
+            String finalOutput = id + (j+1) + ".csv";
             OutputStreamWriter writer = new OutputStreamWriter(
                     new FileOutputStream(finalOutput), "UTF-8");
             BufferedWriter bufWriter = new BufferedWriter(writer);
             Map<String, String> maps = new HashMap<>();
             boolean probing = true;
+
             for (int i = 0; i < results.get(j).size(); i++) {
                 String str = results.get(j).get(i);
                 String[] strarr = str.split(" ");
+                if (str.contains("RESPONSE TIME")) {
+                    System.out.println(id+" " +j);
+                    System.out.println("Respose time " + j + " : " + str );
+                }
                 if (str.contains("Partition (Read File)")) {
                     maps.put(strarr[3], strarr[6]);
                 } else if (str.contains("Partition (Tuples to Buckets)")) {

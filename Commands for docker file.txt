@@ -208,6 +208,13 @@ docker run -d -p 5434:5432 -e POSTGRES_USER=myusername -e POSTGRES_DB=test -e PO
 docker run -d -p 6379:6379 --name redis redis
 docker run -d -p 6380:6379 --name redis_results redis
 docker run -d -p 6379:6379 --name redis redis redis-server --save 60 1 --loglevel warning
+ docker run -p 6380:6379 -e REDIS_AOF_ENABLED=no -e REDIS_IO_THREADS=4 -e REDIS_IO_THREADS_DO_READS=true --name redis redis
+
+ Redis config:
+ slaveof no one
+ CONFIG SET replica-read-only no
+
+
 
 2. Change the env.
 
@@ -228,6 +235,12 @@ curl -O https://downloads.alluxio.io/downloads/files/2.8.1/alluxio-2.8.1-bin.tar
 tar -xvzpf alluxio-2.8.1-bin.tar.gz
 
 scp root@136.145.77.80:/root/logs.logs logs.log
+
+dos2unix rename.sh
+bash rename.sh
+
+
+
 
 
 MTU
