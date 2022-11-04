@@ -50,7 +50,7 @@ def test():
 
 
     # sending get request and saving the response as response object
-    for n in [50, 60]:
+    for n in [120]:
         json = {
             "mode": 3,
             "buckets": n,
@@ -67,5 +67,6 @@ def test():
             sys.stdout.flush()
             getlogs()
 
-test()
-getlogsandprocessnossh()
+# test()
+# getlogsandprocessnossh()
+getlogsandprocess()

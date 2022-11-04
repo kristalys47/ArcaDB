@@ -248,3 +248,12 @@ MTU
 You have to remove the network with the MTU and recreate it with the correct MTU
 docker network rm docker_gwbridge
 docker network create -d bridge --subnet 172.18.0.0/16 --opt com.docker.network.bridge.name=docker_gwbridge --opt com.docker.network.bridge.enable_icc=false --opt com.docker.network.bridge.enable_ip_masquerade=true --opt com.docker.network.driver.mtu=1442 docker_gwbridge
+
+
+
+
+
+scp root@136.145.77.83:/root/spark-3.3.1/conf/* .
+
+
+scp . root@136.145.77.94:/root/spark-3.3.1/conf/

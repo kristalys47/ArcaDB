@@ -122,7 +122,7 @@ public class RunResults {
         String inputFile = "logs.log";
         String outputFile = "output.txt";
         String id = "mej";
-        int reps = 6;
+        int reps = 14;
         FileReader fileReader = new FileReader(inputFile);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String inputLine;
