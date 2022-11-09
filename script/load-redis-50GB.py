@@ -14,4 +14,4 @@ for table in tables:
 for n in range(1201):
     for index in range(len(tables)):
         if(n < numbers[index]):
-            r.rpush(tables[index], "/db100GB/" + tables[index] + "/" + tables[index] + str(n) + ".orc")
+            r.rpush(tables[index], "/db50GB/" + tables[index] + "/" + tables[index] + str(n) + ".orc")

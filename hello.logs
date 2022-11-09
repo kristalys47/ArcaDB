@@ -1,0 +1,80 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.worker:Worker >--------------------------
+[INFO] Building Worker 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:3.1.0:java (default-cli) @ Worker ---
+Started
+[WARNING] 
+redis.clients.jedis.exceptions.JedisConnectionException: [WARNING] 
+Failed to connect to any host resolved for DNS name.redis.clients.jedis.exceptions.JedisConnectionException: 
+Failed to connect to any host resolved for DNS name.
+[WARNING] 
+    redis.clients.jedis.exceptions.JedisConnectionException:     Failed to connect to any host resolved for DNS name.
+at     redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHostat redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHostat redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHost (DefaultJedisSocketFactory.java:63)
+     (DefaultJedisSocketFactory.java:63)
+at redis.clients.jedis.DefaultJedisSocketFactory.createSocket (DefaultJedisSocketFactory.java:63)
+    at redis.clients.jedis.DefaultJedisSocketFactory.createSocket    [WARNING] 
+ (DefaultJedisSocketFactory.java:87)
+    at redis.clients.jedis.Connection.connect[WARNING] 
+redis.clients.jedis.exceptions.JedisConnectionException: Failed to connect to any host resolved for DNS name.
+    at redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHost (DefaultJedisSocketFactory.java:63)
+    at redis.clients.jedis.DefaultJedisSocketFactory.createSocket (DefaultJedisSocketFactory.java:87)
+    at redis.clients.jedis.Connection.connect (Connection.java:180)
+    at redis.clients.jedis.Connection.sendCommand (Connection.java:152)
+    at redis.clients.jedis.Connection.executeCommand (Connection.java:121)
+    at redis.clients.jedis.Jedis.blpop (Jedis.java:6992)
+    at orc.MainWithQueue.run (MainWithQueue.java:23)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1128)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:628)
+    at java.lang.Thread.run (Thread.java:829)
+redis.clients.jedis.exceptions.JedisConnectionException: Failed to connect to any host resolved for DNS name.
+[WARNING] 
+redis.clients.jedis.exceptions.JedisConnectionException:  (DefaultJedisSocketFactory.java:87)
+at redis.clients.jedis.DefaultJedisSocketFactory.createSocket    at redis.clients.jedis.Connection.connect (DefaultJedisSocketFactory.java:87)
+    at (Connection.java:180)Failed to connect to any host resolved for DNS name.
+ (Connection.java:180)    
+     redis.clients.jedis.Connection.connectat redis.clients.jedis.Connection.sendCommand     (Connection.java:180)
+    at redis.clients.jedis.Connection.sendCommand (Connection.java:152)
+    at redis.clients.jedis.Connection.executeCommand (Connection.java:121)
+    at redis.clients.jedis.Jedis.blpop (Jedis.java:6992)
+    at orc.MainWithQueue.run (MainWithQueue.java:23)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1128)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runat redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHost
+     (Connection.java:152)
+    at redis.clients.jedis.DefaultJedisSocketFactory.connectToFirstSuccessfulHostat redis.clients.jedis.Connection.executeCommand (ThreadPoolExecutor.java:628)
+    at (Connection.java:121) (DefaultJedisSocketFactory.java:63)
+    at redis.clients.jedis.DefaultJedisSocketFactory.createSocketat redis.clients.jedis.Connection.sendCommand
+     java.lang.Thread.run (DefaultJedisSocketFactory.java:63) (Connection.java:152)
+    at redis.clients.jedis.Jedis.blpop (DefaultJedisSocketFactory.java:87)
+at (Jedis.java:6992)
+     (Thread.java:829)
+
+    at redis.clients.jedis.Connection.executeCommand     orc.MainWithQueue.run (Connection.java:121)
+    at redis.clients.jedis.Jedis.blpop (MainWithQueue.java:23)
+     (Jedis.java:6992)
+    at orc.MainWithQueue.run (MainWithQueue.java:23)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1128)
+    at redis.clients.jedis.DefaultJedisSocketFactory.createSocketat java.util.concurrent.ThreadPoolExecutor$Worker.runat java.util.concurrent.ThreadPoolExecutor.runWorkerat (ThreadPoolExecutor.java:628)
+    at java.lang.Thread.run (Thread.java:829)
+ (DefaultJedisSocketFactory.java:87)
+ (ThreadPoolExecutor.java:1128)
+ redis.clients.jedis.Connection.connect    at java.util.concurrent.ThreadPoolExecutor$Worker.run (Connection.java:180)
+    at redis.clients.jedis.Connection.sendCommand (Connection.java:152)
+    at redis.clients.jedis.Connection.executeCommand (Connection.java:121)
+    at redis.clients.jedis.Jedis.blpop (Jedis.java:6992)
+    at orc.MainWithQueue.run (MainWithQueue.java:23)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker     (ThreadPoolExecutor.java:1128)
+     (ThreadPoolExecutor.java:628)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.runat redis.clients.jedis.Connection.connectat java.lang.Thread.run (ThreadPoolExecutor.java:628)
+ (Connection.java:180)
+    at (Thread.java:829)
+    at java.lang.Thread.run redis.clients.jedis.Connection.sendCommand (Connection.java:152)
+     (Thread.java:829)
+at redis.clients.jedis.Connection.executeCommand (Connection.java:121)
+    at redis.clients.jedis.Jedis.blpop (Jedis.java:6992)
+    at orc.MainWithQueue.run (MainWithQueue.java:23)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1128)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:628)
+    at java.lang.Thread.run (Thread.java:829)

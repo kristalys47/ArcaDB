@@ -50,7 +50,7 @@ def test():
 
 
     # sending get request and saving the response as response object
-    for n in [120]:
+    for n in [60]:
         json = {
             "mode": 3,
             "buckets": n,
@@ -65,8 +65,10 @@ def test():
             r = requests.get(url = URL, json = json)
             print(r.elapsed)
             sys.stdout.flush()
-            getlogs()
+            # getlogs()
 
-# test()
+test()
 # getlogsandprocessnossh()
-getlogsandprocess()
+# getlogsandprocess()
+
+os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")
