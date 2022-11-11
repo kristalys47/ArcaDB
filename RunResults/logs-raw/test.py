@@ -71,7 +71,7 @@ def addvmlogstolog():
                     logs.write(line)
 
 
-# os.system("scp root@136.145.77.79:/root/worker/WorkerThreads/logs* loggert.log ")
+# os.system("scp root@136.145.77.124:/root/worker/WorkerThreads/logs* loggert.log ")
 test()
 # getlogsfromVmslist
 # os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")
