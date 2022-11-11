@@ -96,7 +96,7 @@ public class JoinManager {
         long end = System.currentTimeMillis();
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //        jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Partition (Read File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Partition (Read File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
 //        System.out.println("File retrieved from s3");
         scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
 //        Files.deleteIfExists(Paths.get(path));
@@ -107,7 +107,7 @@ public class JoinManager {
     public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
         int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
-        Jedis jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+        Jedis jedis = newJedisConnection();
         AmazonS3 s3client = null;
         if(mode == 2){
 //            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
@@ -154,18 +154,18 @@ public class JoinManager {
             }
             //Making sure the connection exits
             jedis.close();
-            jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+            jedis = newJedisConnection();
             lenght = jedis.llen(pathS);
         }
         long end = System.currentTimeMillis();
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //        jedisr.rpush("times", "Probing (Create Hash) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Probing (Create Hash) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Probing (Create Hash) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
         start = System.currentTimeMillis();
 
         //REdefinition of broken pipe
         jedis.close();
-        jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+        jedis = newJedisConnection();
         while(jedis.llen(pathR) > 0){
             try {
                 String jkey = pathR + jedis.lpop(pathR);
@@ -192,7 +192,7 @@ public class JoinManager {
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
                 jedis.close();
-                jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+                jedis = newJedisConnection();
                 BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
@@ -211,12 +211,12 @@ public class JoinManager {
             }
             //Making sure it exist for the next loop
             jedis.close();
-            jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
+            jedis = newJedisConnection();
         }
         jedis.close();
         end = System.currentTimeMillis();
 //        jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Probing (Join) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Probing (Join) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
         //        jedisr.close();
     }
 
@@ -251,7 +251,7 @@ public class JoinManager {
         long end = System.currentTimeMillis();
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //        jedisr.rpush("times", "Partition Single " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Partition Single " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Partition Single " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
 
         //TODO: Do i want threading?
 //        ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -266,7 +266,7 @@ public class JoinManager {
         }
         end = System.currentTimeMillis();
 //        jedisr.rpush("times", "Probing Single " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Probing Single " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Probing Single " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
 
     }
     public static void scannedToMap(String path, String column, String relation, int buckets, int mode) throws IOException {
@@ -320,7 +320,7 @@ public class JoinManager {
         long end = System.currentTimeMillis();
 //        Jedis jedis = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //        jedis.rpush("times", "Partition (Tuples to Buckets) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println("TIME_LOG: Partition (Tuples to Buckets) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+        System.out.println(end + " " + "TIME_LOG: Partition (Tuples to Buckets) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
     }
 
     public static void orcToMap(JsonArray path, String column, int buckets, String relation, int mode) throws IOException {
@@ -341,7 +341,7 @@ public class JoinManager {
             FileUtils.copyInputStreamToFile(in, new File(path.get(i).getAsString()));
             long end = System.currentTimeMillis();
 //            jedisr.rpush("times", "Partition (Reading File) " + ip + " " + start + " " + end + " " + (end-start));
-            System.out.println("TIME_LOG: Partition (Reading File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+            System.out.println(end + " " + "TIME_LOG: Partition (Reading File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
 //            System.out.println("File retrieved from s3");
             Reader reader = OrcFile.createReader(new Path(path.get(i).getAsString()), OrcFile.readerOptions(conf));
             RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
@@ -371,7 +371,7 @@ public class JoinManager {
             }
             end = System.currentTimeMillis();
 //            jedisr.rpush("times", "Partition (Tuples to bucket) " + ip + " " + start + " " + end + " " + (end-start));
-            System.out.println("TIME_LOG: Partition (Tuples to bucket) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+            System.out.println(end + " " + "TIME_LOG: Partition (Tuples to bucket) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
             records.close();
             batch.reset();
         }
@@ -384,4 +384,3 @@ public class JoinManager {
     }
 
 }
-

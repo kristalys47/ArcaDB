@@ -19,7 +19,7 @@ public class MainWithQueue implements Runnable{
         //TODO: custom port
         Jedis jedisControl;
         while (true) {
-            jedisControl = newJedisConnection(REDIS_HOST, REDIS_PORT);
+            jedisControl = newJedisConnection();
             List<String> task = jedisControl.blpop(0, "task");
             jedisControl.close();
             System.out.println("Connected - - - - - -");
@@ -52,7 +52,7 @@ public class MainWithQueue implements Runnable{
 //            jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
 //            jedisResult.close();
 //            if (args[0].contains("joinPartition")) {
-            System.out.println("TIME_LOG: Container " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end - start));
+            System.out.println(end + " " + "TIME_LOG: Container " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end - start));
 //            }else{
 //                System.out.println("TIME_LOG2: Container " + ip + " " + start + " " + end + " " + (end - start));
 //            }

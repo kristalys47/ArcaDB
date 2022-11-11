@@ -13,6 +13,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import orc.Commons;
 import redis.clients.jedis.Jedis;
 import java.util.UUID;
 
@@ -52,7 +53,7 @@ public class BufferStructure {
     private void flushToFile() {
         String fileName = "/results/" + ip + "_" + this.hashCode() + "_" + UUID.randomUUID().toString();
         this.count++;
-        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        Jedis jedis = Commons.newJedisConnection();
         jedis.rpush("result", fileName);
 
 //        System.out.println(fileName + " - " + records[bucket].size());

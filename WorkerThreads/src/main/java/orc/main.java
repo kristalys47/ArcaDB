@@ -44,7 +44,7 @@ public class main {
                 for (int i = 0; i < THREAD_NUMBER; i++) {
                     exec.execute(new MainWithQueue());
                 }
-                exec.awaitTermination(30, TimeUnit.MINUTES);
+                exec.awaitTermination(180, TimeUnit.MINUTES);
 
         } else {
 

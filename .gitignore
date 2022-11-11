@@ -40,9 +40,11 @@ Coordinator/Coordinator.iml
 /Data/CSVGEn/1d7a6e36-9a69-4d45-884a-d2bb2e07045b-tpc-h-tool/
 /Worker/Worker.iml
 /RunResults/Done Results/
-/RunResults/logs-raw/*-json.log
+/RunResults/logs-raw/*.log
 /RunResults/accumulate/
 /RunResults/old-stuff/
-RunResults/logs.log
-RunResults/output.txt
+/RunResults/logs.log
+/RunResults/output.txt
 /DumpingGround/old-stuff-s3/
+/RunResults/generated-sources
+/RunResults/

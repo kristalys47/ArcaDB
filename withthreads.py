@@ -4,12 +4,12 @@ import threading
 
 def runcomputers(n):
     # os.system("ssh root@136.145.77.%d apt install maven -y"%n)
-    # os.system("ssh root@136.145.77.%d rm -r worker"%(n))
-    # os.system("ssh root@136.145.77.%d mkdir /root/worker"%(n))
+    os.system("ssh root@136.145.77.%d rm -r worker"%(n))
+    os.system("ssh root@136.145.77.%d mkdir /root/worker"%(n))
     # # # os.system("scp runmvn0.sh root@136.145.77.%d:/root/worker/."%(n))
     # # # os.system("ssh root@136.145.77.%d \"cd worker ; bash runmvn0.sh\""%(n))
-    # os.system("scp -r WorkerThreads root@136.145.77.%d:/root/worker"%(n))
-    # os.system("ssh root@136.145.77.%d \"cd worker/WorkerThreads ; mvn clean install\""%(n))
+    os.system("scp -r WorkerThreads root@136.145.77.%d:/root/worker"%(n))
+    os.system("ssh root@136.145.77.%d \"cd worker/WorkerThreads ; mvn clean install\""%(n))
     os.system("ssh root@136.145.77.%d \"cd worker/WorkerThreads ; bash runmvn.sh\""%(n))
 
 

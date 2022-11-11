@@ -1,6 +1,8 @@
 package orc;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -24,6 +26,9 @@ public class Commons {
     static public String POSTGRES_JDBC;
     static public String MODE;
 
+
+    static public JedisPool jpool;
+
     static public String ip = null;
     static {
         try {
@@ -33,18 +38,13 @@ public class Commons {
         }
     }
 
-    static public Jedis newJedisConnection(String host, int port){
-        boolean tries = false;
-        Jedis jedis = null;
-        do{
-            try{
-                jedis = new Jedis(host, port);
-                return jedis;
-            } catch (Exception e){
-                tries = true;
-            }
-        } while (tries);
-        return jedis;
+    static public Jedis newJedisConnection(){
+        if(jpool == null){
+            JedisPoolConfig poolConfig = new JedisPoolConfig();
+            poolConfig.setMaxTotal(30);
+            jpool = new JedisPool(poolConfig, REDIS_HOST, REDIS_PORT, -1);
+        }
+        return jpool.getResource();
     }
 
     static public void createConnectiontoAlluxios(){
