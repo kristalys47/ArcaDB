@@ -13,6 +13,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.google.gson.JsonArray;
+import io.lettuce.core.api.sync.RedisCommands;
 import orc.helperClasses.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -107,7 +108,7 @@ public class JoinManager {
     public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
         int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
-        Jedis jedis = newJedisConnection();
+        RedisCommands<String, String> jedis = newJedisConnection();
         AmazonS3 s3client = null;
         if(mode == 2){
 //            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
@@ -153,7 +154,6 @@ public class JoinManager {
                 e.printStackTrace();
             }
             //Making sure the connection exits
-            jedis.close();
             jedis = newJedisConnection();
             lenght = jedis.llen(pathS);
         }
@@ -164,7 +164,6 @@ public class JoinManager {
         start = System.currentTimeMillis();
 
         //REdefinition of broken pipe
-        jedis.close();
         jedis = newJedisConnection();
         while(jedis.llen(pathR) > 0){
             try {
@@ -191,7 +190,6 @@ public class JoinManager {
 
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                jedis.close();
                 jedis = newJedisConnection();
                 BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
                 for (Tuple record : records) {
@@ -210,10 +208,8 @@ public class JoinManager {
                 e.printStackTrace();
             }
             //Making sure it exist for the next loop
-            jedis.close();
             jedis = newJedisConnection();
         }
-        jedis.close();
         end = System.currentTimeMillis();
 //        jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println(end + " " + "TIME_LOG: Probing (Join) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));

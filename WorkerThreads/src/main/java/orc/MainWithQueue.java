@@ -3,6 +3,8 @@ package orc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.lettuce.core.KeyValue;
+import io.lettuce.core.api.sync.RedisCommands;
 import redis.clients.jedis.Jedis;
 
 import java.util.List;
@@ -17,14 +19,13 @@ public class MainWithQueue implements Runnable{
     public void run() {
         //TODO: need a better logger when this is working
         //TODO: custom port
-        Jedis jedisControl;
+        RedisCommands<String, String> jedisControl;
         while (true) {
             jedisControl = newJedisConnection();
-            List<String> task = jedisControl.blpop(0, "task");
-            jedisControl.close();
+            KeyValue<String,String> task = jedisControl.blpop(0, "task");
             System.out.println("Connected - - - - - -");
             long start = System.currentTimeMillis();
-            String message = task.get(1);
+            String message = task.getValue();
 
             System.out.println(message);
 
@@ -47,7 +48,6 @@ public class MainWithQueue implements Runnable{
                 jedisControl.rpush("done", ip + "\nSomething failed in container: " + message + " " + e);
             }
             long end = System.currentTimeMillis();
-            jedisControl.close();
 //            Jedis jedisResult = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
 //            jedisResult.rpush("times", "Container " + ip + " " + start + " " + end + " " + (end - start));
 //            jedisResult.close();

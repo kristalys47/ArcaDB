@@ -1,11 +1,12 @@
 package orc;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
 
 public class Commons {
 
@@ -25,9 +26,8 @@ public class Commons {
     static public String POSTGRES_DB_NAME;
     static public String POSTGRES_JDBC;
     static public String MODE;
-
-
-    static public JedisPool jpool;
+    static protected RedisClient redisClient;
+    // static protected StatefulRedisConnection<String, String> connection;
 
     static public String ip = null;
     static {
@@ -38,17 +38,20 @@ public class Commons {
         }
     }
 
-    static public Jedis newJedisConnection(){
-        if(jpool == null){
-            JedisPoolConfig poolConfig = new JedisPoolConfig();
-            poolConfig.setMaxTotal(30);
-            jpool = new JedisPool(poolConfig, REDIS_HOST, REDIS_PORT, -1);
+    static public RedisCommands<String, String> newJedisConnection(){
+        if(redisClient == null) {
+            redisClient = RedisClient.create("redis://" + REDIS_HOST + ":" + REDIS_PORT);
         }
-        return jpool.getResource();
+        StatefulRedisConnection<String, String> connection = redisClient.connect();
+        RedisCommands<String, String> syncCommands = connection.sync();
+
+        return syncCommands;
+    }
+    static public void closeConnection(){
+
     }
 
     static public void createConnectiontoAlluxios(){
 
     }
 }
-

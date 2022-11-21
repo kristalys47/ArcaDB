@@ -13,6 +13,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import io.lettuce.core.api.sync.RedisCommands;
 import orc.Commons;
 import redis.clients.jedis.Jedis;
 
@@ -46,9 +47,8 @@ public class GRACEHashArrayInParts {
         this.mode = mode;
         this.fileBuckets = new LinkedList[buckets];
         //TODO: get object size
-        Jedis jedis = Commons.newJedisConnection();
+        RedisCommands<String, String> jedis = Commons.newJedisConnection();
         this.recordsLimit = Integer.valueOf(jedis.get(relation + "_partition_size"));
-        jedis.close();
         this.records = new LinkedList[buckets];
 
         for (int i = 0; i < buckets; i++) {
@@ -78,7 +78,7 @@ public class GRACEHashArrayInParts {
     private void flushToFile(int bucket) {
         String uuid = UUID.randomUUID().toString();
         String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid;
-        Jedis jedis = Commons.newJedisConnection();
+        RedisCommands<String, String> jedis = Commons.newJedisConnection();
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid);
         fileBuckets[bucket].add(fileName);
 
@@ -128,7 +128,6 @@ public class GRACEHashArrayInParts {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        jedis.close();
     }
 
     public void flushRemainders(){
