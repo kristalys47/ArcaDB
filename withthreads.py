@@ -26,7 +26,7 @@ def runcomputers(n):
     # os.system("ssh root@136.145.77.%d \"cd worker/WorkerThreads ; export $(xargs <.env) ; echo $MODE\""%(n))
     # os.system("ssh root@136.145.77.%d \"cd worker/WorkerThreads ; export $(grep -v '^#' .env | xargs) ; mvn exec:java -Dexec.mainClass=\"orc.main\" -Dexec.args=\"${S3_BUCKET} ${AWS_S3_ACCESS_KEY} ${AWS_S3_SECRET_KEY} ${REDIS_HOST} ${REDIS_PORT} ${REDIS_HOST_TIMES} ${REDIS_PORT_TIMES} ${WORKER_APP_PORT} ${COORDINATOR_APP_PORT} ${POSTGRES_PASSWORD} ${POSTGRES_USERNAME} ${POSTGRES_HOST} ${POSTGRES_PORT} ${POSTGRES_DB_NAME} ${MODE}\" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false --log-file logs.log\""%(n))
 
-array =  [94, 79, 99, 80, 78, 106, 119, 118, 124, 120, 101]
+array =  [94, 79, 99, 78, 106, 119, 118, 124, 120, 101]
 # array =  [94, 79]
 for n in array:
      x = threading.Thread(target=runcomputers, args=(n,))

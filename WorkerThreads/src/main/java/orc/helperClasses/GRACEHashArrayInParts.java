@@ -105,13 +105,10 @@ public class GRACEHashArrayInParts {
                 InputStream in = new ByteArrayInputStream(bos.toByteArray());
                 s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
             } else {
-
                 FileOutStream out = createfilealluxios(fileName, "136.145.77.83");
                 out.write(bos.toByteArray());
                 out.flush();
                 out.close();
-//                jedis.set(fileName.getBytes(), bos.toByteArray());
-
             }
 //            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
 //            ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");

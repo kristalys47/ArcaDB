@@ -37,6 +37,7 @@ public class Commons {
     static public String POSTGRES_DB_NAME;
     static public String POSTGRES_JDBC;
     static public String MODE;
+    static public int CONNECTION_RETRIES;
     static protected RedisClient redisClient;
     static protected SoftReferenceObjectPool<StatefulRedisConnection<String, String>>  pool;
 //    static protected GenericObjectPool<StatefulRedisConnection<String, String>>  pool;
@@ -44,6 +45,7 @@ public class Commons {
 
     static public String ip = null;
     static {
+        CONNECTION_RETRIES = 5;
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {

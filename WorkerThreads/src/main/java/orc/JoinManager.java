@@ -89,25 +89,27 @@ public class JoinManager {
 //                .build();
 //        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
         FileInStream in;
-        while(true) {
+        int tries = CONNECTION_RETRIES;
+        while(tries>0) {
             try {
                 in = getfilealluxios(path, "136.145.77.107");
+                File f = new File(path);
+                FileUtils.copyInputStreamToFile(in, f);
+                long end = System.currentTimeMillis();
+                System.out.println(end + " " + "TIME_LOG: Partition (Read File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
+                scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
+                f.delete();
                 break;
             } catch (Exception e) {
-                continue;
+                tries--;
+                if(tries == 0){
+                    System.out.println("aborted");
+                }
             }
         }
 
-        File f = new File(path);
-        FileUtils.copyInputStreamToFile(in, f);
-        long end = System.currentTimeMillis();
-//        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-//        jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
-        System.out.println(end + " " + "TIME_LOG: Partition (Read File) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));
-//        System.out.println("File retrieved from s3");
-        scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
-//        Files.deleteIfExists(Paths.get(path));
-        f.delete();
+
+
     }
 
 
@@ -141,28 +143,32 @@ public class JoinManager {
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
                     FileInStream in;
-                    while(true) {
+                    int tries = CONNECTION_RETRIES;
+                    while(tries>0) {
                         try {
                             alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                             in = fs.openFile(path);
+                            b = new ByteArrayInputStream(in.readAllBytes());
+                            fs.delete(path);
+                            fs.close();
+                            in.close();
+                            ObjectInputStream o = new ObjectInputStream(b);
+                            LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+                            for (Tuple record : records) {
+                                String key = record.readAttribute(0).getStringValue();
+                                if (!map.containsKey(key)) {
+                                    map.put(key, new HashNode<Tuple>(record, null));
+                                } else {
+                                    map.put(key, new HashNode<Tuple>(record, map.get(key)));
+                                }
+                            }
                             break;
                         } catch (Exception e) {
-                            continue;
+                            tries--;
+                            if(tries == 0){
+                                System.out.println("aborted");
+                            }
                         }
-                    }
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                    fs.delete(path);
-                    fs.close();
-                    in.close();
-                }
-                ObjectInputStream o = new ObjectInputStream(b);
-                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                for (Tuple record : records) {
-                    String key = record.readAttribute(0).getStringValue();
-                    if (!map.containsKey(key)) {
-                        map.put(key, new HashNode<Tuple>(record, null));
-                    } else {
-                        map.put(key, new HashNode<Tuple>(record, map.get(key)));
                     }
                 }
             }catch (Exception e){
@@ -196,40 +202,43 @@ public class JoinManager {
                     alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
-                    FileInStream in;
-                    while(true) {
+                    FileInStream in = null;
+                    int tries = CONNECTION_RETRIES;
+                    while(tries>0) {
                         try {
                             alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                             in = fs.openFile(path);
+                            b = new ByteArrayInputStream(in.readAllBytes());
+                            fs.delete(path);
+                            fs.close();
+                            in.close();
+                            ObjectInputStream o = new ObjectInputStream(b);
+                            LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
+                            connection.close();
+                            connection = newJedisConnection();
+                            jedis = connection.sync();
+                            BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
+                            for (Tuple record : records) {
+                                String key = record.readAttribute(0).getStringValue();
+                                if(map.containsKey(key)){
+                                    HashNode<Tuple> current = map.get(key);
+                                    do {
+                                        Tuple joined = Tuple.joinTuple(record, current.getElement());
+                                        results.addRecord(joined);
+                                        current = current.getNext();
+                                    }while(current != null);
+                                }
+                            }
+                            results.flushRemainders();
                             break;
                         } catch (Exception e) {
-                            continue;
+                            tries--;
+                            if(tries == 0){
+                                System.out.println("aborted");
+                            }
                         }
                     }
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                    fs.delete(path);
-                    fs.close();
-                    in.close();
                 }
-
-                ObjectInputStream o = new ObjectInputStream(b);
-                LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                connection.close();
-                connection = newJedisConnection();
-                jedis = connection.sync();
-                BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
-                for (Tuple record : records) {
-                    String key = record.readAttribute(0).getStringValue();
-                    if(map.containsKey(key)){
-                        HashNode<Tuple> current = map.get(key);
-                        do {
-                            Tuple joined = Tuple.joinTuple(record, current.getElement());
-                            results.addRecord(joined);
-                            current = current.getNext();
-                        }while(current != null);
-                    }
-                }
-                results.flushRemainders();
             } catch (Exception e){
                 e.printStackTrace();
             }
