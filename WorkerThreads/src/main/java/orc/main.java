@@ -3,6 +3,9 @@ package orc;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.lettuce.core.KeyValue;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
@@ -10,6 +13,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static orc.Commons.*;
@@ -39,12 +43,24 @@ public class main {
         POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
 
         System.out.println("Started");
+
         if (MODE.equals("queue")) {
-                ExecutorService exec = Executors.newFixedThreadPool(THREAD_NUMBER);
-                for (int i = 0; i < THREAD_NUMBER; i++) {
-                    exec.execute(new MainWithQueue());
+            int activeThreads = 0;
+            ExecutorService exec = Executors.newFixedThreadPool(THREAD_NUMBER);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) exec;
+            while (true) {
+                int hello = executor.getActiveCount();
+                if(hello<=THREAD_NUMBER) {
+                    RedisCommands<String, String> jedisControl;
+                    StatefulRedisConnection<String, String> connection = newJedisConnection();
+                    jedisControl = connection.sync();
+                    System.out.println("Connected - - - - - -");
+                    KeyValue<String, String> task = jedisControl.blpop(0, "task");
+                    exec.execute(new MainWithQueue(task.getValue()));
+                    connection.close();
+
                 }
-                exec.awaitTermination(180, TimeUnit.MINUTES);
+            }
 
         } else {
 

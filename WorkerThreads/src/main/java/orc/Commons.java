@@ -1,12 +1,18 @@
 package orc;
 
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
+import io.lettuce.core.cluster.RedisClusterClient;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
+import io.lettuce.core.support.ConnectionPoolSupport;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.commons.pool2.impl.SoftReferenceObjectPool;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 public class Commons {
 
@@ -27,7 +33,9 @@ public class Commons {
     static public String POSTGRES_JDBC;
     static public String MODE;
     static protected RedisClient redisClient;
-    // static protected StatefulRedisConnection<String, String> connection;
+    static protected SoftReferenceObjectPool<StatefulRedisConnection<String, String>>  pool;
+//    static protected GenericObjectPool<StatefulRedisConnection<String, String>>  pool;
+//     static protected StatefulRedisConnection<String, String> connection;
 
     static public String ip = null;
     static {
@@ -38,14 +46,22 @@ public class Commons {
         }
     }
 
-    static public RedisCommands<String, String> newJedisConnection(){
+    static public StatefulRedisConnection<String, String> newJedisConnection() {
         if(redisClient == null) {
-            redisClient = RedisClient.create("redis://" + REDIS_HOST + ":" + REDIS_PORT);
+            RedisURI uri = new RedisURI(REDIS_HOST, REDIS_PORT, Duration.ofMinutes(120));
+            redisClient = RedisClient.create(uri);
+//
+//            pool = ConnectionPoolSupport.createGenericObjectPool(() -> redisClient.connect(), new GenericObjectPoolConfig());
+            pool = ConnectionPoolSupport.createSoftReferenceObjectPool(() -> redisClient.connect());
         }
-        StatefulRedisConnection<String, String> connection = redisClient.connect();
-        RedisCommands<String, String> syncCommands = connection.sync();
-
-        return syncCommands;
+        StatefulRedisConnection<String, String> connection = null;
+        try {
+            connection = pool.borrowObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        RedisCommands<String, String> jedis = connection.sync();
+        return connection;
     }
     static public void closeConnection(){
 

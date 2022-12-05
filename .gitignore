@@ -48,3 +48,5 @@ Coordinator/Coordinator.iml
 /DumpingGround/old-stuff-s3/
 /RunResults/generated-sources
 /RunResults/logs-raw/corrida 60-threads
+/WorkerThreads/.idea/
+/WorkerThreads/Worker.iml

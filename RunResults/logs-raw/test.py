@@ -52,7 +52,8 @@ def getlogsfromVms(n):
     os.system("scp root@136.145.77.%d:/root/worker/WorkerThreads/logs* log%dt.log "%(n, n))
 
 def getlogsfromVmslist():
-    array =  [94, 79, 99, 80, 78, 106, 119, 118, 124, 120, 101]
+    # array =  [94, 79, 99, 80, 78, 106, 119, 118, 124, 120, 101]
+    array =  [94, 79]
     dic = []
     for n in array:
          x = threading.Thread(target=getlogsfromVms, args=(n,))
@@ -72,7 +73,9 @@ def addvmlogstolog():
 
 
 # os.system("scp root@136.145.77.124:/root/worker/WorkerThreads/logs* loggert.log ")
+# getlogsfromVmslist()
 test()
+
 # getlogsfromVmslist
 # os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")
 # addvmlogstolog()

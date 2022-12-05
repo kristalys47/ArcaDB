@@ -13,6 +13,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import orc.Commons;
 import redis.clients.jedis.Jedis;
@@ -54,7 +55,8 @@ public class BufferStructure {
     private void flushToFile() {
         String fileName = "/results/" + ip + "_" + this.hashCode() + "_" + UUID.randomUUID().toString();
         this.count++;
-        RedisCommands<String, String> jedis = Commons.newJedisConnection();
+        StatefulRedisConnection<String, String> connection = newJedisConnection();
+        RedisCommands<String, String> jedis = connection.sync();
         jedis.rpush("result", fileName);
 
 //        System.out.println(fileName + " - " + records[bucket].size());
@@ -76,15 +78,16 @@ public class BufferStructure {
 //                s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
 //            } else {
 
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+//
                 Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-
+                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                 FileSystem fs = FileSystem.Factory.create();
                 AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + fileName);
                 CreateFilePOptions options = CreateFilePOptions
                         .newBuilder()
                         .setRecursive(true)
                         .build();
+                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                 FileOutStream out = fs.createFile(path, options);
                 out.write(bos.toByteArray());
                 out.flush();
@@ -101,6 +104,7 @@ public class BufferStructure {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        connection.close();
     }
 
     public void flushRemainders(){

@@ -13,7 +13,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.google.gson.JsonArray;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
+import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 import orc.helperClasses.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -86,11 +89,11 @@ public class JoinManager {
 //                .build();
 //        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
 
-        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
         alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-
+        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
         FileSystem fs = FileSystem.Factory.get();
         AlluxioURI pathAlluxio = new AlluxioURI("alluxio://136.145.77.107:19998"+path);
+        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
         FileInStream in = fs.openFile(pathAlluxio);
         File f = new File(path);
         FileUtils.copyInputStreamToFile(in, f);
@@ -108,7 +111,8 @@ public class JoinManager {
     public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
         int bucket = Integer.valueOf(bucketID);
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
-        RedisCommands<String, String> jedis = newJedisConnection();
+        StatefulRedisConnection<String, String> connection = newJedisConnection();
+        RedisCommands<String, String> jedis = connection.sync();
         AmazonS3 s3client = null;
         if(mode == 2){
 //            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
@@ -128,11 +132,12 @@ public class JoinManager {
                     InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
                     b = new ByteArrayInputStream(in.readAllBytes());
                 } else {
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
+                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileInStream in = fs.openFile(path);
                     b = new ByteArrayInputStream(in.readAllBytes());
                     fs.delete(path);
@@ -154,7 +159,9 @@ public class JoinManager {
                 e.printStackTrace();
             }
             //Making sure the connection exits
-            jedis = newJedisConnection();
+            connection.close();
+            connection = newJedisConnection();
+            jedis = connection.sync();
             lenght = jedis.llen(pathS);
         }
         long end = System.currentTimeMillis();
@@ -164,7 +171,9 @@ public class JoinManager {
         start = System.currentTimeMillis();
 
         //REdefinition of broken pipe
-        jedis = newJedisConnection();
+        connection.close();
+        connection = newJedisConnection();
+        jedis = connection.sync();
         while(jedis.llen(pathR) > 0){
             try {
                 String jkey = pathR + jedis.lpop(pathR);
@@ -174,11 +183,12 @@ public class JoinManager {
                     b = new ByteArrayInputStream(in.readAllBytes());
                 } else {
 
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+//
                     alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
+                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileInStream in = fs.openFile(path);
                     b = new ByteArrayInputStream(in.readAllBytes());
                     fs.delete(path);
@@ -190,7 +200,9 @@ public class JoinManager {
 
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-                jedis = newJedisConnection();
+                connection.close();
+                connection = newJedisConnection();
+                jedis = connection.sync();
                 BufferStructure results = new BufferStructure("", Integer.parseInt(jedis.get("joinTupleLength")));
                 for (Tuple record : records) {
                     String key = record.readAttribute(0).getStringValue();
@@ -208,8 +220,11 @@ public class JoinManager {
                 e.printStackTrace();
             }
             //Making sure it exist for the next loop
-            jedis = newJedisConnection();
+            connection.close();
+            connection = newJedisConnection();
+            jedis = connection.sync();
         }
+        connection.close();
         end = System.currentTimeMillis();
 //        jedisr.rpush("times", "Probing (Join) " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println(end + " " + "TIME_LOG: Probing (Join) " + ip + Thread.currentThread().getId() + " " + start + " " + end + " " + (end-start));

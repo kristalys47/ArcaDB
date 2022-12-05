@@ -13,6 +13,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import orc.Commons;
 import redis.clients.jedis.Jedis;
@@ -47,8 +48,10 @@ public class GRACEHashArrayInParts {
         this.mode = mode;
         this.fileBuckets = new LinkedList[buckets];
         //TODO: get object size
-        RedisCommands<String, String> jedis = Commons.newJedisConnection();
+        StatefulRedisConnection<String, String> connection = newJedisConnection();
+        RedisCommands<String, String> jedis = connection.sync();
         this.recordsLimit = Integer.valueOf(jedis.get(relation + "_partition_size"));
+        connection.close();
         this.records = new LinkedList[buckets];
 
         for (int i = 0; i < buckets; i++) {
@@ -78,7 +81,8 @@ public class GRACEHashArrayInParts {
     private void flushToFile(int bucket) {
         String uuid = UUID.randomUUID().toString();
         String fileName = "/join/" + bucket + "/" + this.relation + "/" + this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid;
-        RedisCommands<String, String> jedis = Commons.newJedisConnection();
+        StatefulRedisConnection<String, String> connection = newJedisConnection();
+        RedisCommands<String, String> jedis = connection.sync();
         jedis.rpush("/join/" + bucket + "/" + this.relation + "/", this.fileBuckets[bucket].size() + "_" + this.hashCode() + "_" + uuid);
         fileBuckets[bucket].add(fileName);
 
@@ -102,21 +106,20 @@ public class GRACEHashArrayInParts {
                 s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
             } else {
 
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+//
                 Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-
+                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                 FileSystem fs = FileSystem.Factory.create();
                 AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + fileName);
                 CreateFilePOptions options = CreateFilePOptions
                         .newBuilder()
                         .setRecursive(true)
                         .build();
+                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                 FileOutStream out = fs.createFile(path, options);
                 out.write(bos.toByteArray());
                 out.flush();
                 out.close();
-
-
 //                jedis.set(fileName.getBytes(), bos.toByteArray());
 
             }
@@ -128,6 +131,7 @@ public class GRACEHashArrayInParts {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        connection.close();
     }
 
     public void flushRemainders(){
