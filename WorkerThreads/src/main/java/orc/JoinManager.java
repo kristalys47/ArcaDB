@@ -88,13 +88,16 @@ public class JoinManager {
 //                .withRegion(Regions.US_EAST_1)
 //                .build();
 //        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
+        FileInStream in;
+        while(true) {
+            try {
+                in = getfilealluxios(path, "136.145.77.107");
+                break;
+            } catch (Exception e) {
+                continue;
+            }
+        }
 
-        alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
-        FileSystem fs = FileSystem.Factory.get();
-        AlluxioURI pathAlluxio = new AlluxioURI("alluxio://136.145.77.107:19998"+path);
-        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
-        FileInStream in = fs.openFile(pathAlluxio);
         File f = new File(path);
         FileUtils.copyInputStreamToFile(in, f);
         long end = System.currentTimeMillis();
@@ -137,12 +140,19 @@ public class JoinManager {
                     alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                    FileInStream in = fs.openFile(path);
+                    FileInStream in;
+                    while(true) {
+                        try {
+                            alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                            in = fs.openFile(path);
+                            break;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
                     b = new ByteArrayInputStream(in.readAllBytes());
                     fs.delete(path);
                     fs.close();
-//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
                     in.close();
                 }
                 ObjectInputStream o = new ObjectInputStream(b);
@@ -182,20 +192,24 @@ public class JoinManager {
                     InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
                     b = new ByteArrayInputStream(in.readAllBytes());
                 } else {
-
-//
                     alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
                     alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
                     FileSystem fs = FileSystem.Factory.get();
                     AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                    FileInStream in = fs.openFile(path);
+                    FileInStream in;
+                    while(true) {
+                        try {
+                            alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                            in = fs.openFile(path);
+                            break;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
                     b = new ByteArrayInputStream(in.readAllBytes());
                     fs.delete(path);
                     fs.close();
                     in.close();
-
-//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
                 }
 
                 ObjectInputStream o = new ObjectInputStream(b);

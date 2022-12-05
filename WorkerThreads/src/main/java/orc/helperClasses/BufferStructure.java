@@ -58,48 +58,14 @@ public class BufferStructure {
         StatefulRedisConnection<String, String> connection = newJedisConnection();
         RedisCommands<String, String> jedis = connection.sync();
         jedis.rpush("result", fileName);
-
-//        System.out.println(fileName + " - " + records[bucket].size());
-//        AmazonS3 s3client = null;
-//        if(mode == 2){
-//            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
-//            s3client = AmazonS3ClientBuilder
-//                    .standard()
-//                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                    .withRegion(Regions.US_EAST_1)
-//                    .build();
-//        }
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream o = new ObjectOutputStream(bos);
             o.writeObject(records);
-//            if(mode == 2) {
-//                InputStream in = new ByteArrayInputStream(bos.toByteArray());
-//                s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
-//            } else {
-
-//
-                Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                FileSystem fs = FileSystem.Factory.create();
-                AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + fileName);
-                CreateFilePOptions options = CreateFilePOptions
-                        .newBuilder()
-                        .setRecursive(true)
-                        .build();
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                FileOutStream out = fs.createFile(path, options);
-                out.write(bos.toByteArray());
-                out.flush();
-                out.close();
-
-//                jedis.set(fileName.getBytes(), bos.toByteArray());
-
-//            }
-//            IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
-//            ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
-//            cache.put(fileName, records[bucket]);
-//            client.close();
+            FileOutStream out = createfilealluxios(fileName, "136.145.77.83");
+            out.write(bos.toByteArray());
+            out.flush();
+            out.close();
             records.clear();
         } catch (Exception e) {
             e.printStackTrace();

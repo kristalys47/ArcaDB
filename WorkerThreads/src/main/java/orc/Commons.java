@@ -1,15 +1,20 @@
 package orc;
 
+import alluxio.AlluxioURI;
+import alluxio.client.file.FileInStream;
+import alluxio.client.file.FileOutStream;
+import alluxio.client.file.FileSystem;
+import alluxio.conf.Configuration;
+import alluxio.conf.PropertyKey;
+import alluxio.exception.AlluxioException;
+import alluxio.grpc.CreateFilePOptions;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.cluster.RedisClusterClient;
-import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import io.lettuce.core.support.ConnectionPoolSupport;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.commons.pool2.impl.SoftReferenceObjectPool;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Duration;
@@ -67,7 +72,26 @@ public class Commons {
 
     }
 
-    static public void createConnectiontoAlluxios(){
-
+    static public FileOutStream createfilealluxios(String fileName, String host) throws IOException, AlluxioException {
+        Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+        Configuration.set(PropertyKey.MASTER_HOSTNAME, host);
+        FileSystem fs = FileSystem.Factory.create();
+        AlluxioURI path = new AlluxioURI("alluxio://" + host + ":19998" + fileName);
+        CreateFilePOptions options = CreateFilePOptions
+                .newBuilder()
+                .setRecursive(true)
+                .build();
+        Configuration.set(PropertyKey.MASTER_HOSTNAME, host);
+        FileOutStream out = fs.createFile(path, options);
+        return out;
+    }
+    static public FileInStream getfilealluxios(String path, String host) throws IOException, AlluxioException {
+        Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+        Configuration.set(PropertyKey.MASTER_HOSTNAME, host);
+        FileSystem fs = FileSystem.Factory.get();
+        AlluxioURI pathAlluxio = new AlluxioURI("alluxio://" + host + ":19998" + path);
+        alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, host);
+        FileInStream in = fs.openFile(pathAlluxio);
+        return in;
     }
 }

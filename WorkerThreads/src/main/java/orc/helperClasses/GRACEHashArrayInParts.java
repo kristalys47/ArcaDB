@@ -106,17 +106,7 @@ public class GRACEHashArrayInParts {
                 s3client.putObject(S3_BUCKET, fileName, in, new ObjectMetadata());
             } else {
 
-//
-                Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                FileSystem fs = FileSystem.Factory.create();
-                AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + fileName);
-                CreateFilePOptions options = CreateFilePOptions
-                        .newBuilder()
-                        .setRecursive(true)
-                        .build();
-                Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                FileOutStream out = fs.createFile(path, options);
+                FileOutStream out = createfilealluxios(fileName, "136.145.77.83");
                 out.write(bos.toByteArray());
                 out.flush();
                 out.close();
