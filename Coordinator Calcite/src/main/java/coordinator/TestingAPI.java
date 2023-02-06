@@ -7,11 +7,18 @@ import org.apache.calcite.config.CalciteConnectionConfig;
 import org.apache.calcite.config.CalciteConnectionConfigImpl;
 import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.jdbc.CalciteConnection;
-import org.apache.calcite.plan.Contexts;
+import org.apache.calcite.jdbc.JavaTypeFactoryImpl;
+import org.apache.calcite.plan.*;
+import org.apache.calcite.plan.volcano.VolcanoPlanner;
+import org.apache.calcite.prepare.CalciteCatalogReader;
+import org.apache.calcite.prepare.Prepare;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.rel.RelWriter;
 import org.apache.calcite.rel.externalize.RelWriterImpl;
+import org.apache.calcite.rel.rules.CoreRules;
+import org.apache.calcite.rel.type.RelDataTypeFactory;
+import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.Schema;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.schema.Table;
@@ -27,11 +34,13 @@ import org.apache.calcite.sql.util.ListSqlOperatorTable;
 import org.apache.calcite.sql.util.SqlOperatorTables;
 import org.apache.calcite.sql2rel.SqlToRelConverter;
 import org.apache.calcite.tools.*;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -53,9 +62,12 @@ public class TestingAPI {
 //        String QUERY = "select product from SCHEMA.\"orders\"";
 
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
-        String QUERY = "select imageClassifier(12) from SCHEMA.\"part\"";
+//        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
+        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 
         POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        // Rules
+        RuleSet rules = RuleSets.ofList(CoreRules.JOIN_ASSOCIATE, CoreRules.JOIN_COMMUTE, CoreRules.JOIN_COMMUTE, CoreRules.JOIN_COMMUTE_OUTER, CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY, CoreRules.JOIN_EXTRACT_FILTER);
 
         String dbUrl = POSTGRES_JDBC;
         System.out.println(dbUrl);
@@ -83,14 +95,16 @@ public class TestingAPI {
         for (String tableName : rootSchema.getSubSchema("SCHEMA").getTableNames()) {
             System.out.println(tableName);
         }
+
+        //SQL PARSER
         SqlParser.Config parserConfig = SqlParser.config();
         parserConfig.withCaseSensitive(true);
         parserConfig.withUnquotedCasing(Casing.UNCHANGED);
         parserConfig.withQuotedCasing(Casing.UNCHANGED);
 
-
         Frameworks.ConfigBuilder config = Frameworks.newConfigBuilder()
                 .defaultSchema(rootSchema)
+                .ruleSets(rules)
                 .parserConfig(parserConfig)
                 .operatorTable(operatorTables)
                 .context(Contexts.of(calciteConnection.config()));
@@ -105,16 +119,29 @@ public class TestingAPI {
         System.out.println();
         RelNode relationalPlan = planner.rel(validateNode).project();
         System.out.println(relationalPlan.explain());
-        System.out.println(relationalPlan.getRelTypeName());
 
-//        SqlToRelConverter converter;
+        Properties configProperties = new Properties();
+
+        configProperties.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), Boolean.TRUE.toString());
+        configProperties.put(CalciteConnectionProperty.UNQUOTED_CASING.camelName(), Casing.UNCHANGED.toString());
+        configProperties.put(CalciteConnectionProperty.QUOTED_CASING.camelName(), Casing.UNCHANGED.toString());
+
+        CalciteConnectionConfig configOpti = new CalciteConnectionConfigImpl(configProperties);
+
+        VolcanoPlanner optiPlanner = new VolcanoPlanner(RelOptCostImpl.FACTORY, Contexts.of(configOpti));
+        optiPlanner.addRelTraitDef(ConventionTraitDef.INSTANCE);
+        RelNode finalls = optiPlanner.findBestExp();
+
+//        runOptimizer.run(optiPlanner, relationalPlan, relationalPlan.getTraitSet(), Collections.emptyList(), Collections.emptyList());
 
 
-//        SqlWriter writer = new SqlPrettyWriter();
-//        validateNode.unparse(writer, 0,0);
-//
-//        // Print out our formatted SQL to the console
-//        System.out.println(ImmutableList.of(writer.toSqlString().getSql()));
+
+
+
+
+
+
+        
     }
 
 
