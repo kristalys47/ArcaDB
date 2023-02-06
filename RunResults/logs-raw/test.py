@@ -40,7 +40,7 @@ def test():
             "query1": "select * from lineitem, orders where lineitem.\"00\" = orders.\"00\""
             }
         print(n)
-        for n in range(3):
+        for n in range(1):
             os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /join"')
             os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio clearCache"')
             os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /results"')
@@ -49,7 +49,7 @@ def test():
             sys.stdout.flush()
 
 def getlogsfromVms(n):
-    os.system("scp root@136.145.77.%d:/root/worker/WorkerThreads/logs* log%dt.log "%(n, n))
+    os.system("scp root@136.145.77.%d:/root/worker/WorkerThreads/logs* log%dtt.log "%(n, n))
 
 def getlogsfromVmslist():
     array =  [94, 79, 99, 78, 106, 119, 118, 124, 120, 101]
@@ -73,8 +73,8 @@ def addvmlogstolog():
 
 
 # os.system("scp root@136.145.77.124:/root/worker/WorkerThreads/logs* loggert.log ")
-# getlogsfromVmslist()
-test()
+getlogsfromVmslist()
+# test()
 
 # getlogsfromVmslist
 # os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")

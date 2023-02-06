@@ -41,6 +41,9 @@ Coordinator/Coordinator.iml
 /Worker/Worker.iml
 /RunResults/Done Results/
 /RunResults/logs-raw/*.log
+/RunResults/logs-raw/2022-not mem/*.log
+/RunResults/logs-raw/mdmdmd/*.log
+/RunResults/logs-raw/mmm/*.log
 /RunResults/accumulate/
 /RunResults/old-stuff/
 /RunResults/logs.log

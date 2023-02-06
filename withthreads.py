@@ -6,7 +6,7 @@ def runcomputers(n):
     # os.system("ssh root@136.145.77.%d apt install maven -y"%n)
     os.system("ssh root@136.145.77.%d rm -r /db100GB"%(n))
     # os.system("ssh root@136.145.77.%d rm -r /db50GB"%(n))
-    # os.system("ssh root@136.145.77.%d rm -r /db10GB"%(n))
+    os.system("ssh root@136.145.77.%d rm -r /db10GB"%(n))
 
     os.system("ssh root@136.145.77.%d \"pkill -f '/usr/bin/java*' ; pkill -u root 'bash*' \""%(n))
     os.system("ssh root@136.145.77.%d rm -r worker"%(n))
