@@ -23,12 +23,12 @@ import org.apache.calcite.rel.rules.CoreRules;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.SchemaPlus;
-import org.apache.calcite.sql.SqlDialect;
-import org.apache.calcite.sql.SqlDialectFactoryImpl;
-import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.SqlOperatorTable;
+import org.apache.calcite.schema.impl.ScalarFunctionImpl;
+import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.type.OperandTypes;
+import org.apache.calcite.sql.type.ReturnTypes;
 import org.apache.calcite.sql.util.ChainedSqlOperatorTable;
 import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorUtil;
@@ -50,6 +50,9 @@ import static coordinator.Commons.*;
 import static coordinator.Commons.POSTGRES_JDBC;
 
 public class TestingVolcano {
+    static public int IMAGECLASSIFIER(int a){
+        return a+2;
+    }
     public static void run() throws Exception {
         Properties configProperties = new Properties();
 
@@ -70,9 +73,9 @@ public class TestingVolcano {
         POSTGRES_DB_NAME = "test";
 //        String QUERY = "select product from SCHEMA.\"orders\"";
 //        String QUERY = "select * from SCHEMA.\"orders\"";
-        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
+//        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
-//        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
+        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 
         POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
 
@@ -88,6 +91,7 @@ public class TestingVolcano {
         System.out.println(dialectName);
 
         rootSchema.add("SCHEMA", JdbcSchema.create(rootSchema, "test", ds, null, null));
+        rootSchema.add("imageClassifier", ScalarFunctionImpl.create(TestingVolcano.class, "IMAGECLASSIFIER"));
 
         //______________________________________________________________
 
@@ -103,14 +107,25 @@ public class TestingVolcano {
                 typeFactory,
                 config
         );
-        SqlOperatorTable operatorTable = SqlStdOperatorTable.instance();
+
+        SqlFunction udf  = new SqlFunction("imageClassifier",
+                SqlKind.OTHER_FUNCTION,
+                ReturnTypes.INTEGER,
+                null,
+                OperandTypes.INTEGER,
+                SqlFunctionCategory.USER_DEFINED_FUNCTION);
+
+        SqlStdOperatorTable operatorTables = SqlStdOperatorTable.instance();
+        operatorTables.register(udf);
+
+//        SqlOperatorTable operatorTable = SqlStdOperatorTable.instance();
 
         SqlValidator.Config validatorConfig = SqlValidator.Config.DEFAULT
                 .withLenientOperatorLookup(config.lenientOperatorLookup())
                 .withDefaultNullCollation(config.defaultNullCollation())
                 .withIdentifierExpansion(true);
         SqlValidator validator = SqlValidatorUtil.newValidator(
-                operatorTable,
+                operatorTables,
                 catalogReader,
                 typeFactory,
                 validatorConfig
@@ -134,11 +149,11 @@ public class TestingVolcano {
 //                CoreRules.PROJECT_TO_CALC,
 //                CoreRules.FILTER_CALC_MERGE,
 //                CoreRules.PROJECT_CALC_MERGE,
-//                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
-//                EnumerableRules.ENUMERABLE_PROJECT_RULE,
-//                EnumerableRules.ENUMERABLE_FILTER_RULE,
-//                EnumerableRules.ENUMERABLE_CALC_RULE,
-//                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
+                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
+                EnumerableRules.ENUMERABLE_PROJECT_RULE,
+                EnumerableRules.ENUMERABLE_FILTER_RULE,
+                EnumerableRules.ENUMERABLE_CALC_RULE,
+                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
                 CoreRules.JOIN_EXTRACT_FILTER);
         Program program = Programs.of(RuleSets.ofList(rules));
 
