@@ -29,7 +29,6 @@ import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
-import org.apache.calcite.sql.util.ChainedSqlOperatorTable;
 import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorUtil;
 import org.apache.calcite.sql2rel.SqlToRelConverter;
@@ -42,7 +41,6 @@ import org.apache.calcite.tools.RuleSets;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -72,10 +70,10 @@ public class TestingVolcano {
         POSTGRES_PORT = 5434;
         POSTGRES_DB_NAME = "test";
 //        String QUERY = "select product from SCHEMA.\"orders\"";
-//        String QUERY = "select * from SCHEMA.\"orders\"";
+        String QUERY = "select * from SCHEMA.\"orders\" as b, SCHEMA.\"lineitem\" as c where b.\"00\" = c.\"00\"";
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
-        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
+//        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 
         POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
 
@@ -146,9 +144,9 @@ public class TestingVolcano {
                 CoreRules.JOIN_COMMUTE_OUTER, CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
                 CoreRules.FILTER_INTO_JOIN,
                 CoreRules.FILTER_TO_CALC,
-//                CoreRules.PROJECT_TO_CALC,
-//                CoreRules.FILTER_CALC_MERGE,
-//                CoreRules.PROJECT_CALC_MERGE,
+                CoreRules.PROJECT_TO_CALC,
+                CoreRules.FILTER_CALC_MERGE,
+                CoreRules.PROJECT_CALC_MERGE,
                 EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
                 EnumerableRules.ENUMERABLE_PROJECT_RULE,
                 EnumerableRules.ENUMERABLE_FILTER_RULE,
@@ -167,6 +165,7 @@ public class TestingVolcano {
         );
 
         System.out.println(optimizerRelTree.explain());
+        System.out.println(optimizerRelTree.getInputs().get(0).computeSelfCost(planner, cluster.getMetadataQuery()).getCpu());
 
 
     }
