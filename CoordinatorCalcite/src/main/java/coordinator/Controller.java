@@ -12,10 +12,6 @@ public class Controller {
 
         RelNode tree = CalciteOptimizer.run(query);
 
-        String a = "";
-        a = a.substring(1, a.length()-1);
-        System.out.println(a);
-        JSONObject obj = new JSONObject(a);
         System.out.println("test 1");
         BinaryTreePlan btp = new BinaryTreePlan(tree, aCase, buckets);
         System.out.println("test 2");

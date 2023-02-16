@@ -30,20 +30,20 @@ public class FilterTreeNode extends BinaryTreeNode {
     public FilterTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int bucket) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.JOIN, parent, inner, outer, bucket);
-        if (info.has("Hash Cond")) {
-            String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
-                    .replaceAll("\\)", "").split(" = ");
-            String[] outCol = columns[0].split("\\.");
-            String[] inCol = columns[1].split("\\.");
-            this.OuterRelation = outCol[0];
-            this.InnerRelation = inCol[0];
-            this.OuterColumnName = outCol[1];
-            this.InnerColumnName = inCol[1];
-        }
+//        if (info.has("Hash Cond")) {
+//            String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
+//                    .replaceAll("\\)", "").split(" = ");
+//            String[] outCol = columns[0].split("\\.");
+//            String[] inCol = columns[1].split("\\.");
+//            this.OuterRelation = outCol[0];
+//            this.InnerRelation = inCol[0];
+//            this.OuterColumnName = outCol[1];
+//            this.InnerColumnName = inCol[1];
+//        }
         this.mode = mode;
     }
 
-    public void executeWithQueue() {
+    public void run() {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition

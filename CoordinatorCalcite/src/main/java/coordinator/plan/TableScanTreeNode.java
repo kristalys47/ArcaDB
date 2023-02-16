@@ -19,12 +19,13 @@ public class TableScanTreeNode extends BinaryTreeNode{
         //TODO: Check bucket stuff (Create it for the parent class special constructor. Overload it)
         super(NodeType.SCAN, parent, inner, outer, -1);
         //TODO: you can get the relation from here to send to the hash join make it a variable;
-        if (info.has("Relation Name"))
-            this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));
-        if (info.has("Recheck Cond"))
-            this.selection = transformSelection(info.getString("Recheck Cond"));
-        if (info.has("Filter"))
-            this.selection = transformSelection(info.getString("Filter"));
+//        info.
+//        if (info.has("Relation Name"))
+//            this.TableFiles = Catalog.filesForTable(info.getString("Relation Name"));
+//        if (info.has("Recheck Cond"))
+//            this.selection = transformSelection(info.getString("Recheck Cond"));
+//        if (info.has("Filter"))
+//            this.selection = transformSelection(info.getString("Filter"));
     }
 
     public String transformSelection(String conditions){

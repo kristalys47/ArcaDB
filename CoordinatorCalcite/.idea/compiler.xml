@@ -7,7 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Coordinator" />
-        <module name="Coordinator Calcite" />
+        <module name="CoordinatorCalcite" />
       </profile>
     </annotationProcessing>
   </component>

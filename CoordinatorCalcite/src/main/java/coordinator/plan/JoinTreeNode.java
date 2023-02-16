@@ -25,16 +25,16 @@ public class JoinTreeNode extends BinaryTreeNode{
     public JoinTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int buckets) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.JOIN, parent, inner, outer, buckets);
-        if (info.has("Hash Cond")){
-            String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
-                    .replaceAll("\\)", "").split(" = ");
-            String[] outCol = columns[0].split("\\.");
-            String[] inCol = columns[1].split("\\.");
-            this.OuterColumnName = outCol[1];
-            this.InnerColumnName = inCol[1];
-            this.OuterRelation = outCol[0];
-            this.InnerRelation = inCol[0];
-        }
+//        if (info.has("Hash Cond")){
+//            String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
+//                    .replaceAll("\\)", "").split(" = ");
+//            String[] outCol = columns[0].split("\\.");
+//            String[] inCol = columns[1].split("\\.");
+//            this.OuterColumnName = outCol[1];
+//            this.InnerColumnName = inCol[1];
+//            this.OuterRelation = outCol[0];
+//            this.InnerRelation = inCol[0];
+//        }
     }
 
 

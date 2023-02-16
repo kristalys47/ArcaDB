@@ -53,3 +53,5 @@ Coordinator/Coordinator.iml
 /RunResults/logs-raw/corrida 60-threads
 /WorkerThreads/.idea/
 /WorkerThreads/Worker.iml
+/CoordinatorCalcite/.idea/
+/CoordinatorCalcite/target/
