@@ -1,5 +1,6 @@
 package coordinator.Utils;
 
+import coordinator.Commons;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
@@ -8,8 +9,6 @@ import redis.clients.jedis.JedisPool;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
-
-import static coordinator.Commons.*;
 
 
 public class ContainerManager extends Thread{
@@ -35,7 +34,7 @@ public class ContainerManager extends Thread{
         try {
             Jedis jedis = null;
             if(this.jedisPool == null){
-                jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+                jedis = new Jedis(Commons.REDIS_HOST, Commons.REDIS_PORT);
             } else {
                 jedis = jedisPool.getResource();
             }
@@ -45,7 +44,7 @@ public class ContainerManager extends Thread{
             System.out.println("Site: " + containerIP + "--" + siteIP);
             System.out.println(plan);
             System.out.println("Connected - - - - - -");
-            Socket socket = new Socket(siteIP, WORKER_APP_PORT);
+            Socket socket = new Socket(siteIP, Commons.WORKER_APP_PORT);
             System.out.println("Connected to Server");
 
             OutputStream outR = socket.getOutputStream();

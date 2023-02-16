@@ -1,17 +1,9 @@
 package coordinator.plan;
 
 import org.apache.calcite.rel.RelNode;
-import org.json.JSONObject;
-import redis.clients.jedis.*;
 
-import java.io.*;
-import java.net.Socket;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import static coordinator.Commons.*;
 
 public abstract class BinaryTreeNode implements Runnable{
     public BinaryTreeNode inner;

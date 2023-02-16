@@ -4,32 +4,31 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import static coordinator.Commons.*;
 import static spark.Spark.*;
 
 public class Coordinator {
     private static final Logger logger = LogManager.getLogger(Coordinator.class);
     public static void main(String[] arg) {
-        S3_BUCKET = arg[0].trim();
-        AWS_S3_ACCESS_KEY = arg[1].trim();
-        AWS_S3_SECRET_KEY = arg[2].trim();
-        REDIS_HOST = arg[3].trim();
-        REDIS_PORT = Integer.parseInt(arg[4].trim());
-        REDIS_HOST_TIMES = arg[5].trim();
-        REDIS_PORT_TIMES = Integer.parseInt(arg[6].trim());
-        WORKER_APP_PORT = Integer.parseInt(arg[7].trim());
-        COORDINATOR_APP_PORT = Integer.parseInt(arg[8].trim());
+        Commons.S3_BUCKET = arg[0].trim();
+        Commons.AWS_S3_ACCESS_KEY = arg[1].trim();
+        Commons.AWS_S3_SECRET_KEY = arg[2].trim();
+        Commons.REDIS_HOST = arg[3].trim();
+        Commons.REDIS_PORT = Integer.parseInt(arg[4].trim());
+        Commons.REDIS_HOST_TIMES = arg[5].trim();
+        Commons.REDIS_PORT_TIMES = Integer.parseInt(arg[6].trim());
+        Commons.WORKER_APP_PORT = Integer.parseInt(arg[7].trim());
+        Commons.COORDINATOR_APP_PORT = Integer.parseInt(arg[8].trim());
 
-        POSTGRES_PASSWORD = arg[9].trim();
-        POSTGRES_USERNAME = arg[10].trim();
-        POSTGRES_HOST = arg[11].trim();
-        POSTGRES_PORT = Integer.parseInt(arg[12].trim());
-        POSTGRES_DB_NAME = arg[13].trim();
-        MODE = arg[14].trim();
+        Commons.POSTGRES_PASSWORD = arg[9].trim();
+        Commons.POSTGRES_USERNAME = arg[10].trim();
+        Commons.POSTGRES_HOST = arg[11].trim();
+        Commons.POSTGRES_PORT = Integer.parseInt(arg[12].trim());
+        Commons.POSTGRES_DB_NAME = arg[13].trim();
+        Commons.MODE = arg[14].trim();
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
-        port(COORDINATOR_APP_PORT);
+        port(Commons.COORDINATOR_APP_PORT);
         //TODO: Create insert function
         get("/database/query", (request, response) -> {
             long start = System.currentTimeMillis();

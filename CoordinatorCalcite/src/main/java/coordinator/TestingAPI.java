@@ -38,9 +38,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Properties;
 
-import static coordinator.Commons.*;
-import static coordinator.Commons.POSTGRES_DB_NAME;
-
 public class TestingAPI {
     static public int imageClassifier(int a){
         return a+2;
@@ -48,17 +45,19 @@ public class TestingAPI {
 
     @Test
     public void calciteWithClass() throws Exception {
-        POSTGRES_PASSWORD = "mypassword";
-        POSTGRES_USERNAME = "myusername";
-        POSTGRES_HOST = "136.145.77.83";
-        POSTGRES_PORT = 5434;
-        POSTGRES_DB_NAME = "test";
+        Commons.POSTGRES_PASSWORD = "mypassword";
+        Commons.POSTGRES_USERNAME = "myusername";
+        Commons.POSTGRES_HOST = "136.145.77.83";
+        Commons.POSTGRES_PORT = 5434;
+        Commons.POSTGRES_DB_NAME = "test";
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
         //        String QUERY = "select product from SCHEMA.\"orders\"";
 //        String QUERY = "select * from SCHEMA.\"orders\"";
-        String QUERY = "select p.\"05\" from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+//        String QUERY = "select p.\"05\" from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+        String QUERY = "select * from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 //        CalciteOptimizer.run(QUERY);
@@ -68,20 +67,20 @@ public class TestingAPI {
 
     @Test
     public void calciteStufftest2() throws Exception {
-        POSTGRES_PASSWORD = "mypassword";
-        POSTGRES_USERNAME = "myusername";
-        POSTGRES_HOST = "136.145.77.83";
-        POSTGRES_PORT = 5434;
-        POSTGRES_DB_NAME = "test";
+        Commons.POSTGRES_PASSWORD = "mypassword";
+        Commons.POSTGRES_USERNAME = "myusername";
+        Commons.POSTGRES_HOST = "136.145.77.83";
+        Commons.POSTGRES_PORT = 5434;
+        Commons.POSTGRES_DB_NAME = "test";
 //        String QUERY = "select product from SCHEMA.\"orders\"";
         String QUERY = "select * from SCHEMA.\"orders\"";
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
-        String dbUrl = POSTGRES_JDBC;
+        String dbUrl = Commons.POSTGRES_JDBC;
 
         Connection connection = DriverManager.getConnection("jdbc:calcite:caseSensitive=true");
         CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
@@ -157,22 +156,22 @@ public class TestingAPI {
 
     @Test
     public void calciteStufftest() throws Exception {
-        POSTGRES_PASSWORD = "mypassword";
-        POSTGRES_USERNAME = "myusername";
-        POSTGRES_HOST = "136.145.77.83";
-        POSTGRES_PORT = 5434;
-        POSTGRES_DB_NAME = "test";
+        Commons.POSTGRES_PASSWORD = "mypassword";
+        Commons.POSTGRES_USERNAME = "myusername";
+        Commons.POSTGRES_HOST = "136.145.77.83";
+        Commons.POSTGRES_PORT = 5434;
+        Commons.POSTGRES_DB_NAME = "test";
 //        String QUERY = "select product from SCHEMA.\"orders\"";
 
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
         String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
         // Rules
         RuleSet rules = RuleSets.ofList(CoreRules.JOIN_ASSOCIATE, CoreRules.JOIN_COMMUTE, CoreRules.JOIN_COMMUTE, CoreRules.JOIN_COMMUTE_OUTER, CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY, CoreRules.JOIN_EXTRACT_FILTER);
 
-        String dbUrl = POSTGRES_JDBC;
+        String dbUrl = Commons.POSTGRES_JDBC;
         System.out.println(dbUrl);
 
         Connection connection = DriverManager.getConnection("jdbc:calcite:caseSensitive=true");
@@ -269,15 +268,15 @@ public class TestingAPI {
 
     @Test
     public void testing() throws Exception {
-        POSTGRES_PASSWORD = "mypassword";
-        POSTGRES_USERNAME = "myusername";
-        POSTGRES_HOST = "136.145.77.83";
-        POSTGRES_PORT = 5434;
-        POSTGRES_DB_NAME = "test";
+        Commons.POSTGRES_PASSWORD = "mypassword";
+        Commons.POSTGRES_USERNAME = "myusername";
+        Commons.POSTGRES_HOST = "136.145.77.83";
+        Commons.POSTGRES_PORT = 5434;
+        Commons.POSTGRES_DB_NAME = "test";
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+        Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
-        String dbUrl = POSTGRES_JDBC;
+        String dbUrl = Commons.POSTGRES_JDBC;
         System.out.println(dbUrl);
         Properties properties = new Properties();
         properties.setProperty(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), Boolean.TRUE.toString());

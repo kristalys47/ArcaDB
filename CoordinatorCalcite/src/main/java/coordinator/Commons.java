@@ -1,10 +1,5 @@
 package coordinator;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;

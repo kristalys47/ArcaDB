@@ -4,12 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import coordinator.Utils.ContainerManager;
 import org.apache.calcite.rel.RelNode;
-import org.json.JSONObject;
+import org.w3c.dom.Node;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;

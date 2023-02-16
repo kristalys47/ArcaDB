@@ -1,10 +1,7 @@
 package coordinator.plan;
 
 import org.apache.calcite.rel.RelNode;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.sql.Statement;
 import java.util.Stack;
 
 public class BinaryTreePlan {
@@ -36,9 +33,8 @@ public class BinaryTreePlan {
                     case 0:
                         peekNode.count++;
                         RelNode out = peek.getInputs().get(0);
-                        String nodeType = out.getRelTypeName();
 
-                        if(!nodeType.contains("Join")){
+                        if(!peek.getRelTypeName().contains("Join")){
                             peekNode.count++;
                         }
                         stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, stackNode, null, null, buckets));
@@ -47,7 +43,7 @@ public class BinaryTreePlan {
                         break;
                     case 1:
                         peekNode.count++;
-                        RelNode in = peek.getInputs().get(0);
+                        RelNode in = peek.getInputs().get(1);
                         stackNode.setInner(BinaryTreeNode.getNodeWithType(in, stackNode, null, null, buckets));
                         stackNode = stackNode.getInner();
                         stack.push(new StackNode(in, 0, stackNode));

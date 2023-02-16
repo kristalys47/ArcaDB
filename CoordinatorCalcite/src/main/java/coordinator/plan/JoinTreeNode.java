@@ -2,17 +2,11 @@ package coordinator.plan;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import coordinator.Utils.ContainerManager;
+import coordinator.Commons;
 import org.apache.calcite.rel.RelNode;
-import org.json.JSONObject;
 import redis.clients.jedis.Jedis;
 
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
-
-import static coordinator.Commons.REDIS_HOST;
-import static coordinator.Commons.REDIS_PORT;
 
 public class JoinTreeNode extends BinaryTreeNode{
     public List<String> OuterTableFiles;
@@ -62,7 +56,7 @@ public class JoinTreeNode extends BinaryTreeNode{
         obj.add("plan", array);
         obj.add("outer", arrayOuter);
         obj.add("inner", arrayInner);
-        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        Jedis jedis = new Jedis(Commons.REDIS_HOST, Commons.REDIS_PORT);
         jedis.rpush("task", obj.toString());
 
         List<String> element = jedis.blpop(0, "done");

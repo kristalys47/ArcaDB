@@ -42,14 +42,19 @@ import java.sql.DriverManager;
 import java.util.Collections;
 import java.util.Properties;
 
-import static coordinator.Commons.*;
-import static coordinator.Commons.POSTGRES_JDBC;
-
 public class CalciteOptimizer {
+    String QUERY;
+    SqlNode sqlNode;
+    RelNode optimizedPlan;
+
+    public CalciteOptimizer(String QUERY) throws Exception {
+        this.QUERY = QUERY;
+        run();
+    }
     static public int IMAGECLASSIFIER(int a){
         return a+2;
     }
-    public static RelNode run(String QUERY) throws Exception {
+    public RelNode run() throws Exception {
         Properties configProperties = new Properties();
 
         configProperties.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), Boolean.TRUE.toString());
@@ -65,7 +70,7 @@ public class CalciteOptimizer {
         CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
         SchemaPlus rootSchema = calciteConnection.getRootSchema();
 
-        DataSource ds = JdbcSchema.dataSource(POSTGRES_JDBC, "org.postgresql.Driver", "myusername", "mypassword");
+        DataSource ds = JdbcSchema.dataSource(Commons.POSTGRES_JDBC, "org.postgresql.Driver", "myusername", "mypassword");
         SqlDialect jdbcDialect = JdbcSchema.createDialect(SqlDialectFactoryImpl.INSTANCE, ds);
         String dialectName = jdbcDialect.getClass().getName();
         System.out.println(dialectName);
@@ -111,7 +116,7 @@ public class CalciteOptimizer {
                 validatorConfig
         );
 
-        SqlNode sqlNode = parse(QUERY);
+        this.sqlNode = parse(QUERY);
         SqlNode validatedSqlNode = validator.validate(sqlNode);
         System.out.println(validatedSqlNode.toString());
 
@@ -119,29 +124,35 @@ public class CalciteOptimizer {
 
 
 
+
         RelRoot root = converter.convertQuery(validatedSqlNode, false, true);
         RelNode relationalExpression = root.rel;
         RuleSet rules = RuleSets.ofList(
-                CoreRules.JOIN_ASSOCIATE,
-                CoreRules.JOIN_COMMUTE,
-                CoreRules.JOIN_COMMUTE,
-                CoreRules.JOIN_COMMUTE_OUTER,
-                CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
+//                CoreRules.JOIN_ASSOCIATE,
+//                CoreRules.JOIN_COMMUTE,
+//                CoreRules.JOIN_COMMUTE,
+//                CoreRules.JOIN_COMMUTE_OUTER,
+//                CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
                 CoreRules.FILTER_INTO_JOIN,
-                CoreRules.FILTER_TO_CALC,
-                CoreRules.PROJECT_TO_CALC,
-                CoreRules.FILTER_CALC_MERGE,
-                CoreRules.PROJECT_CALC_MERGE,
+                CoreRules.FILTER_MERGE,
+//                CoreRules.FILTER_TO_CALC,
+//                CoreRules.PROJECT_TO_CALC,
+//                CoreRules.FILTER_CALC_MERGE,
+//                CoreRules.PROJECT_CALC_MERGE,
+                CoreRules.FILTER_SCAN,
+                CoreRules.FILTER_TABLE_FUNCTION_TRANSPOSE,
+                CoreRules.FILTER_VALUES_MERGE
 //                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
 //                EnumerableRules.ENUMERABLE_PROJECT_RULE,
 //                EnumerableRules.ENUMERABLE_FILTER_RULE,
 //                EnumerableRules.ENUMERABLE_CALC_RULE,
 //                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
-                CoreRules.JOIN_EXTRACT_FILTER
+//                CoreRules.JOIN_EXTRACT_FILTER
         );
         Program program = Programs.of(RuleSets.ofList(rules));
 
         System.out.println(relationalExpression.explain());
+        System.out.println(relationalExpression.getRelTypeName());
         RelNode optimizerRelTree = program.run(
                 planner,
                 relationalExpression,
@@ -149,12 +160,9 @@ public class CalciteOptimizer {
                 Collections.emptyList(),
                 Collections.emptyList()
         );
+        this.optimizedPlan = optimizerRelTree;
 
         System.out.println(optimizerRelTree.explain());
-
-        System.out.println(optimizerRelTree.getInputs().get(0).getRelTypeName());
-        System.out.println(optimizerRelTree.getInputs().get(0).estimateRowCount(cluster.getMetadataQuery()));
-                //computeSelfCost(planner, cluster.getMetadataQuery()).getIo());
         return optimizerRelTree;
 
 

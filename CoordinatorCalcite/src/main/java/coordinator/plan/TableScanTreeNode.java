@@ -1,10 +1,8 @@
 package coordinator.plan;
 
-import coordinator.Utils.Catalog;
 import org.apache.calcite.rel.RelNode;
-import org.json.JSONObject;
 import com.google.gson.*;
-import java.sql.Statement;
+
 import java.util.List;
 
 
@@ -17,7 +15,8 @@ public class TableScanTreeNode extends BinaryTreeNode{
     public TableScanTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
         //TODO: Check bucket stuff (Create it for the parent class special constructor. Overload it)
-        super(NodeType.SCAN, parent, inner, outer, -1);
+        super(NodeType.SCAN, parent, null, null, -1);
+        System.out.println("Here is a scan");
         //TODO: you can get the relation from here to send to the hash join make it a variable;
 //        info.
 //        if (info.has("Relation Name"))
