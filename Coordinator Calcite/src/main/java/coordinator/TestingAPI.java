@@ -1,12 +1,8 @@
 package coordinator;
 
-import org.apache.calcite.adapter.enumerable.EnumerableRules;
-import org.apache.calcite.adapter.jdbc.JdbcConvention;
 import org.apache.calcite.config.CalciteConnectionConfigImpl;
 import org.apache.calcite.plan.ConventionTraitDef;
 import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.plan.RelOptUtil;
-import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.rel.RelCollationTraitDef;
 import org.apache.calcite.rel.RelDistributionTraitDef;
@@ -17,11 +13,9 @@ import org.apache.calcite.rel.type.RelDataTypeSystem;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.SchemaPlus;
 import org.apache.calcite.sql.SqlNode;
-import org.apache.calcite.sql.dialect.PostgresqlSqlDialect;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.type.SqlTypeFactoryImpl;
-import org.apache.calcite.sql2rel.SqlToRelConverter;
 import org.apache.calcite.tools.FrameworkConfig;
 import org.apache.calcite.tools.Frameworks;
 
@@ -41,12 +35,7 @@ import org.apache.calcite.tools.*;
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
-import javax.swing.text.html.StyleSheet;
-import java.io.PrintWriter;
 import java.sql.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 import java.util.Properties;
 
 import static coordinator.Commons.*;
@@ -59,8 +48,23 @@ public class TestingAPI {
 
     @Test
     public void calciteWithClass() throws Exception {
-        TestingVolcano.run();
+        POSTGRES_PASSWORD = "mypassword";
+        POSTGRES_USERNAME = "myusername";
+        POSTGRES_HOST = "136.145.77.83";
+        POSTGRES_PORT = 5434;
+        POSTGRES_DB_NAME = "test";
+
+        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+
+        //        String QUERY = "select product from SCHEMA.\"orders\"";
+//        String QUERY = "select * from SCHEMA.\"orders\"";
+        String QUERY = "select p.\"05\" from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+//        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
+//        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
+//        CalciteOptimizer.run(QUERY);
+        boolean hello = Controller.handleRequest(QUERY, 3, 60);
     }
+
 
     @Test
     public void calciteStufftest2() throws Exception {
@@ -262,7 +266,6 @@ public class TestingAPI {
 
         
     }
-
 
     @Test
     public void testing() throws Exception {

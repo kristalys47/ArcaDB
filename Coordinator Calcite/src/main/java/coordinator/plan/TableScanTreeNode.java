@@ -1,20 +1,20 @@
 package coordinator.plan;
 
-import org.json.JSONException;
+import coordinator.Utils.Catalog;
+import org.apache.calcite.rel.RelNode;
 import org.json.JSONObject;
 import com.google.gson.*;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class ScanBinaryTreeNode extends BinaryTreeNode{
+public class TableScanTreeNode extends BinaryTreeNode{
     public List<String> TableFiles;
     public String selection = "";
     public String projection = "";
 
 
-    public ScanBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
+    public TableScanTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
         //TODO: send a query to catalog to get the files and everything
         //TODO: Check bucket stuff (Create it for the parent class special constructor. Overload it)
         super(NodeType.SCAN, parent, inner, outer, -1);
@@ -25,7 +25,6 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             this.selection = transformSelection(info.getString("Recheck Cond"));
         if (info.has("Filter"))
             this.selection = transformSelection(info.getString("Filter"));
-
     }
 
     public String transformSelection(String conditions){
@@ -36,7 +35,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
     }
 
     @Override
-    public void execute() {
+    public void run() {
         //TODO: This part should definitely have threads  or different nodes to perform each part of the result
         for(int i = 0 ; i < this.TableFiles.size(); ++i){
             JsonArray array = new JsonArray();
@@ -49,7 +48,7 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
             //TODO: make request for resources
             JsonObject obj = new JsonObject();
             obj.add("plan", array);
-            connectionWithContainers(obj.toString(), "worker");
+            //TODO:IMPLEMENT SCAN WITH QUEUE
         }
 
         this.setDone(true);
@@ -58,8 +57,4 @@ public class ScanBinaryTreeNode extends BinaryTreeNode{
 
     }
 
-    @Override
-    public void executeWithQueue() {
-        //TODO: Complete this method
-    }
 }

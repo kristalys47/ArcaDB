@@ -2,6 +2,8 @@ package coordinator.plan;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import coordinator.Utils.ContainerManager;
+import org.apache.calcite.rel.RelNode;
 import org.json.JSONObject;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -16,7 +18,7 @@ import java.util.concurrent.Executors;
 import static coordinator.Commons.REDIS_HOST;
 import static coordinator.Commons.REDIS_PORT;
 
-public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
+public class FilterTreeNode extends BinaryTreeNode {
     private String InnerRelation;
     private String OuterRelation;
     public ArrayList<String> OuterTableFiles;
@@ -25,9 +27,9 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
     public String InnerColumnName;
     public int mode;
 
-    public ParallelHashJoinBinaryTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int mode, int bucket) {
+    public FilterTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int bucket) {
         //TODO: send a query to catalog to get the files and everything
-        super(NodeType.PARALLELJOIN, parent, inner, outer, bucket);
+        super(NodeType.JOIN, parent, inner, outer, bucket);
         if (info.has("Hash Cond")) {
             String[] columns = info.getString("Hash Cond").replaceAll("\\(", "")
                     .replaceAll("\\)", "").split(" = ");
@@ -45,8 +47,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
-            ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
-            ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
+            TableScanTreeNode relationA = (TableScanTreeNode) this.outer;
+            TableScanTreeNode relationB = (TableScanTreeNode) this.inner;
             Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
             int i = 0;
             int tindex = 0;
@@ -133,8 +135,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante patition
-            ScanBinaryTreeNode relationA = (ScanBinaryTreeNode) this.outer;
-            ScanBinaryTreeNode relationB = (ScanBinaryTreeNode) this.inner;
+            TableScanTreeNode relationA = (TableScanTreeNode) this.outer;
+            TableScanTreeNode relationB = (TableScanTreeNode) this.inner;
             ExecutorService threadPool = Executors.newWorkStealingPool(relationA.TableFiles.size() + relationB.TableFiles.size());
             JedisPoolConfig poolConfig = new JedisPoolConfig();
             JedisPool jedisPool = new JedisPool(poolConfig, REDIS_HOST, REDIS_PORT);
@@ -143,11 +145,8 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
             while (i < relationA.TableFiles.size() || i < relationB.TableFiles.size()) {
                 if (i < relationA.TableFiles.size()) {
                     JsonArray array = new JsonArray();
-                    if(this.mode == 2){
-                        array.add("joinPartition2");
-                    } else{
-                        array.add("joinPartition3");
-                    }
+                    array.add("joinPartition3");
+
                     array.add(relationA.TableFiles.get(i));
                     array.add(this.OuterColumnName);
                     array.add(this.OuterRelation);
@@ -158,11 +157,7 @@ public class ParallelHashJoinBinaryTreeNode extends BinaryTreeNode {
                 }
                 if (i < relationB.TableFiles.size()) {
                     JsonArray array = new JsonArray();
-                    if(this.mode == 2){
-                        array.add("joinPartition2");
-                    } else{
-                        array.add("joinPartition3");
-                    }
+                    array.add("joinPartition3");
                     array.add(relationB.TableFiles.get(i));
                     array.add(this.InnerColumnName);
                     array.add(this.InnerRelation);

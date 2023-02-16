@@ -1,7 +1,6 @@
 package coordinator;
 
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
-import org.apache.calcite.adapter.enumerable.EnumerableRules;
 import org.apache.calcite.adapter.jdbc.JdbcSchema;
 import org.apache.calcite.avatica.util.Casing;
 import org.apache.calcite.config.CalciteConnectionConfig;
@@ -13,7 +12,6 @@ import org.apache.calcite.jdbc.JavaTypeFactoryImpl;
 import org.apache.calcite.plan.Contexts;
 import org.apache.calcite.plan.ConventionTraitDef;
 import org.apache.calcite.plan.RelOptCluster;
-import org.apache.calcite.plan.RelOptCostImpl;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.prepare.Prepare;
@@ -47,11 +45,11 @@ import java.util.Properties;
 import static coordinator.Commons.*;
 import static coordinator.Commons.POSTGRES_JDBC;
 
-public class TestingVolcano {
+public class CalciteOptimizer {
     static public int IMAGECLASSIFIER(int a){
         return a+2;
     }
-    public static void run() throws Exception {
+    public static RelNode run(String QUERY) throws Exception {
         Properties configProperties = new Properties();
 
         configProperties.put(CalciteConnectionProperty.CASE_SENSITIVE.camelName(), Boolean.TRUE.toString());
@@ -62,38 +60,22 @@ public class TestingVolcano {
 
         RelDataTypeFactory typeFactory = new JavaTypeFactoryImpl();
 
-//____________________________________________________________________
-
-        POSTGRES_PASSWORD = "mypassword";
-        POSTGRES_USERNAME = "myusername";
-        POSTGRES_HOST = "136.145.77.83";
-        POSTGRES_PORT = 5434;
-        POSTGRES_DB_NAME = "test";
-//        String QUERY = "select product from SCHEMA.\"orders\"";
-        String QUERY = "select * from SCHEMA.\"orders\" as b, SCHEMA.\"lineitem\" as c where b.\"00\" = c.\"00\"";
-//        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
-//        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
-//        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
-
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
-
-        String dbUrl = POSTGRES_JDBC;
 
         Connection connection = DriverManager.getConnection("jdbc:calcite:caseSensitive=true");
         CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
         SchemaPlus rootSchema = calciteConnection.getRootSchema();
 
-        DataSource ds = JdbcSchema.dataSource(dbUrl, "org.postgresql.Driver", "myusername", "mypassword");
+        DataSource ds = JdbcSchema.dataSource(POSTGRES_JDBC, "org.postgresql.Driver", "myusername", "mypassword");
         SqlDialect jdbcDialect = JdbcSchema.createDialect(SqlDialectFactoryImpl.INSTANCE, ds);
         String dialectName = jdbcDialect.getClass().getName();
         System.out.println(dialectName);
 
         rootSchema.add("SCHEMA", JdbcSchema.create(rootSchema, "test", ds, null, null));
-        rootSchema.add("imageClassifier", ScalarFunctionImpl.create(TestingVolcano.class, "IMAGECLASSIFIER"));
+        rootSchema.add("imageClassifier", ScalarFunctionImpl.create(CalciteOptimizer.class, "IMAGECLASSIFIER"));
 
         //______________________________________________________________
 
-        VolcanoPlanner planner = new VolcanoPlanner(RelOptCostImpl.FACTORY,Contexts.of(config));
+        VolcanoPlanner planner = new VolcanoPlanner(null ,Contexts.of(config));
         planner.addRelTraitDef(ConventionTraitDef.INSTANCE);
         RelOptCluster cluster = RelOptCluster.create(planner, new RexBuilder(typeFactory));
         SqlToRelConverter.Config converterConfig = SqlToRelConverter.config();
@@ -139,20 +121,24 @@ public class TestingVolcano {
 
         RelRoot root = converter.convertQuery(validatedSqlNode, false, true);
         RelNode relationalExpression = root.rel;
-        RuleSet rules = RuleSets.ofList(CoreRules.JOIN_ASSOCIATE,
-                CoreRules.JOIN_COMMUTE, CoreRules.JOIN_COMMUTE,
-                CoreRules.JOIN_COMMUTE_OUTER, CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
+        RuleSet rules = RuleSets.ofList(
+                CoreRules.JOIN_ASSOCIATE,
+                CoreRules.JOIN_COMMUTE,
+                CoreRules.JOIN_COMMUTE,
+                CoreRules.JOIN_COMMUTE_OUTER,
+                CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
                 CoreRules.FILTER_INTO_JOIN,
                 CoreRules.FILTER_TO_CALC,
                 CoreRules.PROJECT_TO_CALC,
                 CoreRules.FILTER_CALC_MERGE,
                 CoreRules.PROJECT_CALC_MERGE,
-                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
-                EnumerableRules.ENUMERABLE_PROJECT_RULE,
-                EnumerableRules.ENUMERABLE_FILTER_RULE,
-                EnumerableRules.ENUMERABLE_CALC_RULE,
-                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
-                CoreRules.JOIN_EXTRACT_FILTER);
+//                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
+//                EnumerableRules.ENUMERABLE_PROJECT_RULE,
+//                EnumerableRules.ENUMERABLE_FILTER_RULE,
+//                EnumerableRules.ENUMERABLE_CALC_RULE,
+//                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
+                CoreRules.JOIN_EXTRACT_FILTER
+        );
         Program program = Programs.of(RuleSets.ofList(rules));
 
         System.out.println(relationalExpression.explain());
@@ -165,7 +151,11 @@ public class TestingVolcano {
         );
 
         System.out.println(optimizerRelTree.explain());
-        System.out.println(optimizerRelTree.getInputs().get(0).computeSelfCost(planner, cluster.getMetadataQuery()).getCpu());
+
+        System.out.println(optimizerRelTree.getInputs().get(0).getRelTypeName());
+        System.out.println(optimizerRelTree.getInputs().get(0).estimateRowCount(cluster.getMetadataQuery()));
+                //computeSelfCost(planner, cluster.getMetadataQuery()).getIo());
+        return optimizerRelTree;
 
 
     }

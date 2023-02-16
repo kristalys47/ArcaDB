@@ -1,17 +1,13 @@
-package coordinator.plan;
+package coordinator.Utils;
 
-import coordinator.Coordinator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Transaction;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Set;
 
 import static coordinator.Commons.*;
 

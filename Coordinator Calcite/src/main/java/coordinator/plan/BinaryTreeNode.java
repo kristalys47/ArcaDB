@@ -1,5 +1,6 @@
 package coordinator.plan;
 
+import org.apache.calcite.rel.RelNode;
 import org.json.JSONObject;
 import redis.clients.jedis.*;
 
@@ -23,7 +24,7 @@ public abstract class BinaryTreeNode implements Runnable{
     public int buckets;
 
 
-    public enum NodeType {PARALLELJOIN, JOIN, SCAN};
+    public enum NodeType {FILTER, JOIN, SCAN, PROJECT};
 
     public BinaryTreeNode(NodeType type, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int buckets){
         this.type = type;
@@ -85,19 +86,7 @@ public abstract class BinaryTreeNode implements Runnable{
     }
 
     @Override
-    public void run(){
-        switch (MODE) {
-            case "queue":
-                executeWithQueue();
-                break;
-            default:
-                execute();
-                break;
-        }
-    }
-
-    public abstract void execute();
-    public abstract void executeWithQueue();
+    public abstract void run();
 
     public boolean isSimpleScan(BinaryTreeNode node) {
         if (node.inner == null && node.outer == null && node.type == NodeType.SCAN) {
@@ -106,80 +95,29 @@ public abstract class BinaryTreeNode implements Runnable{
         return false;
     }
 
-    public void connectionWithContainers(String args, String containerIP){
-        String received = "";
-        try {
-            Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-            Set<String> nodes = jedis.smembers("node");
-            String siteIP = "";
-            for (String node: nodes) {
-                String status = jedis.get(node);
-                if (status.equals("available")) {
-                    siteIP = node;
-                    jedis.set(node, "Down");
-                    break;
-                }
-            }
 
-            System.out.println("Site: " + containerIP);
-            System.out.println("Connected - - - - - -");
-            Socket socket = new Socket(siteIP, WORKER_APP_PORT);
-            System.out.println("Connected to Server");
-
-            OutputStream outR = socket.getOutputStream();
-            InputStream inR = socket.getInputStream();
-
-            PrintStream out = new PrintStream(outR);
-            BufferedReader in = new BufferedReader(new InputStreamReader(inR));
-
-            out.println(args + "/EOF");
-
-            String line = null;
-            String message = "";
-            while((line = in.readLine()) != null)
-            {
-                message += line;
-                if(line.contains("Successful")) //have to decide the ending string
-                    break;
-                else
-                    throw new Exception("There was an error in the container " + siteIP + " " + message);
-            }
-
-            socket.close();
-
-        } catch (Exception s) {
-            System.out.println(s);
-            throw new RuntimeException("Not working" + s);
-        }
-
-        this.setDone(true);
-    }
-
-
-    static public BinaryTreeNode getNodeWithType(JSONObject object, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer aCase, Integer buckets){
-        NodeType node_type= getType(object.getString("Node Type"));
+    static public BinaryTreeNode getNodeWithType(RelNode object, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer buckets) throws Exception {
+        NodeType node_type= getType(object.getRelTypeName());
 //        TODO: depends on the mode we can change this. IMPORTANT
         switch (node_type){
             case JOIN:
-                switch (aCase) {
-                    case 1:
-                        return new HashJoinBinaryTreeNode(object, cursor, parent, inner, outer, buckets);
-                    default:
-                        return new ParallelHashJoinBinaryTreeNode(object, cursor, parent, inner, outer, aCase, buckets);
-                }
-
+                return new JoinTreeNode(object, parent, inner, outer, buckets);
+            case FILTER:
+                return new FilterTreeNode(object, parent, inner, outer, buckets);
             default:
-                return new ScanBinaryTreeNode(object, cursor, parent, inner, outer);
+                return new TableScanTreeNode(object, parent, inner, outer);
         }
     }
 
-    static private BinaryTreeNode.NodeType getType(String node_type) {
-        switch (node_type){
-            case "Hash Join":
-                return BinaryTreeNode.NodeType.JOIN;
-            default:
-                return BinaryTreeNode.NodeType.SCAN;
-
+    static private BinaryTreeNode.NodeType getType(String node_type) throws Exception {
+        if(node_type.contains("Join")){
+            return NodeType.JOIN;
+        } else if(node_type.contains("Filter")){
+            return NodeType.FILTER;
+        } else if(node_type.contains("Scan")){
+            return NodeType.SCAN;
+        } else{
+            throw new Exception("Type " + node_type + " not recognized");
         }
     }
 }
