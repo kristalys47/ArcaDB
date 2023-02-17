@@ -2,7 +2,6 @@ package coordinator;
 
 import coordinator.plan.BinaryTreePlan;
 import coordinator.plan.UserdefinedFunction;
-import org.apache.calcite.rel.RelNode;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -15,6 +14,7 @@ public class Controller {
         System.out.println("test 1");
         if(plan.optimizedPlan.explain().contains("EXPR")){
             UserdefinedFunction function = new UserdefinedFunction(plan);
+            function.run();
         } else {
             BinaryTreePlan btp = new BinaryTreePlan(plan, aCase, buckets);
             System.out.println("test 2");

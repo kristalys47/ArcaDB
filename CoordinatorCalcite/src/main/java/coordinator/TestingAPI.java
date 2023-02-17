@@ -62,7 +62,7 @@ public class TestingAPI {
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 
 
-        String QUERY = "select imageClassifier(\"blackhair\") from SCHEMA.\"images\" where \"blackhair\"=1";
+        String QUERY = "select imageClassifier(\"blackhair\") from SCHEMA.\"images\" where \"blackhair\"=3";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 //        CalciteOptimizer.run(QUERY);
         boolean hello = Controller.handleRequest(QUERY, 3, 60);

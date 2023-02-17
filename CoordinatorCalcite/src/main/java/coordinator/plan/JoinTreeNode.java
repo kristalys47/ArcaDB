@@ -117,7 +117,6 @@ public class JoinTreeNode extends BinaryTreeNode{
 
             System.out.println("PROBING STAGE--------------");
 
-            ExecutorService threadPoolProbing = Executors.newWorkStealingPool(this.buckets);
             for (int i1 = 0; i1 < this.buckets; i1++) {
                 JsonArray array = new JsonArray();
                 array.add("joinProbing3");
