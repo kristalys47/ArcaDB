@@ -2,9 +2,8 @@ package coordinator.plan;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import coordinator.Utils.ContainerManager;
+import coordinator.CalciteOptimizer;
 import org.apache.calcite.rel.RelNode;
-import org.w3c.dom.Node;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -26,7 +25,7 @@ public class FilterTreeNode extends BinaryTreeNode {
     public String InnerColumnName;
     public int mode;
 
-    public FilterTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int bucket) {
+    public FilterTreeNode(RelNode info, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int bucket, CalciteOptimizer plan) {
         //TODO: send a query to catalog to get the files and everything
         super(NodeType.JOIN, parent, inner, outer, bucket);
 //        if (info.has("Hash Cond")) {
@@ -152,7 +151,7 @@ public class FilterTreeNode extends BinaryTreeNode {
                     array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
+//                    threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                 }
                 if (i < relationB.TableFiles.size()) {
                     JsonArray array = new JsonArray();
@@ -163,7 +162,7 @@ public class FilterTreeNode extends BinaryTreeNode {
                     array.add(this.buckets);
                     JsonObject obj = new JsonObject();
                     obj.add("plan", array);
-                    threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
+//                    threadPool.execute( new ContainerManager(obj.toString(), "worker", jedisPool));
                     tindex++;
                 }
                 i++;
@@ -188,7 +187,7 @@ public class FilterTreeNode extends BinaryTreeNode {
                 array.add(i1);
                 JsonObject obj = new JsonObject();
                 obj.add("plan", array);
-                threadPoolProbing.execute(new ContainerManager(obj.toString(), "worker", jedisPool));
+//                threadPoolProbing.execute(new ContainerManager(obj.toString(), "worker", jedisPool));
             }
 
             threadPoolProbing.shutdown();

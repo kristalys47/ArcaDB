@@ -1,6 +1,7 @@
 package coordinator;
 
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
+import org.apache.calcite.adapter.enumerable.EnumerableRules;
 import org.apache.calcite.adapter.jdbc.JdbcSchema;
 import org.apache.calcite.avatica.util.Casing;
 import org.apache.calcite.config.CalciteConnectionConfig;
@@ -43,9 +44,9 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class CalciteOptimizer {
-    String QUERY;
-    SqlNode sqlNode;
-    RelNode optimizedPlan;
+    public String QUERY;
+    public SqlNode sqlNode;
+    public RelNode optimizedPlan;
 
     public CalciteOptimizer(String QUERY) throws Exception {
         this.QUERY = QUERY;
@@ -135,24 +136,23 @@ public class CalciteOptimizer {
 //                CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
                 CoreRules.FILTER_INTO_JOIN,
                 CoreRules.FILTER_MERGE,
-//                CoreRules.FILTER_TO_CALC,
+                CoreRules.FILTER_TO_CALC,
 //                CoreRules.PROJECT_TO_CALC,
-//                CoreRules.FILTER_CALC_MERGE,
+                CoreRules.FILTER_CALC_MERGE,
 //                CoreRules.PROJECT_CALC_MERGE,
                 CoreRules.FILTER_SCAN,
                 CoreRules.FILTER_TABLE_FUNCTION_TRANSPOSE,
-                CoreRules.FILTER_VALUES_MERGE
-//                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE,
-//                EnumerableRules.ENUMERABLE_PROJECT_RULE,
+                CoreRules.FILTER_VALUES_MERGE,
+//                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE
+                EnumerableRules.ENUMERABLE_PROJECT_RULE
 //                EnumerableRules.ENUMERABLE_FILTER_RULE,
 //                EnumerableRules.ENUMERABLE_CALC_RULE,
-//                EnumerableRules.ENUMERABLE_AGGREGATE_RULE,
+//                EnumerableRules.ENUMERABLE_AGGREGATE_RULE
 //                CoreRules.JOIN_EXTRACT_FILTER
         );
         Program program = Programs.of(RuleSets.ofList(rules));
 
         System.out.println(relationalExpression.explain());
-        System.out.println(relationalExpression.getRelTypeName());
         RelNode optimizerRelTree = program.run(
                 planner,
                 relationalExpression,

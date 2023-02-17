@@ -1,5 +1,6 @@
 package coordinator.plan;
 
+import coordinator.CalciteOptimizer;
 import org.apache.calcite.rel.RelNode;
 
 import java.util.ArrayList;
@@ -88,16 +89,16 @@ public abstract class BinaryTreeNode implements Runnable{
     }
 
 
-    static public BinaryTreeNode getNodeWithType(RelNode object, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer buckets) throws Exception {
+    static public BinaryTreeNode getNodeWithType(RelNode object, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, Integer buckets, CalciteOptimizer plan) throws Exception {
         NodeType node_type= getType(object.getRelTypeName());
 //        TODO: depends on the mode we can change this. IMPORTANT
         switch (node_type){
             case JOIN:
-                return new JoinTreeNode(object, parent, inner, outer, buckets);
+                return new JoinTreeNode(object, parent, inner, outer, buckets, plan);
             case FILTER:
-                return new FilterTreeNode(object, parent, inner, outer, buckets);
+                return new FilterTreeNode(object, parent, inner, outer, buckets, plan);
             default:
-                return new TableScanTreeNode(object, parent, inner, outer);
+                return new TableScanTreeNode(object, parent, inner, outer, plan);
         }
     }
 

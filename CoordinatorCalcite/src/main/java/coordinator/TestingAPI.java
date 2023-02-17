@@ -50,20 +50,23 @@ public class TestingAPI {
         Commons.POSTGRES_HOST = "136.145.77.83";
         Commons.POSTGRES_PORT = 5434;
         Commons.POSTGRES_DB_NAME = "test";
+        Commons.REDIS_HOST = "136.145.77.83";
+        Commons.REDIS_PORT = 6379;
 
         Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
         //        String QUERY = "select product from SCHEMA.\"orders\"";
 //        String QUERY = "select * from SCHEMA.\"orders\"";
 //        String QUERY = "select p.\"05\" from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
-        String QUERY = "select * from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+//        String QUERY = "select * from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
+//        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 
-//        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
+
+        String QUERY = "select imageClassifier(\"blackhair\") from SCHEMA.\"images\" where \"blackhair\"=1";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 //        CalciteOptimizer.run(QUERY);
         boolean hello = Controller.handleRequest(QUERY, 3, 60);
     }
-
 
     @Test
     public void calciteStufftest2() throws Exception {
@@ -73,8 +76,8 @@ public class TestingAPI {
         Commons.POSTGRES_PORT = 5434;
         Commons.POSTGRES_DB_NAME = "test";
 //        String QUERY = "select product from SCHEMA.\"orders\"";
-        String QUERY = "select * from SCHEMA.\"orders\"";
-//        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
+//        String QUERY = "select * from SCHEMA.\"orders\"";
+        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
 //        String QUERY = "select imageClassifier(\"01\") from SCHEMA.\"part\"";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 

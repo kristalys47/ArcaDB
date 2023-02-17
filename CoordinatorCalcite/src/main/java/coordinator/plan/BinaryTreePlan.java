@@ -1,5 +1,6 @@
 package coordinator.plan;
 
+import coordinator.CalciteOptimizer;
 import org.apache.calcite.rel.RelNode;
 
 import java.util.Stack;
@@ -20,9 +21,10 @@ public class BinaryTreePlan {
         }
     }
 
-    public BinaryTreePlan(RelNode plan, Integer aCase, Integer buckets) throws Exception {
+    public BinaryTreePlan(CalciteOptimizer reltree, Integer aCase, Integer buckets) throws Exception {
+        RelNode plan = reltree.optimizedPlan.getInputs().get(0);
         Stack<StackNode> stack = new Stack<>();
-        headNode = BinaryTreeNode.getNodeWithType(plan, null, null, null, buckets);
+        headNode = BinaryTreeNode.getNodeWithType(plan, null, null, null, buckets, reltree);
         stack.push(new StackNode(plan, 0, headNode));
         BinaryTreeNode stackNode = headNode;
         while(!stack.isEmpty()){
@@ -37,14 +39,14 @@ public class BinaryTreePlan {
                         if(!peek.getRelTypeName().contains("Join")){
                             peekNode.count++;
                         }
-                        stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, stackNode, null, null, buckets));
+                        stackNode.setOuter(BinaryTreeNode.getNodeWithType(out, stackNode, null, null, buckets, reltree));
                         stackNode = stackNode.getOuter();
                         stack.push(new StackNode(out, 0, stackNode));
                         break;
                     case 1:
                         peekNode.count++;
                         RelNode in = peek.getInputs().get(1);
-                        stackNode.setInner(BinaryTreeNode.getNodeWithType(in, stackNode, null, null, buckets));
+                        stackNode.setInner(BinaryTreeNode.getNodeWithType(in, stackNode, null, null, buckets, reltree));
                         stackNode = stackNode.getInner();
                         stack.push(new StackNode(in, 0, stackNode));
                         break;
