@@ -57,3 +57,8 @@ Coordinator/Coordinator.iml
 /CoordinatorCalcite/target/
 /CoordinatorCalcite/CoordinatorCalcite.iml
 /PythonWorkers/.idea
+/PythonWorkers/img_align_celeba/
+/PythonWorkers/imgclass/
+/PythonWorkers/list_attr_celeba.csv/
+/PythonWorkers/venv/
+/PythonWorkers/archive.zip
