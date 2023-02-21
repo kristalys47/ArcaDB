@@ -52,6 +52,7 @@
 import pandas as pd
 import numpy as np
 import cv2
+import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import f1_score
@@ -70,6 +71,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 
+matplotlib.use('TkAgg')
 plt.style.use('ggplot')
 
 # %matplotlib inline
@@ -86,7 +88,7 @@ print(tf.__version__)
 
 # %% [code]
 # set variables
-main_folder = '/archive/'
+main_folder = 'archive/'
 images_folder = main_folder + 'img_align_celeba/img_align_celeba/'
 
 EXAMPLE_PIC = images_folder + '000506.jpg'
@@ -97,7 +99,7 @@ TEST_SAMPLES = 2000
 IMG_WIDTH = 178
 IMG_HEIGHT = 218
 BATCH_SIZE = 16
-NUM_EPOCHS = 20
+NUM_EPOCHS = 10
 
 # %% [markdown]
 # ### Load the attributes of every picture
@@ -337,8 +339,7 @@ x_valid, y_valid,
 
 # %% [code]
 # Import InceptionV3 Model
-inc_model = InceptionV3(weights='../input/inceptionv3/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5',
-                        include_top=False,
+inc_model = InceptionV3(include_top=False,
                         input_shape=(IMG_HEIGHT, IMG_WIDTH, 3))
 
 print("number of layers:", len(inc_model.layers))
@@ -546,5 +547,6 @@ for index, target in df_to_test.iterrows():
     # display result
     display_result(images_folder + index, result[0], target['Male'])
 
+model_.save("saved_model/model")
 # %% [markdown]
 # I hope you enjoyed this Notebook :) Please feel free to ask me question you may have or make improvements to the Notebook. Cheers!

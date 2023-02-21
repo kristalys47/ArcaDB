@@ -62,3 +62,5 @@ Coordinator/Coordinator.iml
 /PythonWorkers/list_attr_celeba.csv/
 /PythonWorkers/venv/
 /PythonWorkers/archive.zip
+/PythonWorkers/archive/
+PythonWorkers/weights.best.inc.male.hdf5
