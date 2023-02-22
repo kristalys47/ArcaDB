@@ -1,6 +1,9 @@
+import cv2
 import redis
 import json
 import alluxio
+import numpy as np
+from keras.models import Sequential, Model, load_model
 from alluxio import option
 r = redis.Redis(host='136.145.77.83', port=6379)
 client = alluxio.Client('136.145.77.107', 39999)
@@ -27,4 +30,16 @@ def start():
     for n in list:
         print(n)
 
-start()
+def testModel():
+    model = load_model('saved_model/model')
+    model.load_weights('saved_model/weights')
+    print('Model Loaded!')
+    im = cv2.imread("archive/img_align_celeba/img_align_celeba/000001.jpg")
+    im = cv2.resize(cv2.cvtColor(im, cv2.COLOR_BGR2RGB), (178, 218)).astype(np.float32) / 255.0
+    im = np.expand_dims(im, axis=0)
+    result = model.predict(im)
+    print(result)
+
+# start()
+
+testModel()

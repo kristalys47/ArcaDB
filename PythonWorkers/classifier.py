@@ -71,8 +71,6 @@ from PIL import Image
 from io import BytesIO
 import base64
 
-matplotlib.use('TkAgg')
-plt.style.use('ggplot')
 
 # %matplotlib inline
 
@@ -99,7 +97,7 @@ TEST_SAMPLES = 2000
 IMG_WIDTH = 178
 IMG_HEIGHT = 218
 BATCH_SIZE = 16
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 
 # %% [markdown]
 # ### Load the attributes of every picture
@@ -126,23 +124,14 @@ for i, j in enumerate(df_attr.columns):
 # ### Example of a picture in CelebA dataset
 # 178 x 218 px
 
-# %% [code]
-# plot picture and attributes
-img = load_img(EXAMPLE_PIC)
-plt.grid(False)
-plt.imshow(img)
-df_attr.loc[EXAMPLE_PIC.split('/')[-1]][['Smiling', 'Male', 'Young']]  # some attributes
+
 
 # %% [markdown]
 # ### Distribution of the Attribute
 #
 # As specified before, this Notebook is an imagine recognition project of the Gender. There are more Female gender than Male gender in the data set. This give us some insight about the need to balance the data in next steps.
 
-# %% [code]
-# Female or Male?
-plt.title('Female or Male')
-sns.countplot(y='Male', data=df_attr, color="c")
-plt.show()
+
 
 # %% [markdown]
 # ## Step 2: Split Dataset into Training, Validation and Test
@@ -268,20 +257,8 @@ x = img_to_array(img) / 255.
 x = x.reshape((1,) + x.shape)
 
 # plot 10 augmented images of the loaded iamge
-plt.figure(figsize=(20, 10))
-plt.suptitle('Data Augmentation', fontsize=28)
 
-i = 0
-for batch in datagen.flow(x, batch_size=1):
-    plt.subplot(3, 5, i + 1)
-    plt.grid(False)
-    plt.imshow(batch.reshape(218, 178, 3))
 
-    if i == 9:
-        break
-    i += 1
-
-plt.show()
 
 # %% [markdown]
 # The result is a new set of images with modifications from the original one, that allows to the model to learn from these variations in order to take this kind of images during the learning process and predict better never seen images.
@@ -401,24 +378,6 @@ hist = model_.fit_generator(train_generator
 
 # %% [markdown]
 # #### The best model after NUM_epech got an accuracy over the validation data of 95.75%.
-
-# %% [code]
-# Plot loss function value through epochs
-plt.figure(figsize=(18, 4))
-plt.plot(hist.history['loss'], label='train')
-plt.plot(hist.history['val_loss'], label='valid')
-plt.legend()
-plt.title('Loss Function')
-plt.show()
-
-# %% [code]
-# Plot accuracy through epochs
-plt.figure(figsize=(18, 4))
-plt.plot(hist.history['acc'], label='train')
-plt.plot(hist.history['val_acc'], label='valid')
-plt.legend()
-plt.title('Accuracy')
-plt.show()
 
 # %% [markdown]
 # ### 4.3. Model Evaluation
@@ -548,5 +507,6 @@ for index, target in df_to_test.iterrows():
     display_result(images_folder + index, result[0], target['Male'])
 
 model_.save("saved_model/model")
+model_.save_weights("saved_model/weight")
 # %% [markdown]
 # I hope you enjoyed this Notebook :) Please feel free to ask me question you may have or make improvements to the Notebook. Cheers!
