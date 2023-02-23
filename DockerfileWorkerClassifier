@@ -1,0 +1,5 @@
+FROM python:latest
+COPY ./PythonWorker/ /PythonWorker/
+WORKDIR /PythonWorker
+RUN python
+CMD python

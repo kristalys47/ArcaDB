@@ -63,4 +63,6 @@ Coordinator/Coordinator.iml
 /PythonWorkers/venv/
 /PythonWorkers/archive.zip
 /PythonWorkers/archive/
-PythonWorkers/weights.best.inc.male.hdf5
+/PythonWorkers/weights.best.inc.male.hdf5
+/PythonWorkers/saved_model/
+PythonWorkers/metadata.json
