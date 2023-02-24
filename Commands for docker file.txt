@@ -257,3 +257,5 @@ scp root@136.145.77.83:/root/spark-3.3.1/conf/* .
 
 
 scp . root@136.145.77.94:/root/spark-3.3.1/conf/
+
+rpush python "{\"plan\": [\"udf\", \"/image\", \"imageClassifier\", \"gender\", \"true\"]}"

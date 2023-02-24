@@ -6,7 +6,7 @@ import numpy as np
 import os
 from keras.models import Sequential, Model, load_model
 from alluxio import option
-r = redis.Redis(host='localhost', port=6379)
+r = redis.Redis(host='136.145.77.83', port=6379)
 client = alluxio.Client('136.145.77.107', 39999)
 
 def imgClas(directory, property, boolean):
@@ -26,10 +26,44 @@ def start():
         for n in array:
             print(n)
 
-    list = client.ls("/image")
+    # list = client.ls("/image")
 
-    for n in list:
+    json_meta = {}
+
+    with open("metadata.json", "r") as f:
+        json_meta = json.load(f)
+
+    json_results = {}
+    list = []
+
+    model = ""
+    model = load_model('saved_model/model')
+    model.load_weights('saved_model/weights')
+    print("Loaded model!")
+    with client.open("/image/metadata.json", "r") as f:
+        json_meta = json.load(f)
+
+    for n in json_meta["files"]:
         print(n)
+        im = ''
+        with client.open("/image/" + n, "r") as f:
+            im = f.read()
+
+        nparr = np.frombuffer(im, np.uint8)
+        im = cv2.imdecode(nparr, flags=1)
+        im = cv2.resize(cv2.cvtColor(im, cv2.COLOR_BGR2RGB), (178, 218)).astype(np.float32) / 255.0
+        im = np.expand_dims(im, axis=0)
+        result = model.predict(im)
+        prediction = np.argmax(result)
+        if prediction == 0:
+            print("is 0" + n)
+
+    json_results["result"] = list
+    with open("results.json") as f:
+        f.write(json_results)
+
+
+
 
 def testModel():
     model = load_model('saved_model/model')
@@ -93,5 +127,6 @@ def startLocal():
     with open("results.json") as f:
         f.write(json_results)
 
-startLocal()
+start()
+# startLocal()
 # testModel()
