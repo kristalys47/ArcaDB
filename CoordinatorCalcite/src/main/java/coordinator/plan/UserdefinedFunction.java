@@ -77,8 +77,6 @@ public class UserdefinedFunction implements Runnable{
             jedis.rpush("python", obj.toString());
             jedis.rpush("python", obj.toString());
 
-
-
             //TODO:IMPLEMENT SCAN WITH QUEUE
 //            List<String> element = jedis.blpop(0, "donePython");
 //            if(!element.get(1).contains("Successful")){

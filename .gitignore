@@ -59,10 +59,12 @@ Coordinator/Coordinator.iml
 /PythonWorkers/.idea
 /PythonWorkers/img_align_celeba/
 /PythonWorkers/imgclass/
-/PythonWorkers/list_attr_celeba.csv/
+/Data/list_attr_celeba.csv/
 /PythonWorkers/venv/
 /PythonWorkers/archive.zip
 /PythonWorkers/archive/
 /PythonWorkers/weights.best.inc.male.hdf5
 /PythonWorkers/saved_model/
 PythonWorkers/metadata.json
+/PythonDependencies/
+/PythonWorkersBackup/
