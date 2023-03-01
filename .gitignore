@@ -68,3 +68,8 @@ Coordinator/Coordinator.iml
 PythonWorkers/metadata.json
 /PythonDependencies/
 /PythonWorkersBackup/
+*/*.DS_Store
+.DS_Store
+/RunResults/*.txt
+/RunResults/*.csv
+untitled/untitled.iml
