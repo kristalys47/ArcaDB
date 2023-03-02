@@ -1,0 +1,10 @@
+{
+    "runtimes": {
+        "nvidia": {
+            "args": [],
+            "path": "nvidia-container-runtime"
+        }
+    },
+    "default-runtime": "nvidia",
+    "node-generic-resources": ["GPU-28cffdc8-c499-85aa-eee1-27661761ca45"]
+}

@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   coordinator:
-    image: kristalys/dbms-coordinator:1.1
+    image: kristalys/dbms-coordinator-calcite:0.9
     container_name: coordinator
     deploy:
       placement:
@@ -19,6 +19,28 @@ services:
       cloud:
         aliases:
           - coordinator
+  worker-python:
+    image: kristalys/dbms-worker-python:1.2
+    runtime: nvidia
+    logging:
+      driver: local
+      options:
+        max-size: "100m"
+        max-file: "5"
+    networks:
+      cloud:
+        aliases:
+          - worker
+    deploy:
+      replicas: 2
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - "node.role==worker"
+          - "node.labels.processor==gpu"
+    depends_on:
+      - coordinator
+    env_file: .env
   worker:
     image: kristalys/dbms-worker:1.3.3
     logging:

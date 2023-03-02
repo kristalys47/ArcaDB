@@ -29,6 +29,7 @@ public class Coordinator {
         Commons.POSTGRES_JDBC = "jdbc:postgresql://" + Commons.POSTGRES_HOST + ":" + Commons.POSTGRES_PORT + "/" + Commons.POSTGRES_DB_NAME;
 
         port(Commons.COORDINATOR_APP_PORT);
+        System.out.println("REST-API Opened for business!");
         //TODO: Create insert function
         get("/database/query", (request, response) -> {
             long start = System.currentTimeMillis();

@@ -7,25 +7,28 @@ import numpy as np
 import os
 from keras.models import Sequential, Model, load_model
 from alluxio import option, wire
+import time
+import socket
+
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
 
 r = redis.Redis(host='136.145.77.83', port=6379)
 client = alluxio.Client('136.145.77.107', 39999)
-gender_model = ''
+cache = alluxio.Client('136.145.77.83', 39999)
+NOT_LOADED = "not_loaded"
 
 
 
-def gender_clasiffication(plan):
-    gender_model = load_model('saved_model/gender.h5', compile=False)
-    # with client.open("/image/metadata.json", "r") as f:
-    #     json_meta = json.load(f)
-    print("Model is loaded")
+def gender_clasiffication(plan, gender_model):
     json_results = {}
     json_meta = plan["files"]
     list = []
-    i = 0
+    # i = 0
+    start = time.time() * 1000
     for n in json_meta:
-        print("Progress: {:2} ".format(i/len(json_meta)*100))
-        i = i + 1
+        # print("Progress: {:2} ".format(i/len(json_meta)*100))
+        # i = i + 1
         im = ''
         with client.open("/image/" + n, "r") as f:
             im = f.read()
@@ -38,23 +41,24 @@ def gender_clasiffication(plan):
         prediction = np.argmax(result)
         if prediction == 0:
             list.append(n)
-
+    end = time.time() * 1000
     json_results["result"] = list
 
     id = str(uuid.uuid4())
-    cache = alluxio.Client('136.145.77.83', 39999)
+    file_name = '/results/results_' + id + '.json'
     opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
-    with cache.open('/results/results_' + id + '.json', 'w', opt, ) as alluxio_file:
+    with cache.open(file_name, 'w', opt, ) as alluxio_file:
         json.dump(json_results, alluxio_file)
 
+
     jsonResponse = {}
-    jsonResponse["file"] = '/results/results_' + id + '.json'
+    jsonResponse["file"] = file_name
     jsonResponse["status"] = "Completed"
+    r.rpush("donePython", str(jsonResponse))
+    print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
 
-    r.rpush("donePython", jsonResponse)
 
-
-def start():
+def start(models):
     encoding = "utf-8"
     task = r.blpop("python", 0)[1].decode(encoding)
     print("Recieved plan: " + task)
@@ -62,9 +66,20 @@ def start():
 
     json_dic = json.loads(task)
     json_plan = json_dic["plan"]
+    print(json_plan["model"])
     if json_plan["model"] == "gender":
         print("Gender model selected")
-        gender_clasiffication(json_plan)
+        if models["gender"] == NOT_LOADED:
+            with client.open("/models/gender/gender.h5", "r") as f:
+                os.makedirs("saved_model/gender/", exist_ok=True)
+                with open("saved_model/gender/gender.h5", "wb") as lf:
+                    lf.write(f.read())
+            models["gender"] = load_model('saved_model/gender/gender.h5', compile=False)
+            print("Model is loaded")
+        gender_clasiffication(json_plan, models["gender"])
 
+models = {}
+models["gender"] = NOT_LOADED
+print(ip)
 while True:
-    start()
+    start(models)

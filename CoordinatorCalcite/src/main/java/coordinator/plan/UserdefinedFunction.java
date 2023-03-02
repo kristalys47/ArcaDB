@@ -12,25 +12,19 @@ import org.apache.commons.io.FileUtils;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
 import com.google.gson.JsonArray;
 import coordinator.CalciteOptimizer;
 import coordinator.Commons;
 import coordinator.Utils.Catalog;
-import org.apache.calcite.adapter.enumerable.EnumerableProject;
-import org.apache.calcite.adapter.jdbc.JdbcTableScan;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.sql.*;
-import redis.clients.jedis.Jedis;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 
 public class UserdefinedFunction implements Runnable{
-    public final int PICTURE_PARTITION = 50;
+    public final int PICTURE_PARTITION = 2000;
     public String tableFiles;
     public String functionName = "";
     public String tableName = "";
@@ -120,7 +114,7 @@ public class UserdefinedFunction implements Runnable{
                 return;
             }
             JsonObject response = JsonParser.parseString(element.get(1)).getAsJsonObject();
-            System.out.println(element.get(1) + " - " +  response.get("resultFile"));
+            System.out.println(element.get(1) + " - " +  response.get("file"));
         }
 
     }
