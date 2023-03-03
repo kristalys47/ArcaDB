@@ -21,7 +21,6 @@ services:
           - coordinator
   worker-python:
     image: kristalys/dbms-worker-python:1.2
-    runtime: nvidia
     logging:
       driver: local
       options:

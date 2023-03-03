@@ -1,6 +1,11 @@
 import uuid
-import cv2
 import redis
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+from PIL import Image
+from torchvision import datasets, models, transforms
 import json
 import alluxio
 import numpy as np
@@ -8,11 +13,8 @@ import os
 from alluxio import option, wire
 import time
 import socket
-from tensorflow.keras.models import load_model
-import tensorflow as tf
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-tf.test.is_built_with_cuda()
-print(tf.test.is_built_with_gpu_support())
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
@@ -24,10 +26,15 @@ NOT_LOADED = "not_loaded"
 
 
 
-def gender_clasiffication(plan, gender_model):
+def gender_clasiffication_pytorch(plan, gender_model):
     json_results = {}
     json_meta = plan["files"]
     list = []
+    transforms_val = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
     # i = 0
     start = time.time() * 1000
     for n in json_meta:
@@ -36,14 +43,23 @@ def gender_clasiffication(plan, gender_model):
         im = ''
         with client.open("/image/" + n, "r") as f:
             im = f.read()
+            with open("img.jpg", "wb") as f2:
+                f2.write(im)
 
         nparr = np.frombuffer(im, np.uint8)
-        im = cv2.imdecode(nparr, flags=1)
-        im = cv2.resize(cv2.cvtColor(im, cv2.COLOR_BGR2RGB), (178, 218)).astype(np.float32) / 255.0
-        im = np.expand_dims(im, axis=0)
-        result = gender_model.predict(im, verbose=0)
-        prediction = np.argmax(result)
-        if prediction == 0:
+
+        img = Image.fromarray(nparr)
+        img_trans = transforms_val(img)
+        img_trans = img_trans.to(device)
+
+        gender_model.to(device)
+
+        with torch.no_grad():
+            gender_model.eval()
+            output = gender_model(img_trans.unsqueeze(0))
+            _, pred = torch.max(output, 1)
+            print(output + " " + pred)
+        if pred == 0:
             list.append(n)
     end = time.time() * 1000
     json_results["result"] = list
@@ -74,13 +90,13 @@ def start(models):
     if json_plan["model"] == "gender":
         print("Gender model selected")
         if models["gender"] == NOT_LOADED:
-            with client.open("/models/gender/gender.h5", "r") as f:
+            with client.open("/models/gender/pytorch_gender.pth", "r") as f:
                 os.makedirs("saved_model/gender/", exist_ok=True)
-                with open("saved_model/gender/gender.h5", "wb") as lf:
+                with open("saved_model/gender/pytorch_gender", "wb") as lf:
                     lf.write(f.read())
-            models["gender"] = load_model('saved_model/gender/gender.h5', compile=False)
+            models["gender"] = torch.load("pytorch_gender.pth")
             print("Model is loaded")
-        gender_clasiffication(json_plan, models["gender"])
+        gender_clasiffication_pytorch(json_plan, models["gender"])
 
 models = {}
 models["gender"] = NOT_LOADED
