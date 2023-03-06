@@ -1,5 +1,5 @@
-FROM kristalys/basic-tensorflow:1.1
+FROM kristalys/dbms-base-pytorch:1.0
 COPY ./PythonWorkers/ /PythonWorkers/
 WORKDIR /PythonWorkers
 RUN pip3 install -r requirements.txt
-CMD python3 Worker.py
+CMD python3 worker-python.py

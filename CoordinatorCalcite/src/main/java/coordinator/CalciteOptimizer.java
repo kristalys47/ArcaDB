@@ -144,8 +144,8 @@ public class CalciteOptimizer {
                 CoreRules.FILTER_TABLE_FUNCTION_TRANSPOSE,
                 CoreRules.FILTER_VALUES_MERGE,
 //                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE
-                EnumerableRules.ENUMERABLE_PROJECT_RULE
-//                EnumerableRules.ENUMERABLE_FILTER_RULE,
+                EnumerableRules.ENUMERABLE_PROJECT_RULE,
+                EnumerableRules.ENUMERABLE_FILTER_RULE
 //                EnumerableRules.ENUMERABLE_CALC_RULE,
 //                EnumerableRules.ENUMERABLE_AGGREGATE_RULE
 //                CoreRules.JOIN_EXTRACT_FILTER

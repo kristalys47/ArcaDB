@@ -32,6 +32,7 @@ import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
 import org.apache.calcite.tools.*;
+import org.apache.hadoop.security.SaslOutputStream;
 import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
@@ -60,11 +61,13 @@ public class TestingAPI {
 //        String QUERY = "select p.\"05\" from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
 //        String QUERY = "select * from SCHEMA.\"part\" as p, SCHEMA.\"lineitem\" as l where l.\"01\" = p.\"00\" and p.\"05\" > 250 ";
 //        String QUERY = "select * from SCHEMA.\"part\", SCHEMA.\"lineitem\" where \"lineitem\".\"01\" = \"part\".\"00\"";
+//        String QUERY = "select * from SCHEMA.\"images\" where imageClassifier(\"gender\")=0";
 
 
         String QUERY = "select imageClassifier(\"gender\") from SCHEMA.\"images\" where \"gender\"=0";
 //        String QUERY = "select * from SCHEMA.\"part\" where imageClassifier(\"01\")>0 ";
 //        CalciteOptimizer.run(QUERY);
+        System.out.println(QUERY);
         boolean hello = Controller.handleRequest(QUERY, 3, 60);
     }
 

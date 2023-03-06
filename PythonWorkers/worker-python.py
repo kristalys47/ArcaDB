@@ -46,9 +46,7 @@ def gender_clasiffication_pytorch(plan, gender_model):
             with open("img.jpg", "wb") as f2:
                 f2.write(im)
 
-        nparr = np.frombuffer(im, np.uint8)
-
-        img = Image.fromarray(nparr)
+        img = Image.open("img.jpg")
         img_trans = transforms_val(img)
         img_trans = img_trans.to(device)
 
@@ -58,7 +56,7 @@ def gender_clasiffication_pytorch(plan, gender_model):
             gender_model.eval()
             output = gender_model(img_trans.unsqueeze(0))
             _, pred = torch.max(output, 1)
-            print(output + " " + pred)
+            # print(output , " " , pred)
         if pred == 0:
             list.append(n)
     end = time.time() * 1000
@@ -81,20 +79,18 @@ def gender_clasiffication_pytorch(plan, gender_model):
 def start(models):
     encoding = "utf-8"
     task = r.blpop("python", 0)[1].decode(encoding)
-    print("Recieved plan: " + task)
     # type, file_location, modelname, property, boolean, array
 
     json_dic = json.loads(task)
     json_plan = json_dic["plan"]
-    print(json_plan["model"])
     if json_plan["model"] == "gender":
         print("Gender model selected")
         if models["gender"] == NOT_LOADED:
             with client.open("/models/gender/pytorch_gender.pth", "r") as f:
                 os.makedirs("saved_model/gender/", exist_ok=True)
-                with open("saved_model/gender/pytorch_gender", "wb") as lf:
+                with open("saved_model/gender/pytorch_gender.pth", "wb") as lf:
                     lf.write(f.read())
-            models["gender"] = torch.load("pytorch_gender.pth")
+            models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth")
             print("Model is loaded")
         gender_clasiffication_pytorch(json_plan, models["gender"])
 
