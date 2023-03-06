@@ -17,6 +17,23 @@ def getlogs():
     os.system("scp root@136.145.77.99:/var/lib/docker/containers/*/*-json.log .")
     os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")
     os.system("scp root@136.145.77.79:/var/lib/docker/containers/*/*-json.log .")
+    os.system("scp root@136.145.77.86:/var/lib/docker/containers/*/*-json.log .")
+    os.system("scp root@136.145.77.88:/var/lib/docker/containers/*/*-json.log .")
+
+def getContainerLogs(n):
+    os.system("scp root@136.145.77.{}:/var/lib/docker/containers/*/*-json.log .".format(n))
+
+def getContainersLogs():
+    dic = []
+    # array =  [94, 79, 99, 78, 106, 119, 118, 124, 120, 101, 80, 86, 88]
+    array =  [80, 86, 88]
+
+    for n in array:
+         x = threading.Thread(target=getContainerLogs, args=(n,))
+         x.start()
+         dic.append(x)
+    for n in dic:
+        n.join()
 
 def processlogs():
     with open("logs.log", "w") as logs:
@@ -73,7 +90,7 @@ def addvmlogstolog():
 
 
 # os.system("scp root@136.145.77.124:/root/worker/WorkerThreads/logs* loggert.log ")
-getlogsfromVmslist()
+# getlogsfromVmslist()
 # test()
 
 # getlogsfromVmslist
@@ -81,3 +98,5 @@ getlogsfromVmslist()
 # addvmlogstolog()
 # processlogs()
 # getlogsandprocessnossh()
+
+getContainersLogs()

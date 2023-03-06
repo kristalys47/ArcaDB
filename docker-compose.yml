@@ -36,12 +36,12 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 2
+      replicas: 1
       placement:
         max_replicas_per_node: 1
         constraints:
           - "node.role==worker"
-          - "node.labels.processor==gpu"
+          - "node.labels.type==memory"
     depends_on:
       - coordinator
     env_file: .env
@@ -63,6 +63,7 @@ services:
         constraints:
           - "node.role==worker"
           - "node.labels.type==memory"
+          - "node.labels.processor==gpu"
     depends_on:
       - coordinator
     env_file: .env
