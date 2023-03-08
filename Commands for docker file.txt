@@ -276,6 +276,8 @@ docker run --rm -it kristalys/dbms-coordinator-calcite:0.8 mvn exec:java -Dexec.
 env $(cat .env | xargs) rails
 env $(cat .env | grep ^[A-Z] | xargs)
 env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy --compose-file docker-compose.yml testing
+env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy --compose-file docker-compose.yml testing
+env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy --compose-file docker-compose.yml testing
 
 
 { "mtu": 1442 } in daemon docker file. might need changes somewhere else, pero por aqui comienzas y luego con "ifconfig" y varios otros comandos lo arreglas.
@@ -286,3 +288,6 @@ alias <alias>="command"
 
 simbolic Links
 ln -s target linkname
+
+AWS_S3_ACCESS_KEY=AKIA6E4TYZ3JLKC2LPFR
+AWS_S3_SECRET_KEY=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

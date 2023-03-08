@@ -25,7 +25,7 @@ services:
         aliases:
           - coordinator
   worker-python:
-    image: kristalys/dbms-worker-python:2.2
+    image: kristalys/dbms-worker-python:2.2.2
     logging:
       driver: json-file
       options:
@@ -36,7 +36,7 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 1
+      replicas: 4
       placement:
         max_replicas_per_node: 1
         constraints:
@@ -57,7 +57,7 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 60
+      replicas: 0
       placement:
         max_replicas_per_node: 6
         constraints:

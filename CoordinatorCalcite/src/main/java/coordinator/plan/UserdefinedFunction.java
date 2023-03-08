@@ -52,6 +52,7 @@ public class UserdefinedFunction implements Runnable{
         this.tableFiles = Catalog.filesForTable(this.tableName).get(0);
         long start = System.currentTimeMillis();
         alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
+//        alluxio.conf.Configuration.set(PropertyKey.MASTER_RPC_PORT, 39999);
         alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
         FileSystem fs = FileSystem.Factory.get();

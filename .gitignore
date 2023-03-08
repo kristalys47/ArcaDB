@@ -72,5 +72,6 @@ PythonWorkers/metadata.json
 .DS_Store
 /RunResults/*.txt
 /RunResults/*.csv
-untitled/untitled.iml
-CoordinatorCalcite/Coordinator.iml
+/untitled/untitled.iml
+/CoordinatorCalcite/Coordinator.iml
+RunResults/logs-raw/old/*

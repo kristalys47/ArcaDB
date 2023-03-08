@@ -25,8 +25,8 @@ def getContainerLogs(n):
 
 def getContainersLogs():
     dic = []
-    # array =  [94, 79, 99, 78, 106, 119, 118, 124, 120, 101, 80, 86, 88]
-    array =  [80, 86, 88]
+    array =  [94, 79, 99, 78, 106, 119, 118, 124, 120, 101, 80, 86, 88]
+    # array =  [80, 86, 88]
 
     for n in array:
          x = threading.Thread(target=getContainerLogs, args=(n,))
@@ -98,5 +98,5 @@ def addvmlogstolog():
 # addvmlogstolog()
 # processlogs()
 # getlogsandprocessnossh()
-
+time.sleep(60*30)
 getContainersLogs()

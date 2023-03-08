@@ -1,14 +1,10 @@
 import uuid
 import redis
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision
 from PIL import Image
 from torchvision import datasets, models, transforms
 import json
 import alluxio
-import numpy as np
 import os
 from alluxio import option, wire
 import time
@@ -19,9 +15,19 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
-r = redis.Redis(host='136.145.77.83', port=6379)
-client = alluxio.Client('136.145.77.107', 39999)
-cache = alluxio.Client('136.145.77.83', 39999)
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+
+ALLUXIO_DATA_HOST = os.getenv('ALLUXIO_DATA_HOST')
+ALLUXIO_DATA_PORT = os.getenv('ALLUXIO_DATA_PORT')
+
+ALLUXIO_CACHE_HOST = os.getenv('ALLUXIO_CACHE_HOST')
+ALLUXIO_CACHE_PORT = os.getenv('ALLUXIO_CACHE_PORT')
+
+
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+client = alluxio.Client(ALLUXIO_DATA_HOST, ALLUXIO_DATA_PORT)
+cache = alluxio.Client(ALLUXIO_CACHE_HOST, ALLUXIO_CACHE_PORT)
 NOT_LOADED = "not_loaded"
 
 
@@ -68,7 +74,6 @@ def gender_clasiffication_pytorch(plan, gender_model):
     with cache.open(file_name, 'w', opt, ) as alluxio_file:
         json.dump(json_results, alluxio_file)
 
-
     jsonResponse = {}
     jsonResponse["file"] = file_name
     jsonResponse["status"] = "Completed"
@@ -80,22 +85,21 @@ def start(models):
     encoding = "utf-8"
     task = r.blpop("python", 0)[1].decode(encoding)
     # type, file_location, modelname, property, boolean, array
-
+    print("Have a plan!")
     json_dic = json.loads(task)
     json_plan = json_dic["plan"]
     if json_plan["model"] == "gender":
-        print("Gender model selected")
         if models["gender"] == NOT_LOADED:
             with client.open("/models/gender/pytorch_gender.pth", "r") as f:
                 os.makedirs("saved_model/gender/", exist_ok=True)
                 with open("saved_model/gender/pytorch_gender.pth", "wb") as lf:
                     lf.write(f.read())
-            models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth")
+            models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
             print("Model is loaded")
         gender_clasiffication_pytorch(json_plan, models["gender"])
 
 models = {}
 models["gender"] = NOT_LOADED
-print(ip)
+print(ip, " ", REDIS_HOST, " ", REDIS_PORT)
 while True:
     start(models)
