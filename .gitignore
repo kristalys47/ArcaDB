@@ -74,4 +74,5 @@ PythonWorkers/metadata.json
 /RunResults/*.csv
 /untitled/untitled.iml
 /CoordinatorCalcite/Coordinator.iml
-RunResults/logs-raw/old/*
+/RunResults/logs-raw/old/*
+/remote

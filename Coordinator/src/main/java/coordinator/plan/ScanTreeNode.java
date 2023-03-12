@@ -29,9 +29,11 @@ public class ScanTreeNode extends BinaryTreeNode {
         super(NodeType.SCAN, parent, inner, outer, Commons.BUCKETS);
         //TODO: you can get the relation from here to send to the hash join make it a variable;
         if (info.has("Relation Name")) {
-            this.jsonObject = Catalog.getTableMetadata(info.getString("Relation Name"));
+            this.relation = info.getString("Relation Name");
+            this.jsonObject = Catalog.getTableMetadata(this.relation);
             this.TableFiles = Catalog.filesForTable(this.jsonObject);
         }
+        System.out.println(this.jsonObject.getString("type"));
         switch (this.jsonObject.getString("type")) {
             case "structured":
                 this.typeData = DataType.STRUCTURED;

@@ -2,16 +2,14 @@
  "table_name": "image",
   "attributes": {
     "id": {
-      "function_name": "get_images_id",
       "type": "int"
     },
     "gender": {
-      "function_name": "get_image_id",
       "type": "class",
-      "classes": ["female", "male"]
+      "classes": ["female", "male"],
+      "model":
     },
     "heavymakeup": {
-      "function_name": "get_image_heavy_makeup",
       "type": "class",
       "classes": ["heavy_makeup", "no_heavy_makeup"]
     }

@@ -60,8 +60,8 @@ public class WorkerManager {
                 jedisControl.rpush("done", ip + "\nSuccessful: " + arg);
                 break;
             case "joinProbing":
-                String outer = "/" + arg.get("outer").toString() + "/" + ((JSONArray) arg.get("relation")).get(0).toString();
-                String inner = arg.get("inner").toString();
+                String outer = arg.getString("outer");
+                String inner = arg.getString("inner");
                 JoinManager.joinProbing(outer, inner);
                 jedisControl.rpush("done", ip + "\nSuccessful: " + arg);
             default:

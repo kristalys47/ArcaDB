@@ -36,12 +36,6 @@ public class JoinTreeNode extends BinaryTreeNode {
             this.InnerColumnName = inCol[1];
             this.OuterRelation = outCol[0];
             this.InnerRelation = inCol[0];
-            if(((ScanTreeNode) inner).alias != ""){
-                this.InnerRelation = ((ScanTreeNode) inner).relation;
-            }
-            if(((ScanTreeNode) outer).alias != ""){
-                this.OuterRelation = ((ScanTreeNode) outer).relation;
-            }
         }
     }
 
@@ -56,12 +50,12 @@ public class JoinTreeNode extends BinaryTreeNode {
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
         for (int i = 0; i < relation.TableFiles.size(); i++) {
             JSONObject planJAVA = new JSONObject();
-            planJAVA.append("planType", "joinPartition");
-            planJAVA.append("files", new JSONArray().put(relation.TableFiles.get(i)));
-            planJAVA.append("joinColumn", column);
-            planJAVA.append("relation", relation.relation);
-            planJAVA.append("filter", relation.selection);
-            planJAVA.append("buckets", this.buckets);
+            planJAVA.put("planType", "joinPartition");
+            planJAVA.put("files", new JSONArray().put(relation.TableFiles.get(i)));
+            planJAVA.put("joinColumn", column);
+            planJAVA.put("relation", relationName);
+            planJAVA.put("filter", relation.selection);
+            planJAVA.put("buckets", this.buckets);
             jedis.rpush("structured", planJAVA.toString());
         }
         return relation.TableFiles.size();
@@ -88,12 +82,12 @@ public class JoinTreeNode extends BinaryTreeNode {
         Jedis jedis = new Jedis(Commons.REDIS_HOST, Commons.REDIS_PORT);
         for (int i = 0; i < partitions.length; i++) {
             JSONObject planJAVA = new JSONObject();
-            planJAVA.append("planType", "inference");
-            planJAVA.append("files", partitions[i]);
-            planJAVA.append("joinColumn", column);
-            planJAVA.append("relation", relation.relation);
-            planJAVA.append("filter", relation.selection);
-            planJAVA.append("buckets", this.buckets);
+            planJAVA.put("planType", "inference");
+            planJAVA.put("files", partitions[i]);
+            planJAVA.put("joinColumn", column);
+            planJAVA.put("relation", relationName);
+            planJAVA.put("filter", relation.selection);
+            planJAVA.put("buckets", this.buckets);
             jedis.rpush("semistructured", planJAVA.toString());
         }
         return numberOfGroups;
@@ -101,6 +95,13 @@ public class JoinTreeNode extends BinaryTreeNode {
 
     @Override
     public void run() {
+        if(((ScanTreeNode) inner).alias != ""){
+            this.InnerRelation = ((ScanTreeNode) inner).relation;
+        }
+        if(((ScanTreeNode) outer).alias != ""){
+            this.OuterRelation = ((ScanTreeNode) outer).relation;
+        }
+
         //TODO: What if the join is in the same table?
         if (isSimpleScan(this.outer) && isSimpleScan(this.outer)) {
             //initiante partition
@@ -111,19 +112,28 @@ public class JoinTreeNode extends BinaryTreeNode {
 
             switch (relationOuter.typeData){
                 case STRUCTURED:
+                    System.out.println("out struct");
                     outer_count = scanScheduleStructured(relationOuter, this.OuterColumnName, this.OuterRelation);
+                    System.out.println("out struct done");
                     break;
                 case SEMISTRUCTURED:
+                    System.out.println("out semi");
                     outer_count = scanScheduleSemistructured(relationOuter, this.OuterColumnName, this.OuterRelation);
+                    System.out.println("out semi done");
                     break;
             }
 
+
             switch (relationInner.typeData){
                 case STRUCTURED:
+                    System.out.println("in struct");
                     inner_count = scanScheduleStructured(relationInner, this.InnerColumnName, this.InnerRelation);
+                    System.out.println("in struct done");
                     break;
                 case SEMISTRUCTURED:
+                    System.out.println("in semi");
                     inner_count = scanScheduleSemistructured(relationInner, this.InnerColumnName, this.InnerRelation);
+                    System.out.println("in semi done");
                     break;
             }
 

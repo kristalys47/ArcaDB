@@ -45,7 +45,7 @@ public class Catalog {
             }
             Commons.TABLES = new JSONObject(jsonTxt);
         }
-        String table_path = ((JSONObject) Commons.TABLES.get("tables_dir")).getString("tableName");
+        String table_path = Commons.TABLES.getJSONObject("tables_dir").getString(tableName);
         String alluxioPath = "alluxio://136.145.77.107:19998" + table_path + "/metadata.json";
         AlluxioURI pathAlluxio = new AlluxioURI(alluxioPath);
         FileInStream in = null;

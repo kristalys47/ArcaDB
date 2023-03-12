@@ -1,5 +1,5 @@
 {
-  table_list: ["orders", "supplier", "region", "partsupp", "part", "nation", "customer", "lineitem", "image"]
+  table_list: ["orders", "supplier", "region", "partsupp", "part", "nation", "customer", "lineitem", "image"],
   tables_dir: {
     "orders": "/db100GB/orders",
     "supplier": "/db100GB/supplier",
