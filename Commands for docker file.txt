@@ -291,3 +291,9 @@ ln -s target linkname
 
 AWS_S3_ACCESS_KEY=AKIA6E4TYZ3JLKC2LPFR
 AWS_S3_SECRET_KEY=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
+
+swarmpit
+portainer community edition (portainer CE)
+
+
+https://github.com/postgres/postgres/blob/master/src/backend/commands/explain.c#L814

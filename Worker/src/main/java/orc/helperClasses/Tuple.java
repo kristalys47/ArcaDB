@@ -42,6 +42,22 @@ public class Tuple implements Serializable {
     public void addAttribute(Attribute.AttributeType type, int position, String name, long value, int index){
         this.attributeArrayList[position] = new LongAttribute(name, (long) value);
     }
+    public void addAttribute(Attribute.AttributeType type, int position, String name, Object value){
+        switch (type) {
+            case Long:
+                this.attributeArrayList[position] = new LongAttribute(name, (long) value);
+                break;
+            case String:
+                this.attributeArrayList[position] = new StringAttribute(name, (String) value);
+                break;
+            case Double:
+                this.attributeArrayList[position] = new DoubleAttribute(name, (double) value);
+                break;
+            case Decimal:
+                this.attributeArrayList[position] = new FloatAttribute(name, (float) value);
+                break;
+        }
+    }
 
     public Attribute readAttribute(int position){
         return this.attributeArrayList[position];

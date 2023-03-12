@@ -5,11 +5,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import javax.annotation.Nullable;
 import java.sql.*;
-import java.util.List;
 
-import static coordinator.Commons.postgresConnect;
+import static coordinator.Utils.Commons.postgresConnect;
 
 public class Controller {
     private static final Logger logger = LogManager.getLogger(Controller.class);

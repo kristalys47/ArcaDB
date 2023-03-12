@@ -1,5 +1,6 @@
 package orc;
 
+import orc.helperClasses.AES;
 import redis.clients.jedis.Jedis;
 
 import java.net.InetAddress;
@@ -47,8 +48,9 @@ public class Commons {
         return jedis;
     }
 
-    static public void createConnectiontoAlluxios(){
-
+    public static long hashFunction(String s, AES hashing){
+        long result = hashing.encrypt(s);
+        return result;
     }
 }
 

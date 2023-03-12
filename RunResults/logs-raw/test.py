@@ -98,5 +98,5 @@ def addvmlogstolog():
 # addvmlogstolog()
 # processlogs()
 # getlogsandprocessnossh()
-time.sleep(60*30)
+# time.sleep(60*30)
 getContainersLogs()

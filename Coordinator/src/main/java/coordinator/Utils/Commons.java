@@ -1,7 +1,8 @@
-package coordinator;
+package coordinator.Utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -27,6 +28,9 @@ public class Commons {
     static public String POSTGRES_DB_NAME;
     static public String POSTGRES_JDBC;
     static public String MODE;
+    static public int BUCKETS;
+    static public JSONObject TABLES;
+    static public int PICTURE_PARTITION = 2000;
 
     static public Statement postgresConnect() throws Exception {
         Connection c = null;

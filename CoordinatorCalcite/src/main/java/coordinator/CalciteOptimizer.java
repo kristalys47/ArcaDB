@@ -1,24 +1,33 @@
 package coordinator;
 
+import io.netty.util.Constant;
 import org.apache.calcite.adapter.enumerable.EnumerableConvention;
 import org.apache.calcite.adapter.enumerable.EnumerableRules;
+import org.apache.calcite.adapter.jdbc.JdbcConvention;
 import org.apache.calcite.adapter.jdbc.JdbcSchema;
 import org.apache.calcite.avatica.util.Casing;
 import org.apache.calcite.config.CalciteConnectionConfig;
 import org.apache.calcite.config.CalciteConnectionConfigImpl;
 import org.apache.calcite.config.CalciteConnectionProperty;
+import org.apache.calcite.interpreter.BindableConvention;
 import org.apache.calcite.jdbc.CalciteConnection;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.jdbc.JavaTypeFactoryImpl;
 import org.apache.calcite.plan.Contexts;
 import org.apache.calcite.plan.ConventionTraitDef;
 import org.apache.calcite.plan.RelOptCluster;
+import org.apache.calcite.plan.hep.HepPlanner;
+import org.apache.calcite.plan.hep.HepProgram;
+import org.apache.calcite.plan.hep.HepProgramBuilder;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.prepare.Prepare;
+import org.apache.calcite.rel.RelCollationImpl;
+import org.apache.calcite.rel.RelCollationTraitDef;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.rel.rules.CoreRules;
+import org.apache.calcite.rel.rules.FilterJoinRule;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;
 import org.apache.calcite.schema.SchemaPlus;
@@ -32,10 +41,7 @@ import org.apache.calcite.sql.validate.SqlValidator;
 import org.apache.calcite.sql.validate.SqlValidatorUtil;
 import org.apache.calcite.sql2rel.SqlToRelConverter;
 import org.apache.calcite.sql2rel.StandardConvertletTable;
-import org.apache.calcite.tools.Program;
-import org.apache.calcite.tools.Programs;
-import org.apache.calcite.tools.RuleSet;
-import org.apache.calcite.tools.RuleSets;
+import org.apache.calcite.tools.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -82,7 +88,22 @@ public class CalciteOptimizer {
         //______________________________________________________________
 
         VolcanoPlanner planner = new VolcanoPlanner(null ,Contexts.of(config));
+        planner.addRule(CoreRules.PROJECT_TO_CALC);
+        planner.addRule(CoreRules.FILTER_TO_CALC);
+        planner.addRule(EnumerableRules.ENUMERABLE_CALC_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_JOIN_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_SORT_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_LIMIT_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_AGGREGATE_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_VALUES_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_UNION_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_MINUS_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_INTERSECT_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_MATCH_RULE);
+        planner.addRule(EnumerableRules.ENUMERABLE_WINDOW_RULE);
         planner.addRelTraitDef(ConventionTraitDef.INSTANCE);
+//        planner.addRule(CoreRules.FILTER_SCAN);
+//        planner.addRelTraitDef(RelCollationTraitDef.INSTANCE);
         RelOptCluster cluster = RelOptCluster.create(planner, new RexBuilder(typeFactory));
         SqlToRelConverter.Config converterConfig = SqlToRelConverter.config();
         CalciteSchema cschema = CalciteSchema.createRootSchema(false,false);
@@ -129,40 +150,49 @@ public class CalciteOptimizer {
         RelRoot root = converter.convertQuery(validatedSqlNode, false, true);
         RelNode relationalExpression = root.rel;
         RuleSet rules = RuleSets.ofList(
+                EnumerableRules.ENUMERABLE_PROJECT_RULE,
+                EnumerableRules.ENUMERABLE_FILTER_RULE,
 //                CoreRules.JOIN_ASSOCIATE,
 //                CoreRules.JOIN_COMMUTE,
 //                CoreRules.JOIN_COMMUTE,
 //                CoreRules.JOIN_COMMUTE_OUTER,
 //                CoreRules.MULTI_JOIN_OPTIMIZE_BUSHY,
                 CoreRules.FILTER_INTO_JOIN,
-                CoreRules.FILTER_MERGE,
-                CoreRules.FILTER_TO_CALC,
+//                CoreRules.FILTER_MERGE,
+//                CoreRules.FILTER_TO_CALC,
 //                CoreRules.PROJECT_TO_CALC,
-                CoreRules.FILTER_CALC_MERGE,
+//                CoreRules.FILTER_CALC_MERGE,
 //                CoreRules.PROJECT_CALC_MERGE,
+//                CoreRules.JOIN_PROJECT_BOTH_TRANSPOSE,
+//                CoreRules.JOIN_PUSH_EXPRESSIONS,
                 CoreRules.FILTER_SCAN,
-                CoreRules.FILTER_TABLE_FUNCTION_TRANSPOSE,
-                CoreRules.FILTER_VALUES_MERGE,
+//                CoreRules.JOIN_CONDITION_PUSH,
+//                CoreRules.PROJECT_FILTER_TRANSPOSE_WHOLE_EXPRESSIONS,
+                CoreRules.JOIN_PUSH_TRANSITIVE_PREDICATES
+//                CoreRules.FILTER_TABLE_FUNCTION_TRANSPOSE,
+//                CoreRules.FILTER_VALUES_MERGE,
 //                EnumerableRules.ENUMERABLE_TABLE_SCAN_RULE
-                EnumerableRules.ENUMERABLE_PROJECT_RULE,
-                EnumerableRules.ENUMERABLE_FILTER_RULE
 //                EnumerableRules.ENUMERABLE_CALC_RULE,
 //                EnumerableRules.ENUMERABLE_AGGREGATE_RULE
 //                CoreRules.JOIN_EXTRACT_FILTER
         );
-        Program program = Programs.of(RuleSets.ofList(rules));
-
+        Program program = Programs.of(rules);
         System.out.println(relationalExpression.explain());
+
+        JdbcConvention convention = JdbcConvention.of(jdbcDialect, null, dialectName);
         RelNode optimizerRelTree = program.run(
                 planner,
                 relationalExpression,
-                relationalExpression.getTraitSet().plus(EnumerableConvention.INSTANCE),
+                relationalExpression.getTraitSet().replace(EnumerableConvention.INSTANCE),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
+
         this.optimizedPlan = optimizerRelTree;
 
+
         System.out.println(optimizerRelTree.explain());
+
         return optimizerRelTree;
 
 

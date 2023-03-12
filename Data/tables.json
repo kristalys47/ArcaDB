@@ -1,0 +1,14 @@
+{
+  table_list: ["orders", "supplier", "region", "partsupp", "part", "nation", "customer", "lineitem", "image"]
+  tables_dir: {
+    "orders": "/db100GB/orders",
+    "supplier": "/db100GB/supplier",
+    "region": "/db100GB/region",
+    "partsupp": "/db100GB/partsupp",
+    "part": "/db100GB/part",
+    "nation": "/db100GB/nation",
+    "customer": "/db100GB/customer",
+    "lineitem": "/db100GB/lineitem",
+    "image": "/image"
+  }
+}

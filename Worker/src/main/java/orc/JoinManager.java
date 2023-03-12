@@ -27,8 +27,6 @@ import org.apache.orc.impl.RecordReaderImpl;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static orc.Commons.*;
@@ -40,7 +38,6 @@ public class JoinManager {
         Configuration conf = new Configuration();
 
         Reader reader = OrcFile.createReader(new Path(path), OrcFile.readerOptions(conf));
-//        TypeDescription schema = reader.getSchema();
         RecordReaderImpl records = (RecordReaderImpl) reader.rows(reader.options());
         VectorizedRowBatch batch = reader.getSchema().createRowBatch();
 
@@ -72,18 +69,10 @@ public class JoinManager {
         }
         records2.close();
         batch2.reset();
-//        System.out.println(hm.toString());
     }
 
-    public static void joinPartition(String path, String column, String relation, String buckets, int mode) throws IOException, AlluxioException {
+    public static void joinPartition(String path, String column, String relation, String buckets) throws IOException, AlluxioException {
         long start = System.currentTimeMillis();
-//        AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
-//        AmazonS3 s3client = AmazonS3ClientBuilder
-//                .standard()
-//                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                .withRegion(Regions.US_EAST_1)
-//                .build();
-//        InputStream in = s3client.getObject(S3_BUCKET, path).getObjectContent();
 
         alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
         alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
@@ -94,51 +83,31 @@ public class JoinManager {
         File f = new File(path);
         FileUtils.copyInputStreamToFile(in, f);
         long end = System.currentTimeMillis();
-//        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-//        jedisr.rpush("times", "Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println("TIME_LOG: Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
-//        System.out.println("File retrieved from s3");
-        scannedToMap(path, column, relation, Integer.valueOf(buckets), mode);
-//        Files.deleteIfExists(Paths.get(path));
+        scannedToMap(path, column, relation, Integer.valueOf(buckets));
         f.delete();
     }
 
-
-    public static void joinProbing(String pathS, String pathR, String bucketID, int mode) throws IOException {
-        int bucket = Integer.valueOf(bucketID);
+    public static void joinProbing(String pathS, String pathR) throws IOException {
         Map<String, HashNode<Tuple>> map = new TreeMap<>();
         Jedis jedis = newJedisConnection(REDIS_HOST, REDIS_PORT);
-        AmazonS3 s3client = null;
-        if(mode == 2){
-//            AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
-//            s3client = AmazonS3ClientBuilder
-//                    .standard()
-//                    .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                    .withRegion(Regions.US_EAST_1)
-//                    .build();
-        }
         long start = System.currentTimeMillis();
         long lenght = jedis.llen(pathS);
         while(lenght > 0){
             try {
                 String jkey = pathS + jedis.lpop(pathS);
                 ByteArrayInputStream b = null;
-                if (mode == 2) {
-                    InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                } else {
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
+                alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
-                    FileSystem fs = FileSystem.Factory.get();
-                    AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
-                    FileInStream in = fs.openFile(path);
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                    fs.delete(path);
-                    fs.close();
-//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
-                    in.close();
-                }
+                FileSystem fs = FileSystem.Factory.get();
+                AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998"+jkey);
+                FileInStream in = fs.openFile(path);
+                b = new ByteArrayInputStream(in.readAllBytes());
+                fs.delete(path);
+                fs.close();
+                in.close();
+
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
                 for (Tuple record : records) {
@@ -170,24 +139,18 @@ public class JoinManager {
             try {
                 String jkey = pathR + jedis.lpop(pathR);
                 ByteArrayInputStream b = null;
-                if (mode == 2) {
-                    InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                } else {
 
-                    alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
-                    alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
-                    FileSystem fs = FileSystem.Factory.get();
-                    AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
-                    FileInStream in = fs.openFile(path);
-                    b = new ByteArrayInputStream(in.readAllBytes());
-                    fs.delete(path);
-                    fs.close();
-                    in.close();
+                alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.83");
+                alluxio.conf.Configuration.set(PropertyKey.SECURITY_LOGIN_USERNAME, "root");
 
-//                    b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
-                }
+                FileSystem fs = FileSystem.Factory.get();
+                AlluxioURI path = new AlluxioURI("alluxio://136.145.77.83:19998" + jkey);
+                FileInStream in = fs.openFile(path);
+                b = new ByteArrayInputStream(in.readAllBytes());
+                fs.delete(path);
+                fs.close();
+                in.close();
 
                 ObjectInputStream o = new ObjectInputStream(b);
                 LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
@@ -220,37 +183,16 @@ public class JoinManager {
         //        jedisr.close();
     }
 
-    private static LinkedList<Tuple> getPartitions(String path, int mode, Jedis jedis, AmazonS3 s3client) throws IOException, ClassNotFoundException {
-        String jkey = path + jedis.lpop(path);
-        ByteArrayInputStream b = null;
-        if (mode == 2) {
-            InputStream in = s3client.getObject(S3_BUCKET, jkey).getObjectContent();
-            b = new ByteArrayInputStream(in.readAllBytes());
-        } else {
-            b = new ByteArrayInputStream(jedis.get(jkey.getBytes()));
-        }
-        ObjectInputStream o = new ObjectInputStream(b);
-        LinkedList<Tuple> records = (LinkedList<Tuple>) o.readObject();
-        return records;
-
-        //                IgniteClient client = Ignition.startClient(new ClientConfiguration().setAddresses(IGNITE_HOST_PORT));
-//                ClientCache<String, LinkedList<Tuple>> cache = client.getOrCreateCache("join");
-//                LinkedList<Tuple> records = cache.get(pathS + jedis.lpop(pathS));
-//                client.close();
-    }
-
-    public static void join(JsonArray pathR, String columnR, String relationR, JsonArray pathS, String columnS, String relationS, String buckets, int mode) throws IOException {
+    public static void join(JsonArray pathR, String columnR, String relationR, JsonArray pathS, String columnS, String relationS, String buckets) throws IOException {
 
         int bucket = Integer.valueOf(buckets);
         //TODO: ******************** what to do if the join is with the same table but different columns
         //TODO: what to do with the fixed bucket size
         //TODO: where do i save the list?
         long start = System.currentTimeMillis();
-        orcToMap(pathR, columnR, bucket,  relationR, mode);
-        orcToMap(pathS, columnS, bucket,  relationS, mode);
+        orcToMap(pathR, columnR, bucket,  relationR);
+        orcToMap(pathS, columnS, bucket,  relationS);
         long end = System.currentTimeMillis();
-//        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
-//        jedisr.rpush("times", "Partition Single " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println("TIME_LOG: Partition Single " + ip + " " + start + " " + end + " " + (end-start));
 
         //TODO: Do i want threading?
@@ -262,14 +204,14 @@ public class JoinManager {
             String s = "/join/" + i + "/" + relationS + "/";
 
 //            System.out.println(r + " - " + s);
-            joinProbing(s, r, String.valueOf(i), mode);
+            joinProbing(s, r);
         }
         end = System.currentTimeMillis();
-//        jedisr.rpush("times", "Probing Single " + ip + " " + start + " " + end + " " + (end-start));
         System.out.println("TIME_LOG: Probing Single " + ip + " " + start + " " + end + " " + (end-start));
 
     }
-    public static void scannedToMap(String path, String column, String relation, int buckets, int mode) throws IOException {
+
+    public static void scannedToMap(String path, String column, String relation, int buckets) throws IOException {
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
 
@@ -292,7 +234,6 @@ public class JoinManager {
 
 
         while (records.nextBatch(batch)) {
-//            System.out.println("reading...");
             for(int r=0; r < batch.size; ++r) {
                 Tuple created = new Tuple(batch.cols.length + 1);
                 StringBuilder key = new StringBuilder();
@@ -306,7 +247,7 @@ public class JoinManager {
                 // TODO: create better hashfunction
                 if(table == null) {
                     //fix the relation name
-                    table = new GRACEHashArrayInParts(buckets, 1, relation, mode);
+                    table = new GRACEHashArrayInParts(buckets, relation);
                 }
                 table.addRecord(created);
             }
@@ -323,7 +264,7 @@ public class JoinManager {
         System.out.println("TIME_LOG: Partition (Tuples to Buckets) " + ip + " " + start + " " + end + " " + (end-start));
     }
 
-    public static void orcToMap(JsonArray path, String column, int buckets, String relation, int mode) throws IOException {
+    public static void orcToMap(JsonArray path, String column, int buckets, String relation) throws IOException {
         Configuration conf = new Configuration();
 //        System.out.println(path);
         AWSCredentials credentials = new BasicAWSCredentials(AWS_S3_ACCESS_KEY, AWS_S3_SECRET_KEY);
@@ -333,7 +274,7 @@ public class JoinManager {
                 .withRegion(Regions.US_EAST_1)
                 .build();
 
-        GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, 1, relation, mode);
+        GRACEHashArrayInParts table = new GRACEHashArrayInParts(buckets, relation);
 //        Jedis jedisr = new Jedis(REDIS_HOST_TIMES, REDIS_PORT_TIMES);
         for (int i = 0; i < path.size(); i++) {
             long start = System.currentTimeMillis();
@@ -376,11 +317,6 @@ public class JoinManager {
             batch.reset();
         }
         table.flushRemainders();
-    }
-
-    public static long hashFunction(String s, AES hashing){
-        long result = hashing.encrypt(s);
-        return result;
     }
 
 }
