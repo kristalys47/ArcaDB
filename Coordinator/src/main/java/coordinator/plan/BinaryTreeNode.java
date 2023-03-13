@@ -89,7 +89,7 @@ public abstract class BinaryTreeNode implements Runnable{
             case JOIN:
                 return new JoinTreeNode(object, cursor, parent, inner, outer, buckets);
             default:
-                return new ScanTreeNode(object, cursor, parent, inner, outer);
+                return new ScanTreeNode(object, cursor, parent, inner, outer, buckets);
         }
     }
 

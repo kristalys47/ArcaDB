@@ -28,7 +28,6 @@ public class Commons {
     static public String POSTGRES_DB_NAME;
     static public String POSTGRES_JDBC;
     static public String MODE;
-    static public int BUCKETS;
     static public JSONObject TABLES;
     static public int PICTURE_PARTITION = 2000;
 

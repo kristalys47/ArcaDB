@@ -3,4 +3,4 @@ COPY ./m2/ /root/.m2/
 COPY ./Coordinator/ /Coordinator/
 WORKDIR /Coordinator
 RUN mvn clean install
-CMD mvn exec:java -Dexec.mainClass="coordinator.Coordinator" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false
+CMD mvn exec:java -Dexec.mainClass="coordinator.Coordinator" -Dexec.cleanupDaemonThreads=false -Dsbt.classloader.close=false -DAWS_S3_ACCESS_KEY=AK -DAWS_S3_SECRET_KEY=UaMYs -DREDIS_HOST=136.145.77.83 -DREDIS_PORT=6379 -DREDIS_HOST_TIMES=136.145.77.83 -DREDIS_PORT_TIMES=6380 -DWORKER_APP_PORT=7272 -DCOORDINATOR_APP_PORT=7271 -DPOSTGRES_PASSWORD=mypassword -DPOSTGRES_USERNAME=myusername -DPOSTGRES_HOST=136.145.77.83 -DPOSTGRES_PORT=5434 -DPOSTGRES_DB_NAME=test -DMODE=queue -DCPN=5 -DTC=20 -DALLUXIO_DATA_HOST=136.145.77.107 -DALLUXIO_DATA_PORT=39999 -DALLUXIO_CACHE_HOST=136.145.77.83 -DALLUXIO_CACHE_PORT=39999

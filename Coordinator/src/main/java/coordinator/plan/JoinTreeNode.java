@@ -112,27 +112,19 @@ public class JoinTreeNode extends BinaryTreeNode {
 
             switch (relationOuter.typeData){
                 case STRUCTURED:
-                    System.out.println("out struct");
                     outer_count = scanScheduleStructured(relationOuter, this.OuterColumnName, this.OuterRelation);
-                    System.out.println("out struct done");
                     break;
                 case SEMISTRUCTURED:
-                    System.out.println("out semi");
                     outer_count = scanScheduleSemistructured(relationOuter, this.OuterColumnName, this.OuterRelation);
-                    System.out.println("out semi done");
                     break;
             }
 
             switch (relationInner.typeData){
                 case STRUCTURED:
-                    System.out.println("in struct");
                     inner_count = scanScheduleStructured(relationInner, this.InnerColumnName, this.InnerRelation);
-                    System.out.println("in struct done");
                     break;
                 case SEMISTRUCTURED:
-                    System.out.println("in semi");
                     inner_count = scanScheduleSemistructured(relationInner, this.InnerColumnName, this.InnerRelation);
-                    System.out.println("in semi done");
                     break;
             }
 

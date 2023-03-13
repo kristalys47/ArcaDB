@@ -50,7 +50,7 @@ public class WorkerManager {
                 break;
             case "inference":
                 FileAttributesManager.semistructuredID(arg.getJSONArray("result"), arg.getInt("buckets"), arg.getString("relation"));
-                jedisControl.rpush("semistructuredDONE", ip + "\nSuccessful: " + arg);
+                jedisControl.rpush("done", ip + "\nSuccessful: " + arg);
                 break;
             case "joinPartition":
                 String path = "/" + arg.getString("relation") + "/" + arg.getJSONArray("files").getString(0);

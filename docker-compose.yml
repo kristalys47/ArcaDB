@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   coordinator:
-    image: kristalys/dbms-coordinator-calcite:0.9
+    image: kristalys/dbms-coordinator:2.5
     container_name: coordinator
     logging:
         driver: json-file
@@ -18,14 +18,12 @@ services:
         protocol: tcp
         mode: host
     env_file: .env
-    command: mvn exec:java -Dexec.mainClass="coordinator.Coordinator" -Dexec.args="${S3_BUCKET} ${AWS_S3_ACCESS_KEY} ${AWS_S3_SECRET_KEY} ${REDIS_HOST} ${REDIS_PORT} ${REDIS_HOST_TIMES} ${REDIS_PORT_TIMES} ${WORKER_APP_PORT} ${COORDINATOR_APP_PORT} ${POSTGRES_PASSWORD} ${POSTGRES_USERNAME} ${POSTGRES_HOST} ${POSTGRES_PORT} ${POSTGRES_DB_NAME} ${MODE}"
-
     networks:
       cloud:
         aliases:
           - coordinator
   worker-python:
-    image: kristalys/dbms-worker-python:2.2.2
+    image: kristalys/dbms-worker-python:3.5
     logging:
       driver: json-file
       options:
@@ -36,17 +34,17 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 4
+      replicas: 2
       placement:
         max_replicas_per_node: 1
         constraints:
           - "node.role==worker"
-          - "node.labels.type==memory"
+          - "node.labels.processor==gpu"
     depends_on:
       - coordinator
     env_file: .env
   worker:
-    image: kristalys/dbms-worker:1.3.3
+    image: kristalys/dbms-worker:2.5
     logging:
         driver: json-file
         options:
@@ -57,17 +55,15 @@ services:
         aliases:
           - worker
     deploy:
-      replicas: 0
+      replicas: 60
       placement:
         max_replicas_per_node: 6
         constraints:
           - "node.role==worker"
           - "node.labels.type==memory"
-          - "node.labels.processor==gpu"
     depends_on:
       - coordinator
     env_file: .env
-    command: mvn exec:java -Dexec.mainClass="orc.main" -Dexec.args="${S3_BUCKET} ${AWS_S3_ACCESS_KEY} ${AWS_S3_SECRET_KEY} ${REDIS_HOST} ${REDIS_PORT} ${REDIS_HOST_TIMES} ${REDIS_PORT_TIMES} ${WORKER_APP_PORT} ${COORDINATOR_APP_PORT} ${POSTGRES_PASSWORD} ${POSTGRES_USERNAME} ${POSTGRES_HOST} ${POSTGRES_PORT} ${POSTGRES_DB_NAME} ${MODE}"
 networks:
   cloud:
     driver: overlay

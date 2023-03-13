@@ -1,4 +1,4 @@
-docker run -dit --mount type=bind,source="$(pwd)",target="/JavaCode" --name rw2 ghcr.io/graalvm/graalvm-ce:latest bash
+docker stack deploy --compose-file docker-compose.yml testingdocker run -dit --mount type=bind,source="$(pwd)",target="/JavaCode" --name rw2 ghcr.io/graalvm/graalvm-ce:latest bash
 
 install https://github.com/oracle/graal.git
 git clone https://github.com/oracle/graal.git
@@ -297,7 +297,7 @@ portainer community edition (portainer CE)
 
 scp -r src root@136.145.77.80:/root/Coordinator
 
-"{'planType': 'joinProbing', 'outer': '/join/8/customer', 'inner': '/join/8/image', 'buckets': 60, 'relation': 'image'}"
+"{'planType': 'joinProbing', 'outer': '/join/8/customer/', 'inner': '/join/8/image/'}"
 
 https://github.com/postgres/postgres/blob/master/src/backend/commands/explain.c#L814
 
@@ -307,3 +307,7 @@ https://github.com/postgres/postgres/blob/master/src/backend/commands/explain.c#
 
 
 "{'planType': 'inference', 'file': '/results/results_e21ff78e-afdb-4e90-8592-6e186bf5b632.json', 'result': ['000001.jpg'], 'buckets': 60, 'relation': 'image'}"
+
+
+
+-DAWS_S3_ACCESS_KEY=AK -DAWS_S3_SECRET_KEY=UaMYs -DREDIS_HOST=136.145.77.83 -DREDIS_PORT=6379 -DREDIS_HOST_TIMES=136.145.77.83 -DREDIS_PORT_TIMES=6380 -DWORKER_APP_PORT=7272 -DCOORDINATOR_APP_PORT=7271 -DPOSTGRES_PASSWORD=mypassword -DPOSTGRES_USERNAME=myusername -DPOSTGRES_HOST=136.145.77.83 -DPOSTGRES_PORT=5434 -DPOSTGRES_DB_NAME=test -DMODE=queue -DCPN=5 -DTC=20 -DALLUXIO_DATA_HOST=136.145.77.107 -DALLUXIO_DATA_PORT=39999 -DALLUXIO_CACHE_HOST=136.145.77.83 -DALLUXIO_CACHE_PORT=39999

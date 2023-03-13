@@ -23,17 +23,16 @@ public class ScanTreeNode extends BinaryTreeNode {
     public String relation = "";
 
 
-    public ScanTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer) {
+    public ScanTreeNode(JSONObject info, Statement cursor, BinaryTreeNode parent, BinaryTreeNode inner, BinaryTreeNode outer, int buckets) {
         //TODO: send a query to catalog to get the files and everything
         //TODO: Check bucket stuff (Create it for the parent class special constructor. Overload it)
-        super(NodeType.SCAN, parent, inner, outer, Commons.BUCKETS);
+        super(NodeType.SCAN, parent, inner, outer, buckets);
         //TODO: you can get the relation from here to send to the hash join make it a variable;
         if (info.has("Relation Name")) {
             this.relation = info.getString("Relation Name");
             this.jsonObject = Catalog.getTableMetadata(this.relation);
             this.TableFiles = Catalog.filesForTable(this.jsonObject);
         }
-        System.out.println(this.jsonObject.getString("type"));
         switch (this.jsonObject.getString("type")) {
             case "structured":
                 this.typeData = DataType.STRUCTURED;
