@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3385a805-206f-43e7-9c32-50612260b1eb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/FilterTreeNode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/UserdefinedFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Commands for docker file.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Commands for docker file.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/BinaryTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/BinaryTreeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/Catalog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/Utils/Catalog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/ContainerManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/HashJoinBinaryTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/JoinTreeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/ParallelHashJoinBinaryTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/ParallelHashJoinBinaryTreeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/ScanBinaryTreeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Coordinator/src/main/java/coordinator/plan/ScanTreeNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/coordinator/CalciteOptimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/coordinator/CalciteOptimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/coordinator/SiteAllocation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/coordinator/TestingAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/coordinator/TestingAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../RunResults/logs-raw/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../RunResults/logs-raw/test.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2Lpkwp412Y6iJK9eIfmZVrVpIS2" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="postgresql" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RunManager" selected="TestNG.TestingAPI.calciteStufftest3">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestingAPI.calciteStufftest2" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="Coordinator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="coordinator.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="coordinator" />
+      <option name="MAIN_CLASS_NAME" value="coordinator.TestingAPI" />
+      <option name="METHOD_NAME" value="calciteStufftest2" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestingAPI.calciteStufftest3" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="Coordinator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="coordinator.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="coordinator" />
+      <option name="MAIN_CLASS_NAME" value="coordinator.TestingAPI" />
+      <option name="METHOD_NAME" value="calciteStufftest3" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestingAPI.calciteWithClass" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="Coordinator" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="coordinator.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="coordinator" />
+      <option name="MAIN_CLASS_NAME" value="coordinator.TestingAPI" />
+      <option name="METHOD_NAME" value="calciteWithClass" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="TestNG.TestingAPI.calciteStufftest3" />
+        <item itemvalue="TestNG.TestingAPI.calciteWithClass" />
+        <item itemvalue="TestNG.TestingAPI.calciteStufftest2" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3385a805-206f-43e7-9c32-50612260b1eb" name="Changes" comment="" />
+      <created>1676575657502</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1676575657502</updated>
+      <workItem from="1676575660120" duration="4077000" />
+      <workItem from="1677263789777" duration="876000" />
+      <workItem from="1677302424202" duration="370000" />
+      <workItem from="1677597410853" duration="17037000" />
+      <workItem from="1677696315900" duration="5558000" />
+      <workItem from="1678046970366" duration="2300000" />
+      <workItem from="1678054281217" duration="31367000" />
+      <workItem from="1678478329940" duration="6850000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/plan/TableScanTreeNode.java</url>
+          <line>23</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/plan/UserdefinedFunction.java</url>
+          <line>80</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/plan/UserdefinedFunction.java</url>
+          <line>95</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/plan/UserdefinedFunction.java</url>
+          <line>108</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/Coordinator.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/Controller.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/plan/UserdefinedFunction.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/CalciteOptimizer.java</url>
+          <line>195</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/coordinator/TestingAPI.java</url>
+          <line>424</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

@@ -1,0 +1,13 @@
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/CalciteOptimizer.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/BinaryTreeNode.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/Controller.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/TestingAPI.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/Coordinator.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/BinaryTreePlan.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/Commons.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/Utils/Catalog.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/SiteAllocation.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/TableScanTreeNode.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/UserdefinedFunction.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/JoinTreeNode.java
+/Users/kristalys/git/Container-DBMS/CoordinatorCalcite/src/main/java/coordinator/plan/FilterTreeNode.java
