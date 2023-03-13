@@ -6,8 +6,7 @@
     },
     "gender": {
       "type": "class",
-      "classes": ["female", "male"],
-      "model":
+      "classes": ["female", "male"]
     },
     "heavymakeup": {
       "type": "class",

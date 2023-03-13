@@ -66,6 +66,7 @@ public class WorkerManager {
                 String inner = arg.getString("inner");
                 JoinManager.joinProbing(outer, inner);
                 jedisControl.rpush("done", ip + "\nSuccessful: " + arg);
+                break;
             default:
 //                return ORCManager.reader(arg[1], arg[2], arg[3], arg[4]);
         }

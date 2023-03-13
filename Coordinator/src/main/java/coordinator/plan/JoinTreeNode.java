@@ -144,9 +144,9 @@ public class JoinTreeNode extends BinaryTreeNode {
             for (int i1 = 0; i1 < this.buckets; i1++) {
 
                 JSONObject planJAVA = new JSONObject();
-                planJAVA.append("planType", "joinProbing");
-                planJAVA.append("outer", "/join/" + i1 + "/" + this.OuterRelation + "/");
-                planJAVA.append("inner", "/join/" + i1 + "/" + this.InnerRelation + "/");
+                planJAVA.put("planType", "joinProbing");
+                planJAVA.put("outer", "/join/" + i1 + "/" + this.OuterRelation + "/");
+                planJAVA.put("inner", "/join/" + i1 + "/" + this.InnerRelation + "/");
                 jedis.rpush("structured", planJAVA.toString());
             }
 
