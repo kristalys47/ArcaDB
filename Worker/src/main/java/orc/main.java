@@ -9,24 +9,24 @@ import static orc.Commons.*;
 
 public class main {
     static public void main(String[] arg) throws Exception {
-        S3_BUCKET = arg[0].trim();
-        AWS_S3_ACCESS_KEY = arg[1].trim();
-        AWS_S3_SECRET_KEY = arg[2].trim();
-        REDIS_HOST = arg[3].trim();
-        REDIS_PORT = Integer.parseInt(arg[4].trim());
-        REDIS_HOST_TIMES = arg[5].trim();
-        REDIS_PORT_TIMES = Integer.parseInt(arg[6].trim());
-        WORKER_APP_PORT = Integer.parseInt(arg[7].trim());
-        COORDINATOR_APP_PORT = Integer.parseInt(arg[8].trim());
+      S3_BUCKET = System.getProperty("S3_BUCKET");
+      AWS_S3_ACCESS_KEY = System.getProperty("AWS_S3_ACCESS_KEY");
+      AWS_S3_SECRET_KEY = System.getProperty("AWS_S3_SECRET_KEY");
+      REDIS_HOST = System.getProperty("REDIS_HOST");
+      REDIS_PORT = Integer.parseInt(System.getProperty("REDIS_PORT"));
+      REDIS_HOST_TIMES = System.getProperty("REDIS_HOST_TIMES");
+      REDIS_PORT_TIMES = Integer.parseInt(System.getProperty("REDIS_PORT_TIMES"));
+      WORKER_APP_PORT = Integer.parseInt(System.getProperty("WORKER_APP_PORT"));
+      COORDINATOR_APP_PORT = Integer.parseInt(System.getProperty("COORDINATOR_APP_PORT"));
 
-        POSTGRES_PASSWORD = arg[9].trim();
-        POSTGRES_USERNAME = arg[10].trim();
-        POSTGRES_HOST = arg[11].trim();
-        POSTGRES_PORT = Integer.parseInt(arg[12].trim());
-        POSTGRES_DB_NAME = arg[13].trim();
-        MODE = arg[14].trim();
+      POSTGRES_PASSWORD = System.getProperty("POSTGRES_PASSWORD");
+      POSTGRES_USERNAME = System.getProperty("POSTGRES_USERNAME");
+      POSTGRES_HOST = System.getProperty("POSTGRES_HOST");
+      POSTGRES_PORT = Integer.parseInt(System.getProperty("POSTGRES_PORT"));
+      POSTGRES_DB_NAME = System.getProperty("POSTGRES_DB_NAME");
+      MODE = System.getProperty("MODE");
 
-        POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
+      POSTGRES_JDBC = "jdbc:postgresql://" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB_NAME;
 
         System.out.println("Started");
 

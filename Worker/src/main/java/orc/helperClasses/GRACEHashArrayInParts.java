@@ -34,7 +34,8 @@ public class GRACEHashArrayInParts {
         this.fileBuckets = new LinkedList[buckets];
         //TODO: get object size
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
-        this.recordsLimit = Integer.valueOf(jedis.get(relation + "_partition_size"));
+        //TODO:SEND metadata with this info to plan
+        this.recordsLimit = 50000;
         jedis.close();
         this.records = new LinkedList[buckets];
 
@@ -103,4 +104,3 @@ public class GRACEHashArrayInParts {
         }
     }
 }
-

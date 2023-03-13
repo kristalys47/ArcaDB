@@ -71,7 +71,7 @@ public class JoinManager {
         batch2.reset();
     }
 
-    public static void joinPartition(String path, String column, String relation, String buckets) throws IOException, AlluxioException {
+    public static void joinPartition(String path, String column, String relation, int buckets) throws IOException, AlluxioException {
         long start = System.currentTimeMillis();
 
         alluxio.conf.Configuration.set(PropertyKey.MASTER_HOSTNAME, "136.145.77.107");
@@ -84,7 +84,7 @@ public class JoinManager {
         FileUtils.copyInputStreamToFile(in, f);
         long end = System.currentTimeMillis();
         System.out.println("TIME_LOG: Partition (Read File) " + ip + " " + start + " " + end + " " + (end-start));
-        scannedToMap(path, column, relation, Integer.valueOf(buckets));
+        scannedToMap(path, column, relation, buckets);
         f.delete();
     }
 
@@ -320,4 +320,3 @@ public class JoinManager {
     }
 
 }
-
