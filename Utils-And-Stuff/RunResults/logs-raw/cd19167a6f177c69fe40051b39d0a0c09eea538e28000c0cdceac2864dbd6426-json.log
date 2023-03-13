@@ -1,0 +1,15 @@
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.140987338Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-13T05:23:40.141037844Z"}
+{"log":"== CUDA ==\n","stream":"stdout","time":"2023-03-13T05:23:40.141086548Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-13T05:23:40.141140721Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.144104742Z"}
+{"log":"CUDA Version 11.7.1\n","stream":"stdout","time":"2023-03-13T05:23:40.144120036Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.144938328Z"}
+{"log":"Container image Copyright (c) 2016-2022, NVIDIA CORPORATION \u0026 AFFILIATES. All rights reserved.\n","stream":"stdout","time":"2023-03-13T05:23:40.14494995Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.145753651Z"}
+{"log":"This container image and its contents are governed by the NVIDIA Deep Learning Container License.\n","stream":"stdout","time":"2023-03-13T05:23:40.145768805Z"}
+{"log":"By pulling and using the container, you accept the terms and conditions of this license:\n","stream":"stdout","time":"2023-03-13T05:23:40.145773804Z"}
+{"log":"https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license\n","stream":"stdout","time":"2023-03-13T05:23:40.145778108Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.145782258Z"}
+{"log":"A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.\n","stream":"stdout","time":"2023-03-13T05:23:40.145786348Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-13T05:23:40.154004596Z"}

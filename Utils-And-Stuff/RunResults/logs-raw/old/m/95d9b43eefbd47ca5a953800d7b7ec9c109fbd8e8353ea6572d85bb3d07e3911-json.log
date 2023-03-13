@@ -1,0 +1,318 @@
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.127625834Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-06T04:10:58.127747317Z"}
+{"log":"== CUDA ==\n","stream":"stdout","time":"2023-03-06T04:10:58.12775461Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-06T04:10:58.127776988Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.130309594Z"}
+{"log":"CUDA Version 11.7.1\n","stream":"stdout","time":"2023-03-06T04:10:58.13034223Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.131044613Z"}
+{"log":"Container image Copyright (c) 2016-2022, NVIDIA CORPORATION \u0026 AFFILIATES. All rights reserved.\n","stream":"stdout","time":"2023-03-06T04:10:58.131050673Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.132050445Z"}
+{"log":"This container image and its contents are governed by the NVIDIA Deep Learning Container License.\n","stream":"stdout","time":"2023-03-06T04:10:58.132055362Z"}
+{"log":"By pulling and using the container, you accept the terms and conditions of this license:\n","stream":"stdout","time":"2023-03-06T04:10:58.132058275Z"}
+{"log":"https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license\n","stream":"stdout","time":"2023-03-06T04:10:58.132060759Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.132063567Z"}
+{"log":"A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.\n","stream":"stdout","time":"2023-03-06T04:10:58.132065991Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-06T04:10:58.140080233Z"}
+{"log":"10.0.19.7\n","stream":"stdout","time":"2023-03-06T05:03:18.428918501Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42896237Z"}
+{"log":"Model is loaded\n","stream":"stdout","time":"2023-03-06T05:03:18.428966518Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076093239.252 1678076128200.0513 34960.79931640625\n","stream":"stdout","time":"2023-03-06T05:03:18.428969441Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.428972286Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076130091.6172 1678076166210.1416 36118.5244140625\n","stream":"stdout","time":"2023-03-06T05:03:18.428974989Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.428977726Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076167951.633 1678076202245.7563 34294.123291015625\n","stream":"stdout","time":"2023-03-06T05:03:18.428980311Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.428983028Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076204066.1975 1678076236274.8926 32208.695068359375\n","stream":"stdout","time":"2023-03-06T05:03:18.428985802Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.428988534Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076237860.1633 1678076272947.017 35086.853759765625\n","stream":"stdout","time":"2023-03-06T05:03:18.428991191Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.428998529Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076274705.401 1678076309159.7227 34454.32177734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429001153Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429004037Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076310747.7139 1678076343740.1494 32992.435546875\n","stream":"stdout","time":"2023-03-06T05:03:18.429006599Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429009273Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076345487.1975 1678076377981.8894 32494.69189453125\n","stream":"stdout","time":"2023-03-06T05:03:18.429012104Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429015205Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076379682.1824 1678076413251.9563 33569.77392578125\n","stream":"stdout","time":"2023-03-06T05:03:18.429017959Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429020741Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076414905.0322 1678076448114.853 33209.82080078125\n","stream":"stdout","time":"2023-03-06T05:03:18.429023445Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429040318Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076449977.509 1678076483959.6216 33982.112548828125\n","stream":"stdout","time":"2023-03-06T05:03:18.429043412Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42904585Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076485707.506 1678076518986.4993 33278.9931640625\n","stream":"stdout","time":"2023-03-06T05:03:18.429048397Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429050921Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076520579.7954 1678076554501.9827 33922.187255859375\n","stream":"stdout","time":"2023-03-06T05:03:18.429053421Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429055957Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076556304.2683 1678076589993.5227 33689.25439453125\n","stream":"stdout","time":"2023-03-06T05:03:18.429058312Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429060662Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076591665.2788 1678076623892.4534 32227.174560546875\n","stream":"stdout","time":"2023-03-06T05:03:18.429062917Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429065339Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076625707.8313 1678076658405.987 32698.15576171875\n","stream":"stdout","time":"2023-03-06T05:03:18.429067786Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429070324Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076659884.6272 1678076692850.6765 32966.04931640625\n","stream":"stdout","time":"2023-03-06T05:03:18.429072868Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429075376Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076694541.544 1678076727489.6323 32948.08837890625\n","stream":"stdout","time":"2023-03-06T05:03:18.429077635Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429079978Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076729081.8013 1678076762083.997 33002.19580078125\n","stream":"stdout","time":"2023-03-06T05:03:18.429083083Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429085607Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076763805.496 1678076796012.8447 32207.3486328125\n","stream":"stdout","time":"2023-03-06T05:03:18.429088065Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429090618Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076797716.7175 1678076829821.081 32104.363525390625\n","stream":"stdout","time":"2023-03-06T05:03:18.429093096Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429095682Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076831443.2039 1678076864863.3818 33420.177978515625\n","stream":"stdout","time":"2023-03-06T05:03:18.429097973Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42910033Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076866606.4883 1678076900230.039 33623.55078125\n","stream":"stdout","time":"2023-03-06T05:03:18.429102594Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429105021Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076901758.3042 1678076934399.351 32641.046875\n","stream":"stdout","time":"2023-03-06T05:03:18.429107514Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429110053Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076936085.4028 1678076971161.714 35076.311279296875\n","stream":"stdout","time":"2023-03-06T05:03:18.429112543Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429115064Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678076972883.8691 1678077005869.8625 32985.993408203125\n","stream":"stdout","time":"2023-03-06T05:03:18.429117354Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429123046Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077007468.8105 1678077040433.5532 32964.74267578125\n","stream":"stdout","time":"2023-03-06T05:03:18.429125463Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429127916Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077042092.1162 1678077075469.0056 33376.889404296875\n","stream":"stdout","time":"2023-03-06T05:03:18.429130337Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429132856Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077077053.9138 1678077109810.2478 32756.333984375\n","stream":"stdout","time":"2023-03-06T05:03:18.429135337Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429137935Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077111517.451 1678077145047.7463 33530.29541015625\n","stream":"stdout","time":"2023-03-06T05:03:18.429140193Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429142593Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077146697.769 1678077180350.5525 33652.783447265625\n","stream":"stdout","time":"2023-03-06T05:03:18.429144856Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429147252Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077182001.3442 1678077216126.9204 34125.576171875\n","stream":"stdout","time":"2023-03-06T05:03:18.429149724Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429152242Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077217815.6794 1678077250670.1924 32854.512939453125\n","stream":"stdout","time":"2023-03-06T05:03:18.4291547Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429157311Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077252218.9841 1678077285974.7654 33755.78125\n","stream":"stdout","time":"2023-03-06T05:03:18.42915957Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42916188Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077287695.604 1678077320279.416 32583.81201171875\n","stream":"stdout","time":"2023-03-06T05:03:18.429164175Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429166563Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077321868.0808 1678077354504.1123 32636.031494140625\n","stream":"stdout","time":"2023-03-06T05:03:18.429168985Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429171541Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077356056.7092 1678077389656.9377 33600.228515625\n","stream":"stdout","time":"2023-03-06T05:03:18.429173988Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42917648Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077391410.553 1678077423842.159 32431.60595703125\n","stream":"stdout","time":"2023-03-06T05:03:18.429179101Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429181635Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077425496.9136 1678077460144.2378 34647.32421875\n","stream":"stdout","time":"2023-03-06T05:03:18.429183925Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429186308Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077461838.7761 1678077495352.5417 33513.765625\n","stream":"stdout","time":"2023-03-06T05:03:18.42918878Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429191284Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077496887.0671 1678077529520.4949 32633.427734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429193858Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429196464Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077531231.8215 1678077565179.7615 33947.93994140625\n","stream":"stdout","time":"2023-03-06T05:03:18.42919877Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429201117Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077566751.4849 1678077599209.3118 32457.826904296875\n","stream":"stdout","time":"2023-03-06T05:03:18.429203433Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429208752Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077600883.1091 1678077633902.5657 33019.45654296875\n","stream":"stdout","time":"2023-03-06T05:03:18.429211319Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429213831Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077635559.5972 1678077668750.4543 33190.857177734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429216296Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429218862Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077670275.0093 1678077703513.9446 33238.935302734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429221089Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429223415Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077705224.8408 1678077739806.5388 34581.697998046875\n","stream":"stdout","time":"2023-03-06T05:03:18.429225635Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429228072Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077741601.8616 1678077775896.3691 34294.507568359375\n","stream":"stdout","time":"2023-03-06T05:03:18.429230483Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429232998Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077777755.742 1678077813347.9626 35592.220703125\n","stream":"stdout","time":"2023-03-06T05:03:18.429235472Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429238006Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077815088.5264 1678077848477.6082 33389.081787109375\n","stream":"stdout","time":"2023-03-06T05:03:18.42924025Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429242583Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678077850082.2114 1678077885406.9202 35324.708740234375\n","stream":"stdout","time":"2023-03-06T05:03:18.429244807Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429247196Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078103765.7302 1678078137265.6624 33499.93212890625\n","stream":"stdout","time":"2023-03-06T05:03:18.429249611Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429252161Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078138995.905 1678078173878.3884 34882.4833984375\n","stream":"stdout","time":"2023-03-06T05:03:18.429254584Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429257063Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078175566.6006 1678078208483.6567 32917.05615234375\n","stream":"stdout","time":"2023-03-06T05:03:18.429259319Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429261672Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078210133.6072 1678078246401.1497 36267.54248046875\n","stream":"stdout","time":"2023-03-06T05:03:18.429263894Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429266265Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078248089.1443 1678078281258.0703 33168.926025390625\n","stream":"stdout","time":"2023-03-06T05:03:18.429268735Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429271231Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078282860.162 1678078317229.067 34368.90478515625\n","stream":"stdout","time":"2023-03-06T05:03:18.429274227Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429276818Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078318875.052 1678078353813.1768 34938.124755859375\n","stream":"stdout","time":"2023-03-06T05:03:18.429279065Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429281365Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078355481.178 1678078392518.2349 37037.056884765625\n","stream":"stdout","time":"2023-03-06T05:03:18.429283616Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.42928605Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078394068.8438 1678078427811.281 33742.437255859375\n","stream":"stdout","time":"2023-03-06T05:03:18.429291259Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429293875Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078429413.526 1678078463806.3738 34392.847900390625\n","stream":"stdout","time":"2023-03-06T05:03:18.429296319Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429298714Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078465466.5342 1678078498502.0803 33035.546142578125\n","stream":"stdout","time":"2023-03-06T05:03:18.429300973Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429303318Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078500174.8086 1678078533689.7385 33514.929931640625\n","stream":"stdout","time":"2023-03-06T05:03:18.429305547Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429307954Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078535313.6199 1678078568816.823 33503.203125\n","stream":"stdout","time":"2023-03-06T05:03:18.429310371Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429312885Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078570359.364 1678078606097.8696 35738.505615234375\n","stream":"stdout","time":"2023-03-06T05:03:18.429315387Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429317857Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078607835.2053 1678078642222.024 34386.818603515625\n","stream":"stdout","time":"2023-03-06T05:03:18.429320118Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429322418Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078643803.7947 1678078678620.2373 34816.442626953125\n","stream":"stdout","time":"2023-03-06T05:03:18.429324654Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429327037Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078680324.3618 1678078714698.0898 34373.72802734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429329563Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429332075Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078716428.522 1678078749273.4495 32844.927490234375\n","stream":"stdout","time":"2023-03-06T05:03:18.429334525Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429336976Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078750954.1895 1678078784178.3894 33224.199951171875\n","stream":"stdout","time":"2023-03-06T05:03:18.429339225Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429341532Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078785766.9985 1678078821061.318 35294.319580078125\n","stream":"stdout","time":"2023-03-06T05:03:18.429343798Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429346219Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078822636.4937 1678078855386.883 32750.389404296875\n","stream":"stdout","time":"2023-03-06T05:03:18.429348632Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429351108Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078857215.2258 1678078890218.745 33003.519287109375\n","stream":"stdout","time":"2023-03-06T05:03:18.429353552Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429356117Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078892040.0193 1678078926630.1692 34590.14990234375\n","stream":"stdout","time":"2023-03-06T05:03:18.429358369Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429360672Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078928332.0825 1678078962328.1428 33996.060302734375\n","stream":"stdout","time":"2023-03-06T05:03:18.429362953Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:03:18.429365372Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078964043.8677 1678078996859.9844 32816.11669921875\n","stream":"stdout","time":"2023-03-06T05:48:28.838783182Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838839676Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678078998429.8784 1678079032190.8872 33761.0087890625\n","stream":"stdout","time":"2023-03-06T05:48:28.838861047Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838864914Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079033850.8591 1678079068179.468 34328.60888671875\n","stream":"stdout","time":"2023-03-06T05:48:28.83886742Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838870005Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079069755.0352 1678079102803.557 33048.521728515625\n","stream":"stdout","time":"2023-03-06T05:48:28.838872338Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838874872Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079104338.0354 1678079138192.1584 33854.123046875\n","stream":"stdout","time":"2023-03-06T05:48:28.838877218Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838879899Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079139871.437 1678079171966.1406 32094.70361328125\n","stream":"stdout","time":"2023-03-06T05:48:28.838882351Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838886328Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079173549.0056 1678079206192.5688 32643.563232421875\n","stream":"stdout","time":"2023-03-06T05:48:28.838889985Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838893952Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079207884.9988 1678079241983.0305 34098.03173828125\n","stream":"stdout","time":"2023-03-06T05:48:28.838897666Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838901607Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079243570.6458 1678079277501.604 33930.958251953125\n","stream":"stdout","time":"2023-03-06T05:48:28.838905308Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838909357Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079279120.365 1678079311792.904 32672.5390625\n","stream":"stdout","time":"2023-03-06T05:48:28.838913097Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838917322Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079313568.9963 1678079348207.2852 34638.288818359375\n","stream":"stdout","time":"2023-03-06T05:48:28.838921276Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838925411Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079349789.258 1678079383217.7834 33428.525390625\n","stream":"stdout","time":"2023-03-06T05:48:28.838929357Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838932164Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079384880.791 1678079417745.8748 32865.083740234375\n","stream":"stdout","time":"2023-03-06T05:48:28.83893443Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838936936Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079419412.5337 1678079454296.5352 34884.00146484375\n","stream":"stdout","time":"2023-03-06T05:48:28.838939553Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838942146Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079455916.9785 1678079490024.5222 34107.543701171875\n","stream":"stdout","time":"2023-03-06T05:48:28.838944651Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838947249Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079491804.162 1678079525068.3901 33264.22802734375\n","stream":"stdout","time":"2023-03-06T05:48:28.838949684Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838952061Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079526559.7966 1678079559569.1318 33009.335205078125\n","stream":"stdout","time":"2023-03-06T05:48:28.838954563Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838974031Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079561327.3088 1678079595838.0098 34510.700927734375\n","stream":"stdout","time":"2023-03-06T05:48:28.83897818Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838982056Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079597423.6555 1678079631305.333 33881.677490234375\n","stream":"stdout","time":"2023-03-06T05:48:28.83898582Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83899119Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079633004.925 1678079665669.7368 32664.811767578125\n","stream":"stdout","time":"2023-03-06T05:48:28.838994795Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.838998643Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079667267.8345 1678079699454.9395 32187.10498046875\n","stream":"stdout","time":"2023-03-06T05:48:28.839002366Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839006584Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079701055.6367 1678079733852.5652 32796.928466796875\n","stream":"stdout","time":"2023-03-06T05:48:28.839010715Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83901481Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079735719.3586 1678079769549.5322 33830.173583984375\n","stream":"stdout","time":"2023-03-06T05:48:28.839018763Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839022891Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079771118.8977 1678079804868.1458 33749.248046875\n","stream":"stdout","time":"2023-03-06T05:48:28.839026672Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839030659Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079806660.796 1678079839500.8286 32840.03271484375\n","stream":"stdout","time":"2023-03-06T05:48:28.83903455Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.8390386Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079841293.9197 1678079875042.1643 33748.24462890625\n","stream":"stdout","time":"2023-03-06T05:48:28.839042529Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839045175Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079876780.3472 1678079887044.3306 10263.9833984375\n","stream":"stdout","time":"2023-03-06T05:48:28.839047545Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839050991Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079957688.4268 1678079991371.965 33683.538330078125\n","stream":"stdout","time":"2023-03-06T05:48:28.839054436Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839058192Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678079993184.112 1678080028092.2922 34908.18017578125\n","stream":"stdout","time":"2023-03-06T05:48:28.839061657Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839065521Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080029741.3738 1678080065737.1077 35995.73388671875\n","stream":"stdout","time":"2023-03-06T05:48:28.83906946Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839073689Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080067520.2637 1678080101849.0483 34328.78466796875\n","stream":"stdout","time":"2023-03-06T05:48:28.839077729Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839081857Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080103594.5544 1678080136672.262 33077.70751953125\n","stream":"stdout","time":"2023-03-06T05:48:28.839085528Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839089403Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080138278.069 1678080171611.6611 33333.592041015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839093071Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839097059Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080173365.2886 1678080208636.9487 35271.66015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839101117Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839109481Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080210242.75 1678080244519.9856 34277.235595703125\n","stream":"stdout","time":"2023-03-06T05:48:28.839113487Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839117539Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080246090.4214 1678080281853.3635 35762.942138671875\n","stream":"stdout","time":"2023-03-06T05:48:28.839121391Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839125383Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080283641.7588 1678080317381.6711 33739.912353515625\n","stream":"stdout","time":"2023-03-06T05:48:28.839129069Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83913272Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080319054.7585 1678080353680.703 34625.9443359375\n","stream":"stdout","time":"2023-03-06T05:48:28.839137015Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839140934Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080355454.4724 1678080389232.058 33777.585693359375\n","stream":"stdout","time":"2023-03-06T05:48:28.839144599Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839148623Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080390932.8877 1678080425416.619 34483.731201171875\n","stream":"stdout","time":"2023-03-06T05:48:28.839170362Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839174603Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080427094.9478 1678080460585.0708 33490.123046875\n","stream":"stdout","time":"2023-03-06T05:48:28.839178602Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839182889Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080462340.6753 1678080496936.6465 34595.97119140625\n","stream":"stdout","time":"2023-03-06T05:48:28.839187258Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839191701Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080498601.99 1678080531968.7007 33366.710693359375\n","stream":"stdout","time":"2023-03-06T05:48:28.839195993Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839200483Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080533726.702 1678080568800.4734 35073.771484375\n","stream":"stdout","time":"2023-03-06T05:48:28.839204463Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83920865Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080570445.5251 1678080604908.9705 34463.4453125\n","stream":"stdout","time":"2023-03-06T05:48:28.83921231Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839216342Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080606553.2554 1678080641204.5576 34651.30224609375\n","stream":"stdout","time":"2023-03-06T05:48:28.839220381Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839224606Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080643070.8118 1678080676620.4644 33549.652587890625\n","stream":"stdout","time":"2023-03-06T05:48:28.839228913Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839233391Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080678185.9624 1678080713052.9749 34867.012451171875\n","stream":"stdout","time":"2023-03-06T05:48:28.839237339Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839241551Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080714846.9492 1678080749028.5005 34181.55126953125\n","stream":"stdout","time":"2023-03-06T05:48:28.839245524Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839249762Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080750799.3745 1678080784251.4897 33452.115234375\n","stream":"stdout","time":"2023-03-06T05:48:28.839254041Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83926293Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080785777.1096 1678080818806.1826 33029.072998046875\n","stream":"stdout","time":"2023-03-06T05:48:28.839267339Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.8392717Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080820512.1274 1678080854784.6548 34272.52734375\n","stream":"stdout","time":"2023-03-06T05:48:28.839275751Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839279907Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080856443.1855 1678080889121.321 32678.135498046875\n","stream":"stdout","time":"2023-03-06T05:48:28.839283855Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839288018Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080890915.1572 1678080924608.6707 33693.513427734375\n","stream":"stdout","time":"2023-03-06T05:48:28.839291974Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83929624Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080926240.4575 1678080958671.8196 32431.362060546875\n","stream":"stdout","time":"2023-03-06T05:48:28.839300186Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839304648Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080960323.7874 1678080992753.0073 32429.219970703125\n","stream":"stdout","time":"2023-03-06T05:48:28.839308738Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839312929Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678080994466.3103 1678081026860.7878 32394.4775390625\n","stream":"stdout","time":"2023-03-06T05:48:28.839317649Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839321921Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081028458.8074 1678081061667.393 33208.585693359375\n","stream":"stdout","time":"2023-03-06T05:48:28.839326252Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839330672Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081063355.4587 1678081096508.3152 33152.8564453125\n","stream":"stdout","time":"2023-03-06T05:48:28.839334876Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839339247Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081098064.5369 1678081131675.4036 33610.86669921875\n","stream":"stdout","time":"2023-03-06T05:48:28.839343205Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839347357Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081133329.0498 1678081168082.0908 34753.041015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839351298Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839355535Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081169726.2153 1678081204856.0547 35129.83935546875\n","stream":"stdout","time":"2023-03-06T05:48:28.83935986Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839364266Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081206367.5916 1678081239859.761 33492.16943359375\n","stream":"stdout","time":"2023-03-06T05:48:28.839368384Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839372583Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081241547.559 1678081274668.4507 33120.8916015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839376172Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839380107Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081276308.446 1678081309756.4 33447.953857421875\n","stream":"stdout","time":"2023-03-06T05:48:28.83938394Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83938819Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081311483.5642 1678081345729.085 34245.520751953125\n","stream":"stdout","time":"2023-03-06T05:48:28.83939256Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839397043Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081347312.299 1678081382753.4739 35441.1748046875\n","stream":"stdout","time":"2023-03-06T05:48:28.83940104Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839409254Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081384450.3782 1678081417862.9016 33412.5234375\n","stream":"stdout","time":"2023-03-06T05:48:28.839413302Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839417451Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081419636.4312 1678081454569.7302 34933.299072265625\n","stream":"stdout","time":"2023-03-06T05:48:28.839421429Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839425673Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081456213.8337 1678081490332.629 34118.795166015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839430009Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839434437Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081492060.917 1678081525143.6294 33082.71240234375\n","stream":"stdout","time":"2023-03-06T05:48:28.839438621Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.83944305Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081526842.2217 1678081560948.2766 34106.054931640625\n","stream":"stdout","time":"2023-03-06T05:48:28.839446952Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839450818Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081562634.1877 1678081598592.6626 35958.474853515625\n","stream":"stdout","time":"2023-03-06T05:48:28.839454605Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839458559Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081600379.0122 1678081634607.4011 34228.388916015625\n","stream":"stdout","time":"2023-03-06T05:48:28.839462878Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839467434Z"}
+{"log":"TIME_LOG: Classifier 10.0.19.7 1678081636194.5642 1678081671484.1743 35289.610107421875\n","stream":"stdout","time":"2023-03-06T05:48:28.83947165Z"}
+{"log":"Gender model selected\n","stream":"stdout","time":"2023-03-06T05:48:28.839476079Z"}

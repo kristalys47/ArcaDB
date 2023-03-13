@@ -1,0 +1,19 @@
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.748242645Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-08T03:38:49.748372764Z"}
+{"log":"== CUDA ==\n","stream":"stdout","time":"2023-03-08T03:38:49.74840599Z"}
+{"log":"==========\n","stream":"stdout","time":"2023-03-08T03:38:49.748517398Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.751255109Z"}
+{"log":"CUDA Version 11.7.1\n","stream":"stdout","time":"2023-03-08T03:38:49.751266846Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.752102978Z"}
+{"log":"Container image Copyright (c) 2016-2022, NVIDIA CORPORATION \u0026 AFFILIATES. All rights reserved.\n","stream":"stdout","time":"2023-03-08T03:38:49.752109167Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.752744319Z"}
+{"log":"This container image and its contents are governed by the NVIDIA Deep Learning Container License.\n","stream":"stdout","time":"2023-03-08T03:38:49.752755591Z"}
+{"log":"By pulling and using the container, you accept the terms and conditions of this license:\n","stream":"stdout","time":"2023-03-08T03:38:49.75275983Z"}
+{"log":"https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license\n","stream":"stdout","time":"2023-03-08T03:38:49.752763482Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.752767338Z"}
+{"log":"A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.\n","stream":"stdout","time":"2023-03-08T03:38:49.752770604Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.760499165Z"}
+{"log":"WARNING: The NVIDIA Driver was not detected.  GPU functionality will not be available.\n","stream":"stdout","time":"2023-03-08T03:38:49.760513061Z"}
+{"log":"   Use the NVIDIA Container Toolkit to start this container with GPU support; see\n","stream":"stdout","time":"2023-03-08T03:38:49.760518076Z"}
+{"log":"   https://docs.nvidia.com/datacenter/cloud-native/ .\n","stream":"stdout","time":"2023-03-08T03:38:49.760521676Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-08T03:38:49.760587061Z"}
