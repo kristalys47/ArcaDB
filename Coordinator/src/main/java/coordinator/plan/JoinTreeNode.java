@@ -123,7 +123,6 @@ public class JoinTreeNode extends BinaryTreeNode {
                     break;
             }
 
-
             switch (relationInner.typeData){
                 case STRUCTURED:
                     System.out.println("in struct");

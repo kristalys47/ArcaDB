@@ -9,6 +9,8 @@ import os
 from alluxio import option, wire
 import time
 import socket
+from dotenv import load_dotenv
+load_dotenv()
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -16,21 +18,19 @@ hostname = socket.gethostname()
 ip = socket.gethostbyname(hostname)
 
 REDIS_HOST = os.getenv('REDIS_HOST')
-REDIS_PORT = os.getenv('REDIS_PORT')
+REDIS_PORT = int(os.getenv('REDIS_PORT'))
 
 ALLUXIO_DATA_HOST = os.getenv('ALLUXIO_DATA_HOST')
-ALLUXIO_DATA_PORT = os.getenv('ALLUXIO_DATA_PORT')
+ALLUXIO_DATA_PORT = int(os.getenv('ALLUXIO_DATA_PORT'))
 
 ALLUXIO_CACHE_HOST = os.getenv('ALLUXIO_CACHE_HOST')
-ALLUXIO_CACHE_PORT = os.getenv('ALLUXIO_CACHE_PORT')
+ALLUXIO_CACHE_PORT = int(os.getenv('ALLUXIO_CACHE_PORT'))
 
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 client = alluxio.Client(ALLUXIO_DATA_HOST, ALLUXIO_DATA_PORT)
 cache = alluxio.Client(ALLUXIO_CACHE_HOST, ALLUXIO_CACHE_PORT)
 NOT_LOADED = "not_loaded"
-
-def write_result(results, id):
 
 
 def gender_clasiffication_pytorch(plan, gender_model, selection, relation):
@@ -87,7 +87,8 @@ def start(models):
     # type, file_location, modelname, property, boolean, array
     print("Have a plan!")
     json_plan = json.loads(task)
-    attribute = json_plan["filter"].split("=")
+    attribute = json_plan["filter"].replace("(", "").replace(")", "").split("=")
+    print(attribute)
     if  attribute[0] == "gender":
         if models["gender"] == NOT_LOADED:
             with client.open("/models/gender/pytorch_gender.pth", "r") as f:
@@ -96,7 +97,7 @@ def start(models):
                     lf.write(f.read())
             models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
             print("Model is loaded")
-        gender_clasiffication_pytorch(json_plan, models["gender"], attribute[1], attribute[0])
+        gender_clasiffication_pytorch(json_plan, models["gender"], attribute[1], json_plan["relation"])
 
 models = {}
 models["gender"] = NOT_LOADED
