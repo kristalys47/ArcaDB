@@ -53,14 +53,17 @@ def test():
         json = {
             "mode": 3,
             "buckets": n,
-            "query": "select * from part, lineitem where lineitem.\"01\" = part.\"00\"",
-            "query1": "select * from lineitem, orders where lineitem.\"00\" = orders.\"00\""
+            "query2": "select * from image as a where a.gender=0",
+            "query2": "select * from part, lineitem where lineitem.\"01\" = part.\"00\"",
+            "query1": "select * from lineitem, orders where lineitem.\"00\" = orders.\"00\"",
+            "query": "select a.id, a.molecular_formula, a.canonical_smiles, a.isomeric_smiles, a.molecular_weight from pubchem as a where a.molecular_weight=0"
+
             }
         print(n)
         for n in range(1):
-            os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /join"')
-            os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio clearCache"')
-            os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /results"')
+            # os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /join"')
+            # os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio clearCache"')
+            # os.system('ssh root@136.145.77.83 "./alluxio-2.8.1/bin/alluxio fs rm -r /results"')
             r = requests.get(url = URL, json = json)
             print(r.elapsed)
             sys.stdout.flush()
@@ -91,7 +94,7 @@ def addvmlogstolog():
 
 # os.system("scp root@136.145.77.124:/root/worker/WorkerThreads/logs* loggert.log ")
 # getlogsfromVmslist()
-# test()
+test()
 
 # getlogsfromVmslist
 # os.system("scp root@136.145.77.80:/var/lib/docker/containers/*/*-json.log .")
@@ -99,4 +102,4 @@ def addvmlogstolog():
 # processlogs()
 # getlogsandprocessnossh()
 # time.sleep(60*30)
-getContainersLogs()
+# getContainersLogs()

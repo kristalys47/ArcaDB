@@ -39,8 +39,8 @@ services:
         max_replicas_per_node: 1
         constraints:
           - "node.role==worker"
-          - "node.labels.processor!=gpu"
-          - "node.labels.testalone==yes"
+          - "node.labels.processor==gpu"
+          - "node.labels.testalone!=yes"
     depends_on:
       - coordinator
     env_file: .env

@@ -22,6 +22,25 @@ import os
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") # device object
 
+
+class CustomDataset(torch.utils.data.Dataset):
+    def __init__(self, csv_path, images_folder, transform = None):
+        self.df = pd.read_csv(csv_path)
+        self.images_folder = images_folder
+        self.transform = transform
+        self.class2index = {-1:0, 1:1}
+
+    def __len__(self):
+        return len(self.df)
+    def __getitem__(self, index):
+        filename = self.loc[index, "FILENAME"]
+        label = self.class2index[self.df[index, "LABEL"]]
+        image = PIL.Image.open(os.path.join(self.images_folder, filename))
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, label
+
+
 transforms_train = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.RandomHorizontalFlip(), # data augmentation
@@ -36,8 +55,8 @@ transforms_val = transforms.Compose([
 ])
 
 data_dir = './gender_classification_dataset'
-train_datasets = datasets.ImageFolder(os.path.join(data_dir, 'Training'), transforms_train)
-val_datasets = datasets.ImageFolder(os.path.join(data_dir, 'Validation'), transforms_val)
+train_datasets = CustomDataset(os.path.join(data_dir, 'Training'), transforms_train)
+val_datasets = CustomDataset(os.path.join(data_dir, 'Validation'), transforms_val)
 
 train_dataloader = torch.utils.data.DataLoader(train_datasets, batch_size=16, shuffle=True, num_workers=4)
 val_dataloader = torch.utils.data.DataLoader(val_datasets, batch_size=16, shuffle=True, num_workers=4)

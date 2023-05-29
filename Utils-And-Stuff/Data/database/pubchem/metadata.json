@@ -1,0 +1,13 @@
+{"type": "semistructured",
+ "table_name": "pubchem",
+  "attributes": {
+    "id": {
+      "type": "int"
+    },
+    "molecular_weight": {
+      "type": "int",
+    }
+  },
+  "attribute_list": ["id", "molecular_weight"],
+  "files": ["pubchem.csv"]
+}

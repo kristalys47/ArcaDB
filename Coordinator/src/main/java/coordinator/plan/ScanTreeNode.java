@@ -8,7 +8,7 @@ import redis.clients.jedis.Jedis;
 import java.sql.Statement;
 import java.util.List;
 
-import static coordinator.Utils.Commons.REDIS_HOST;
+import static coordinator.Utils.Commons.*;
 import static coordinator.Utils.Commons.REDIS_PORT;
 
 
@@ -61,6 +61,49 @@ public class ScanTreeNode extends BinaryTreeNode {
         return cleaned;
     }
 
+    public int scanScheduleStructured(String column, String relationName){
+        Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
+        for (int i = 0; i < this.TableFiles.size(); i++) {
+            JSONObject planJAVA = new JSONObject();
+            planJAVA.put("planType", "scan");
+            planJAVA.put("files", new JSONArray().put(this.TableFiles.get(i)));
+            planJAVA.put("relation", relationName);
+            planJAVA.put("filter", this.selection);
+            jedis.rpush("structured", planJAVA.toString());
+        }
+        return this.TableFiles.size();
+    }
+
+    public int scanScheduleSemistructured(String column, String relationName){
+        List<String> files = this.TableFiles;
+        int numberOfGroups = (files.size()/PICTURE_PARTITION) + 1;
+
+        JSONArray[] partitions = new JSONArray[numberOfGroups];
+
+        for (int i = 0; i < partitions.length; i++) {
+            partitions[i] = new JSONArray(PICTURE_PARTITION);
+            int portion = i*(PICTURE_PARTITION);
+            for (int j = 0; j < PICTURE_PARTITION; j++) {
+                int index = portion + j;
+                if(index < files.size())
+                    partitions[i].put(files.get(portion + j));
+                else{
+                    break;
+                }
+            }
+        }
+        Jedis jedis = new Jedis(Commons.REDIS_HOST, Commons.REDIS_PORT);
+        for (int i = 0; i < partitions.length; i++) {
+            JSONObject planJAVA = new JSONObject();
+            planJAVA.put("planType", "inference");
+            planJAVA.put("files", partitions[i]);
+            planJAVA.put("relation", relationName);
+            planJAVA.put("filter", this.selection);
+            jedis.rpush("semistructured", planJAVA.toString());
+        }
+        return numberOfGroups;
+    }
+
     @Override
     public void run() {
         Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT);
@@ -88,7 +131,45 @@ public class ScanTreeNode extends BinaryTreeNode {
             this.setDone(true);
             //resquest for a node to perform this
             //Assign The files from the catalog
-
         }
+        if(this.typeData == DataType.SEMISTRUCTURED){
+            List<String> files = this.TableFiles;
+            int numberOfGroups = (files.size()/PICTURE_PARTITION) + 1;
+
+            JSONArray[] partitions = new JSONArray[numberOfGroups];
+
+            for (int i = 0; i < partitions.length; i++) {
+                partitions[i] = new JSONArray(PICTURE_PARTITION);
+                int portion = i*(PICTURE_PARTITION);
+                for (int j = 0; j < PICTURE_PARTITION; j++) {
+                    int index = portion + j;
+                    if(index < files.size())
+                        partitions[i].put(files.get(portion + j));
+                    else{
+                        break;
+                    }
+                }
+            }
+            jedis = new Jedis(Commons.REDIS_HOST, Commons.REDIS_PORT);
+            for (int i = 0; i < partitions.length; i++) {
+                JSONObject planJAVA = new JSONObject();
+                planJAVA.put("planType", "inference");
+                planJAVA.put("files", partitions[i]);
+                planJAVA.put("relation", relation);
+                planJAVA.put("filter", this.selection);
+                System.out.println(planJAVA.toString());
+                jedis.rpush("semistructured", planJAVA.toString());
+            }
+            for (int i1 = 0; i1 < numberOfGroups; i1++) {
+                List<String> element = jedis.blpop(0, "done");
+                if(!element.get(1).contains("Successful")){
+                    System.out.println("A container failed" + element.get(1));
+                    return;
+                }
+                System.out.println(element.get(1));
+            }
+        }
+
+
     }
 }

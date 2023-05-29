@@ -1,5 +1,5 @@
 {
-  table_list: ["orders", "supplier", "region", "partsupp", "part", "nation", "customer", "lineitem", "image"],
+  table_list: ["orders", "supplier", "region", "partsupp", "part", "nation", "customer", "lineitem", "image", "pubchem"],
   tables_dir: {
     "orders": "/db100GB/orders",
     "supplier": "/db100GB/supplier",
@@ -9,6 +9,7 @@
     "nation": "/db100GB/nation",
     "customer": "/db100GB/customer",
     "lineitem": "/db100GB/lineitem",
-    "image": "/image"
+    "image": "/image",
+    "pubchem": "/pubchem"
   }
 }

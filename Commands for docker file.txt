@@ -311,3 +311,22 @@ https://github.com/postgres/postgres/blob/master/src/backend/commands/explain.c#
 
 
 -DAWS_S3_ACCESS_KEY=AK -DAWS_S3_SECRET_KEY=UaMYs -DREDIS_HOST=136.145.77.83 -DREDIS_PORT=6379 -DREDIS_HOST_TIMES=136.145.77.83 -DREDIS_PORT_TIMES=6380 -DWORKER_APP_PORT=7272 -DCOORDINATOR_APP_PORT=7271 -DPOSTGRES_PASSWORD=mypassword -DPOSTGRES_USERNAME=myusername -DPOSTGRES_HOST=136.145.77.83 -DPOSTGRES_PORT=5434 -DPOSTGRES_DB_NAME=test -DMODE=queue -DCPN=5 -DTC=20 -DALLUXIO_DATA_HOST=136.145.77.107 -DALLUXIO_DATA_PORT=39999 -DALLUXIO_CACHE_HOST=136.145.77.83 -DALLUXIO_CACHE_PORT=39999
+
+
+python3 load-redis-100GB.py
+docker stack rm testing
+docker service logs -f testing_coordinator
+docker stack deploy --compose-file docker-compose.yml testing
+
+./alluxio-2.8.1/bin/alluxio fs copyFromLocal tables.json  /
+
+
+
+docker build . -f DockerfileWorkerPython -t kristalys/dbms-worker-python:4.0.0
+docker push -t kristalys/dbms-worker-python:4.0.0
+cker push kristalys/dbms-worker-python:4.0.0
+
+bin/alluxio-stop.sh all
+bin/alluxio-start.sh all SudoMount
+alluxio-2.8.1/bin/alluxio fs copyToLocal /results_4de05381-6b42-42ec-8c5c-b15cd92faf1a
+1970  alluxio-2.8.1/bin/alluxio fs copyToLocal /results_4de05381-6b42-42ec-8c5c-b15cd92faf1a.js
