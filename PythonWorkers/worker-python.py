@@ -163,7 +163,7 @@ cache = alluxio.Client(ALLUXIO_CACHE_HOST, ALLUXIO_CACHE_PORT)
 NOT_LOADED = "not_loaded"
 
 
-def gender_clasiffication_pytorch(plan, gender_model, selection, relation):
+def gender_clasiffication_pytorch(plan, loaded_model, selection, relation):
     json_results = {}
     json_meta = plan["files"]
     list = []
@@ -184,11 +184,11 @@ def gender_clasiffication_pytorch(plan, gender_model, selection, relation):
         img_trans = transforms_val(img)
         img_trans = img_trans.to(device)
 
-        gender_model.to(device)
+        loaded_model.to(device)
 
         with torch.no_grad():
-            gender_model.eval()
-            output = gender_model(img_trans.unsqueeze(0))
+            loaded_model.eval()
+            output = loaded_model(img_trans.unsqueeze(0))
             _, pred = torch.max(output, 1)
         if pred == int(selection):
             list.append(n)
@@ -287,6 +287,24 @@ def start(models):
             models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
             print("Model is loaded")
         gender_clasiffication_pytorch(json_plan, models["gender"], attribute[1], json_plan["relation"])
+    if  attribute[0] == "eyeglasses":
+        if models["eyeglasses"] == NOT_LOADED:
+            with client.open("/models/eyeglasses/pytorch_eyeglasses.pth", "r") as f:
+                os.makedirs("saved_model/eyeglasses/", exist_ok=True)
+                with open("saved_model/eyeglasses/pytorch_eyeglasses.pth", "wb") as lf:
+                    lf.write(f.read())
+            models["eyeglasses"] = torch.load("saved_model/eyeglasses/pytorch_eyeglasses.pth", map_location=device)
+            print("Model is loaded")
+        gender_clasiffication_pytorch(json_plan, models["eyeglasses"], attribute[1], json_plan["relation"])
+    if  attribute[0] == "bangs":
+        if models["bangs"] == NOT_LOADED:
+            with client.open("/models/bangs/pytorch_bangs.pth", "r") as f:
+                os.makedirs("saved_model/bangs/", exist_ok=True)
+                with open("saved_model/bangs/pytorch_bangs.pth", "wb") as lf:
+                    lf.write(f.read())
+            models["bangs"] = torch.load("saved_model/bangs/pytorch_bangs.pth", map_location=device)
+            print("Model is loaded")
+        gender_clasiffication_pytorch(json_plan, models["bangs"], attribute[1], json_plan["relation"])
 
     if  attribute[0] == "molecular_weight":
         if models["molecular_weight"] == NOT_LOADED:
@@ -302,6 +320,8 @@ def start(models):
 models = {}
 models["gender"] = NOT_LOADED
 models["molecular_weight"] = NOT_LOADED
+models["eyeglasses"] = NOT_LOADED
+models["bangs"] = NOT_LOADED
 print(ip, " ", REDIS_HOST, " ", REDIS_PORT)
 while True:
     start(models)
