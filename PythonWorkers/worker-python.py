@@ -163,6 +163,124 @@ cache = alluxio.Client(ALLUXIO_CACHE_HOST, ALLUXIO_CACHE_PORT)
 NOT_LOADED = "not_loaded"
 
 
+def project_celeba(plan, models, relation):
+    json_results = {}
+    json_meta = plan["files"]
+    transforms_val = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    list = {}
+    start = time.time() * 1000
+    for n in json_meta:
+        with client.open("/" + relation + "/" + n, "r") as f:
+            im = f.read()
+            with open("img.jpg", "wb") as f2:
+                f2.write(im)
+
+        img = Image.open("img.jpg")
+        img_trans = transforms_val(img)
+        img_trans = img_trans.to(device)
+
+        image_classifications = []
+        projection = []
+        for a in ["eyeglasses", "bangs"]:
+            loaded_model = models[a]
+            loaded_model.to(device)
+            with torch.no_grad():
+                loaded_model.eval()
+                output = loaded_model(img_trans.unsqueeze(0))
+                _, pred = torch.max(output, 1)
+                projection.append(pred.item())
+        list[n] = projection
+
+    end = time.time() * 1000
+    json_results["result"] = list
+
+    id = str(uuid.uuid4())
+    file_name = '/results/results_' + id + '.json'
+    opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
+    with cache.open(file_name, 'w', opt, ) as alluxio_file:
+        json.dump(json_results, alluxio_file)
+
+    jsonResponse = {}
+    jsonResponse["planType"] =  "inference"
+    jsonResponse["file"] = file_name
+    jsonResponse["result"] = list
+    jsonResponse["relation"] = relation
+    if "buckets" in plan:
+        jsonResponse["buckets"] = plan["buckets"]
+        r.rpush("structured", str(jsonResponse))
+    else:
+        r.rpush("done", "\nSuccessful: " + str(ip) + " " + str(jsonResponse))
+    print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
+
+
+
+def celeba_multi_attr_filter(plan, attributes, models, relation):
+    json_results = {}
+    json_meta = plan["files"]
+    transforms_val = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    list = {}
+    start = time.time() * 1000
+    for n in json_meta:
+        with client.open("/" + relation + "/" + n, "r") as f:
+            im = f.read()
+            with open("img.jpg", "wb") as f2:
+                f2.write(im)
+
+        img = Image.open("img.jpg")
+        img_trans = transforms_val(img)
+        img_trans = img_trans.to(device)
+
+        image_classifications = []
+        projection = []
+        for a in attributes:
+            loaded_model = models[a[0]]
+            loaded_model.to(device)
+            with torch.no_grad():
+                loaded_model.eval()
+                output = loaded_model(img_trans.unsqueeze(0))
+                _, pred = torch.max(output, 1)
+                projection.append(pred)
+                if pred != int(a[1]):   #<--------------------
+                    break
+                else:
+                    image_classifications.append(pred)
+
+        # what if it is an or? or a mix... try to check this...
+        if len(image_classifications) == len(attributes):
+            list[n] = projection
+
+    end = time.time() * 1000
+    json_results["result"] = list
+
+    id = str(uuid.uuid4())
+    file_name = '/results/results_' + id + '.json'
+    # opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
+    # with cache.open(file_name, 'w', opt, ) as alluxio_file:
+    #     json.dump(json_results, alluxio_file)
+
+    jsonResponse = {}
+    jsonResponse["planType"] =  "inference"
+    jsonResponse["file"] = file_name
+    jsonResponse["result"] = list
+    jsonResponse["relation"] = relation
+    if "buckets" in plan:
+        jsonResponse["buckets"] = plan["buckets"]
+        r.rpush("structured", str(jsonResponse))
+    else:
+        r.rpush("done", "\nSuccessful: " + str(ip) + " " + str(jsonResponse))
+    print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
+
+
 def gender_clasiffication_pytorch(plan, loaded_model, selection, relation):
     json_results = {}
     json_meta = plan["files"]
@@ -205,12 +323,15 @@ def gender_clasiffication_pytorch(plan, loaded_model, selection, relation):
     jsonResponse["planType"] =  "inference"
     jsonResponse["file"] = file_name
     jsonResponse["result"] = list
-    jsonResponse["buckets"] = plan["buckets"]
     jsonResponse["relation"] = relation
-    r.rpush("structured", str(jsonResponse))
+    if "buckets" in plan:
+        jsonResponse["buckets"] = plan["buckets"]
+        r.rpush("structured", str(jsonResponse))
+    else:
+        r.rpush("done", "\nSuccessful: " + str(ip) + " " + str(jsonResponse))
     print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
 
-def smile_predictions(plan, model1, selection, relation):
+def smile_predictions(plan, model1, selection, comparison, relation):
     json_results = {}
     json_meta = plan["files"]
     list = {}
@@ -244,9 +365,28 @@ def smile_predictions(plan, model1, selection, relation):
                 # _, pred = torch.max(output, 1)
                 # print(pred)
                 pred = output.item()
-                X1, X2, X3, X4 = training_data.get_info(i)
-                record = [X1, X2, X3, X4, pred]
-                list[record[0]] = record
+
+                if "<=" == comparison and pred<=selection:
+                    X1, X2, X3, X4 = training_data.get_info(i)
+                    record = [X1, X2, X3, X4, pred]
+                    list[record[0]] = record
+                elif ">=" == comparison and pred>=selection:
+                    X1, X2, X3, X4 = training_data.get_info(i)
+                    record = [X1, X2, X3, X4, pred]
+                    list[record[0]] = record
+                elif ">" == comparison and pred>selection:
+                    X1, X2, X3, X4 = training_data.get_info(i)
+                    record = [X1, X2, X3, X4, pred]
+                    list[record[0]] = record
+                elif "<" == comparison and pred<selection:
+                    X1, X2, X3, X4 = training_data.get_info(i)
+                    record = [X1, X2, X3, X4, pred]
+                    list[record[0]] = record
+                elif "=" == comparison and pred>selection:
+                    X1, X2, X3, X4 = training_data.get_info(i)
+                    record = [X1, X2, X3, X4, pred]
+                    list[record[0]] = record
+
     json_results["result"] = list
 
     file_name = '/results/smiles/results_' + id + '.json'
@@ -276,18 +416,100 @@ def start(models):
     # type, file_location, modelname, property, boolean, array
     print("Have a plan!")
     json_plan = json.loads(task)
-    attribute = json_plan["filter"].replace("(", "").replace(")", "").split("=")
-    print(attribute)
-    if  attribute[0] == "gender":
-        if models["gender"] == NOT_LOADED:
-            with client.open("/models/gender/pytorch_gender.pth", "r") as f:
-                os.makedirs("saved_model/gender/", exist_ok=True)
-                with open("saved_model/gender/pytorch_gender.pth", "wb") as lf:
-                    lf.write(f.read())
-            models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
-            print("Model is loaded")
-        gender_clasiffication_pytorch(json_plan, models["gender"], attribute[1], json_plan["relation"])
-    if  attribute[0] == "eyeglasses":
+    attribute = json_plan["filter"].split("&")
+    attribute_array = []
+    for a in attribute:
+        a_arr = []
+        if "<=" in a:
+            a_arr = a.replace("(", "").replace(")", "").split("<=")
+            a_arr.append("<=")
+            attribute_array.append(a_arr)
+        elif ">=" in a:
+            a_arr = a.replace("(", "").replace(")", "").split(">=")
+            a_arr.append(">=")
+            attribute_array.append(a_arr)
+        elif ">" in a:
+            a_arr = a.replace("(", "").replace(")", "").split(">")
+            a_arr.append(">")
+            attribute_array.append(a_arr)
+        elif "<" in a:
+            a_arr = a.replace("(", "").replace(")", "").split("<")
+            a_arr.append("<")
+            attribute_array.append(a_arr)
+        elif "=" in a:
+            a_arr = a.replace("(", "").replace(")", "").split("=")
+            a_arr.append("=")
+            attribute_array.append(a_arr)
+
+    print(attribute_array)
+    if len(attribute_array)>1:
+        for a in attribute_array:
+            print(a[0])
+            if  a[0] == "gender":
+                if models["gender"] == NOT_LOADED:
+                    with client.open("/models/gender/pytorch_gender.pth", "r") as f:
+                        os.makedirs("saved_model/gender/", exist_ok=True)
+                        with open("saved_model/gender/pytorch_gender.pth", "wb") as lf:
+                            lf.write(f.read())
+                    models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
+                    print("Model is loaded")
+            if  a[0] == "eyeglasses":
+                if models["eyeglasses"] == NOT_LOADED:
+                    with client.open("/models/eyeglasses/pytorch_eyeglasses.pth", "r") as f:
+                        os.makedirs("saved_model/eyeglasses/", exist_ok=True)
+                        with open("saved_model/eyeglasses/pytorch_eyeglasses.pth", "wb") as lf:
+                            lf.write(f.read())
+                    models["eyeglasses"] = torch.load("saved_model/eyeglasses/pytorch_eyeglasses.pth", map_location=device)
+                    print("Model is loaded")
+            if  a[0] == "bangs":
+                if models["bangs"] == NOT_LOADED:
+                    with client.open("/models/bangs/pytorch_bangs.pth", "r") as f:
+                        os.makedirs("saved_model/bangs/", exist_ok=True)
+                        with open("saved_model/bangs/pytorch_bangs.pth", "wb") as lf:
+                            lf.write(f.read())
+                    models["bangs"] = torch.load("saved_model/bangs/pytorch_bangs.pth", map_location=device)
+                    print("Model is loaded")
+        celeba_multi_attr_filter(json_plan, attribute_array, models, json_plan["relation"])
+
+    elif len(attribute_array)==1:
+        if  attribute_array[0][0] == "gender":
+            if models["gender"] == NOT_LOADED:
+                with client.open("/models/gender/pytorch_gender.pth", "r") as f:
+                    os.makedirs("saved_model/gender/", exist_ok=True)
+                    with open("saved_model/gender/pytorch_gender.pth", "wb") as lf:
+                        lf.write(f.read())
+                models["gender"] = torch.load("saved_model/gender/pytorch_gender.pth", map_location=device)
+                print("Model is loaded")
+            gender_clasiffication_pytorch(json_plan, models["gender"], attribute_array[0][1], json_plan["relation"])
+        if  attribute_array[0][0] == "eyeglasses":
+            if models["eyeglasses"] == NOT_LOADED:
+                with client.open("/models/eyeglasses/pytorch_eyeglasses.pth", "r") as f:
+                    os.makedirs("saved_model/eyeglasses/", exist_ok=True)
+                    with open("saved_model/eyeglasses/pytorch_eyeglasses.pth", "wb") as lf:
+                        lf.write(f.read())
+                models["eyeglasses"] = torch.load("saved_model/eyeglasses/pytorch_eyeglasses.pth", map_location=device)
+                print("Model is loaded")
+            gender_clasiffication_pytorch(json_plan, models["eyeglasses"], attribute_array[0][1], json_plan["relation"])
+        if  attribute_array[0][0] == "bangs":
+            if models["bangs"] == NOT_LOADED:
+                with client.open("/models/bangs/pytorch_bangs.pth", "r") as f:
+                    os.makedirs("saved_model/bangs/", exist_ok=True)
+                    with open("saved_model/bangs/pytorch_bangs.pth", "wb") as lf:
+                        lf.write(f.read())
+                models["bangs"] = torch.load("saved_model/bangs/pytorch_bangs.pth", map_location=device)
+                print("Model is loaded")
+            gender_clasiffication_pytorch(json_plan, models["bangs"], attribute_array[0][1], json_plan["relation"])
+
+        if  attribute_array[0][0] == "molecular_weight":
+            if models["molecular_weight"] == NOT_LOADED:
+                with client.open("/models/molecular_weight/mymodelkrFIXED.pth", "r") as f:
+                    os.makedirs("saved_model/molecular_weight/", exist_ok=True)
+                    with open("saved_model/molecular_weight/mymodelkrFIXED.pth", "wb") as lf:
+                        lf.write(f.read())
+                models["molecular_weight"] = torch.load("saved_model/molecular_weight/mymodelkrFIXED.pth", map_location=device)
+                print("Model is loaded")
+            smile_predictions(json_plan, models["molecular_weight"], float(attribute_array[0][1]), attribute_array[0][2], json_plan["relation"] )
+    else:
         if models["eyeglasses"] == NOT_LOADED:
             with client.open("/models/eyeglasses/pytorch_eyeglasses.pth", "r") as f:
                 os.makedirs("saved_model/eyeglasses/", exist_ok=True)
@@ -295,8 +517,6 @@ def start(models):
                     lf.write(f.read())
             models["eyeglasses"] = torch.load("saved_model/eyeglasses/pytorch_eyeglasses.pth", map_location=device)
             print("Model is loaded")
-        gender_clasiffication_pytorch(json_plan, models["eyeglasses"], attribute[1], json_plan["relation"])
-    if  attribute[0] == "bangs":
         if models["bangs"] == NOT_LOADED:
             with client.open("/models/bangs/pytorch_bangs.pth", "r") as f:
                 os.makedirs("saved_model/bangs/", exist_ok=True)
@@ -304,18 +524,7 @@ def start(models):
                     lf.write(f.read())
             models["bangs"] = torch.load("saved_model/bangs/pytorch_bangs.pth", map_location=device)
             print("Model is loaded")
-        gender_clasiffication_pytorch(json_plan, models["bangs"], attribute[1], json_plan["relation"])
-
-    if  attribute[0] == "molecular_weight":
-        if models["molecular_weight"] == NOT_LOADED:
-            with client.open("/models/molecular_weight/mymodelkrFIXED.pth", "r") as f:
-                os.makedirs("saved_model/molecular_weight/", exist_ok=True)
-                with open("saved_model/molecular_weight/mymodelkrFIXED.pth", "wb") as lf:
-                    lf.write(f.read())
-            models["molecular_weight"] = torch.load("saved_model/molecular_weight/mymodelkrFIXED.pth", map_location=device)
-            print("Model is loaded")
-        smile_predictions(json_plan, models["molecular_weight"], attribute[1], json_plan["relation"])
-
+        project_celeba(json_plan, models, json_plan["relation"])
 
 models = {}
 models["gender"] = NOT_LOADED
