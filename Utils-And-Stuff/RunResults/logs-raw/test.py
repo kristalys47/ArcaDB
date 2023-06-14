@@ -75,7 +75,8 @@ def test():
             "query250": "select * from part, lineitem where lineitem.\"01\" = part.\"00\"",
             "query1": "select * from lineitem, orders where lineitem.\"00\" = orders.\"00\"",
             "query2": "select a.id, a.molecular_formula, a.canonical_smiles, a.isomeric_smiles, a.molecular_weight from pubchem as a where a.molecular_weight=0",
-            "query": "select a.id, a.molecular_formula, a.canonical_smiles, a.isomeric_smiles, a.molecular_weight from pubchem as a where a.molecular_weight>437.9"
+            "query3445": "select a.id, a.molecular_formula, a.canonical_smiles, a.isomeric_smiles, a.molecular_weight from pubchem as a where a.molecular_weight>437.9",
+            "query": "select a.id, a.molecular_formula, a.canonical_smiles, a.isomeric_smiles, a.molecular_weight from pubchem as a where a.molecular_weight>437.9 and a.exact_mass>200"
 
             }
         print(n)

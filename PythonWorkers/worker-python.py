@@ -331,6 +331,98 @@ def gender_clasiffication_pytorch(plan, loaded_model, selection, relation):
         r.rpush("done", "\nSuccessful: " + str(ip) + " " + str(jsonResponse))
     print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
 
+
+def pubchem_multi_attr_filter(plan, attributes, models, relation):
+    json_results = {}
+    json_meta = plan["files"]
+    list = {}
+    start = time.time() * 1000
+    for n in json_meta:
+        with client.open("/" + relation + "/" + n, "r") as f:
+            file = f.read()
+            with open("dataset.csv", "wb") as f2:
+                f2.write(file)
+        id = str(uuid.uuid4())
+        ## TODO hard coded name
+
+        # file_name = '/results/smiles/results_' + id + '.json'
+        # opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
+        # with cache.open(file_name, 'w', opt) as alluxio_file:
+        #     # json_results.dump(json_results, alluxio_file)
+        #     alluxio_file.write(json.dumps(json_results))
+
+        training_data = SMILESDataSet("dataset.csv", train=True)
+        train_dataloader = DataLoader(training_data, batch_size=1, shuffle=False)
+
+        for i, data in enumerate(train_dataloader):
+            X, Y = data
+            X = X.to(device)
+
+            compound = []
+            projection = []
+            for a in attributes:
+                model1 = models[a[0]]
+                model1.to(device)
+                with torch.no_grad():
+                    model1.eval()
+                    output = model1(X)
+                    pred = output.item()
+                    projection.append(pred)
+
+                    if "<=" == a[2]:
+                        if pred<=float(a[1]):
+                            compound.append(pred)
+                        else:
+                            break
+
+                    elif ">=" == a[2]:
+                        if pred>=float(a[1]):
+                            compound.append(pred)
+                        else:
+                            break
+                    elif ">" == a[2]:
+                        if pred>float(a[1]):
+                            compound.append(pred)
+                        else:
+                            break
+                    elif "<" == a[2]:
+                        if pred<float(a[1]):
+                            compound.append(pred)
+                        else:
+                            break
+                    elif "=" == a[2]:
+                        if pred>float(a[1]):
+                            compound.append(pred)
+                        else:
+                            break
+            if len(compound) == len(attributes):
+                X1, X2, X3, X4 = training_data.get_info(i)
+                record = [X1, X2, X3, X4]
+                for att_proj in projection:
+                    record.append(att_proj)
+                list[record[0]] = record
+
+    json_results["result"] = list
+
+    file_name = '/results/smiles/results_' + id + '.json'
+    opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
+    with cache.open(file_name, 'w', opt) as alluxio_file:
+        # json_results.dump(json_results, alluxio_file)
+        alluxio_file.write(str(json_results))
+
+
+
+    # opt = alluxio.option.CreateFile(write_type=wire.WRITE_TYPE_CACHE_THROUGH, recursive=True)
+    # with cache.open(file_name, 'w', opt, ) as alluxio_file:
+    #     json_results.dump(json_results, alluxio_file)
+
+
+    r.rpush("done", "\nSuccessful: " + str(ip))
+    end = time.time() * 1000
+    print("TIME_LOG: Classifier " + str(ip) + " " + str(start) + " " + str(end) + " " + str(end - start))
+
+
+
 def smile_predictions(plan, model1, selection, comparison, relation):
     json_results = {}
     json_meta = plan["files"]
@@ -442,6 +534,8 @@ def start(models):
             attribute_array.append(a_arr)
 
     print(attribute_array)
+    attribute_array = attribute_array[::-1]
+    print(attribute_array)
     if len(attribute_array)>1:
         for a in attribute_array:
             print(a[0])
@@ -469,7 +563,26 @@ def start(models):
                             lf.write(f.read())
                     models["bangs"] = torch.load("saved_model/bangs/pytorch_bangs.pth", map_location=device)
                     print("Model is loaded")
-        celeba_multi_attr_filter(json_plan, attribute_array, models, json_plan["relation"])
+            if  a[0] == "molecular_weight":
+                if models["molecular_weight"] == NOT_LOADED:
+                    with client.open("/models/molecular_weight/mymodelkrFIXED.pth", "r") as f:
+                        os.makedirs("saved_model/molecular_weight/", exist_ok=True)
+                        with open("saved_model/molecular_weight/mymodelkrFIXED.pth", "wb") as lf:
+                            lf.write(f.read())
+                    models["molecular_weight"] = torch.load("saved_model/molecular_weight/mymodelkrFIXED.pth", map_location=device)
+                    print("Model is loaded")
+            if  a[0] == "exact_mass":
+                if models["exact_mass"] == NOT_LOADED:
+                    with client.open("/models/exact_mass/exactMass.pth", "r") as f:
+                        os.makedirs("saved_model/exact_mass/", exist_ok=True)
+                        with open("saved_model/exact_mass/exactMass.pth", "wb") as lf:
+                            lf.write(f.read())
+                    models["exact_mass"] = torch.load("saved_model/exact_mass/exactMass.pth", map_location=device)
+                    print("Model is loaded")
+        if json_plan["relation"] == "image":
+            celeba_multi_attr_filter(json_plan, attribute_array, models, json_plan["relation"])
+        elif json_plan["relation"] == "pubchem":
+            pubchem_multi_attr_filter(json_plan, attribute_array, models, json_plan["relation"])
 
     elif len(attribute_array)==1:
         if  attribute_array[0][0] == "gender":
@@ -508,7 +621,7 @@ def start(models):
                         lf.write(f.read())
                 models["molecular_weight"] = torch.load("saved_model/molecular_weight/mymodelkrFIXED.pth", map_location=device)
                 print("Model is loaded")
-            smile_predictions(json_plan, models["molecular_weight"], float(attribute_array[0][1]), attribute_array[0][2], json_plan["relation"] )
+            smile_predictions(json_plan, models["molecular_weight"], float(attribute_array[0][1]), attribute_array[0][2], json_plan["relation"])
     else:
         if models["eyeglasses"] == NOT_LOADED:
             with client.open("/models/eyeglasses/pytorch_eyeglasses.pth", "r") as f:
@@ -531,6 +644,7 @@ models["gender"] = NOT_LOADED
 models["molecular_weight"] = NOT_LOADED
 models["eyeglasses"] = NOT_LOADED
 models["bangs"] = NOT_LOADED
+models["exact_mass"] = NOT_LOADED
 print(ip, " ", REDIS_HOST, " ", REDIS_PORT)
 while True:
     start(models)
